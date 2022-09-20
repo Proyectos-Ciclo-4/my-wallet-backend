@@ -20,7 +20,9 @@ public class Wallet extends AggregateEvent<WalletID> {
 
     protected List<Motivo> motivos;
 
-    protected Usuario usuario;
+    protected Usuario dueño;
+
+    protected List<Usuario> contactos;
 
     protected List<Transferencia> transferencias;
 
