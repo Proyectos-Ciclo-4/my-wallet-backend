@@ -27,8 +27,6 @@ import java.util.Optional;
 
 public class Wallet extends AggregateEvent<WalletID> {
 
-  protected UsuarioID usuarioID;
-
   protected Saldo saldo;
 
   protected List<Motivo> motivos;
