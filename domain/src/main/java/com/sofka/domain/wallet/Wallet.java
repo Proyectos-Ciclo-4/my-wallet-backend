@@ -27,8 +27,6 @@ import java.util.Optional;
 
 public class Wallet extends AggregateEvent<WalletID> {
 
-  protected UsuarioID usuarioID;
-
   protected Saldo saldo;
 
   protected List<Motivo> motivos;
@@ -51,7 +49,7 @@ public class Wallet extends AggregateEvent<WalletID> {
     subscribe(new WalletChange(this));
   }
 
-  public Wallet from(WalletID walletID, List<DomainEvent> events) {
+  public static Wallet from(WalletID walletID, List<DomainEvent> events) {
     Wallet wallet = new Wallet(walletID);
     events.forEach(event -> {
       wallet.applyEvent(event);
