@@ -40,4 +40,6 @@ public class CrearWallet extends Command {
     public List<Motivo> getMotivos() {
         return motivos;
     }
+
+
 }
