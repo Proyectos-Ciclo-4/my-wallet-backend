@@ -49,7 +49,7 @@ public class Wallet extends AggregateEvent<WalletID> {
     subscribe(new WalletChange(this));
   }
 
-  public Wallet from(WalletID walletID, List<DomainEvent> events) {
+  public static Wallet from(WalletID walletID, List<DomainEvent> events) {
     Wallet wallet = new Wallet(walletID);
     events.forEach(event -> {
       wallet.applyEvent(event);
