@@ -14,40 +14,42 @@ import java.util.Optional;
 
 public class Wallet extends AggregateEvent<WalletID> {
 
-    protected UsuarioID usuarioID;
+  protected UsuarioID usuarioID;
 
-    protected Saldo saldo;
+  protected Saldo saldo;
 
-    protected List<Motivo> motivos;
+  protected List<Motivo> motivos;
 
-    protected Usuario dueño;
+  protected Usuario dueño;
 
-    protected List<Usuario> contactos;
+  protected List<Usuario> contactos;
 
-    protected List<Transferencia> transferencias;
+  protected List<Transferencia> transferencias;
 
 
-    public Wallet(WalletID entityId, UsuarioID usuarioID, Saldo saldo, List<Motivo> motivos) {
-        super(entityId);
-        subscribe(new WalletChange(this));
-        appendChange(new WalletCreada(entityId,usuarioID,saldo,motivos)).apply();
-    }
+  public Wallet(WalletID entityId, UsuarioID usuarioID, Saldo saldo, List<Motivo> motivos) {
+    super(entityId);
+    subscribe(new WalletChange(this));
+    appendChange(new WalletCreada(entityId, usuarioID, saldo, motivos)).apply();
+  }
 
-    private Wallet(WalletID entityId){
-        super(entityId);
-        subscribe(new WalletChange(this));
-    }
+  private Wallet(WalletID entityId) {
+    super(entityId);
+    subscribe(new WalletChange(this));
+  }
 
-    public Wallet from(WalletID walletID, List<DomainEvent> events){
-        Wallet wallet = new Wallet(walletID);
-        events.forEach(event -> {wallet.applyEvent(event);});
-        return wallet;
-    }
+  public Wallet from(WalletID walletID, List<DomainEvent> events) {
+    Wallet wallet = new Wallet(walletID);
+    events.forEach(event -> {
+      wallet.applyEvent(event);
+    });
+    return wallet;
+  }
 
-    public Optional<Transferencia> getTransferenciaPorId(TransferenciaID transferenciaID){
-        return transferencias.stream().filter((transferencia -> transferencia.identity().equals(transferenciaID))).findFirst();
-    }
-
+  public Optional<Transferencia> getTransferenciaPorId(TransferenciaID transferenciaID) {
+    return transferencias.stream()
+        .filter((transferencia -> transferencia.identity().equals(transferenciaID))).findFirst();
+  }
 
 
 }
