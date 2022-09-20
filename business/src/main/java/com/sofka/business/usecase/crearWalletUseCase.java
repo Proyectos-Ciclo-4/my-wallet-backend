@@ -15,10 +15,12 @@ public class crearWalletUseCase extends UseCaseForCommand<CrearWallet> {
   @Override
   public Flux<DomainEvent> apply(Mono<CrearWallet> crearWallet) {
     return crearWallet.flatMapMany(command -> {
+      var usuario = new Usuario(command.getUsuarioID());
 
       var wallet = new Wallet(command.getWalletID(), command.getUsuarioID(), command.getSaldo(),
           command.getMotivos());
-      // wallet.asignarUsuario();
+      wallet.asignarUsuario(command.getUsuarioID(), usuario.getNombre(), usuario.getEmail(),
+          usuario.getTelefono());
       return Flux.fromIterable(wallet.getUncommittedChanges());
 
     });

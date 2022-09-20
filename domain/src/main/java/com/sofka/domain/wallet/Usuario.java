@@ -8,40 +8,44 @@ import com.sofka.domain.wallet.objetosdevalor.UsuarioID;
 
 public class Usuario extends Entity<UsuarioID> {
 
-    private Nombre nombre;
+  private Nombre nombre;
 
-    private Email email;
+  private Email email;
 
-    private Telefono telefono;
+  private Telefono telefono;
 
-    public Usuario(UsuarioID entityId, Nombre nombre, Email email, Telefono telefono) {
-        super(entityId);
-        this.nombre = nombre;
-        this.email = email;
-        this.telefono = telefono;
-    }
+  public Usuario(UsuarioID entityId, Nombre nombre, Email email, Telefono telefono) {
+    super(entityId);
+    this.nombre = nombre;
+    this.email = email;
+    this.telefono = telefono;
+  }
 
-    public Nombre getNombre() {
-        return nombre;
-    }
+  public Usuario(UsuarioID entityId) {
+    super(entityId);
+  }
 
-    public void setNombre(Nombre nombre) {
-        this.nombre = nombre;
-    }
+  public Nombre getNombre() {
+    return nombre;
+  }
 
-    public Email getEmail() {
-        return email;
-    }
+  public void setNombre(Nombre nombre) {
+    this.nombre = nombre;
+  }
 
-    public void setEmail(Email email) {
-        this.email = email;
-    }
+  public Email getEmail() {
+    return email;
+  }
 
-    public Telefono getTelefono() {
-        return telefono;
-    }
+  public void setEmail(Email email) {
+    this.email = email;
+  }
 
-    public void setTelefono(Telefono telefono) {
-        this.telefono = telefono;
-    }
+  public Telefono getTelefono() {
+    return telefono;
+  }
+
+  public void setTelefono(Telefono telefono) {
+    this.telefono = telefono;
+  }
 }
