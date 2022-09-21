@@ -53,15 +53,16 @@ public class WalletChange extends EventChange {
     });
 
     apply((SaldoModificado event) -> {
-      wallet.saldo = new Saldo(wallet.saldo.value() + event.getSaldo().value());
+      wallet.saldo = new Saldo(wallet.saldo.value() + event.getCantidad().value());
     });
 
     apply((TransferenciaCreada event) -> {
 
-      if (wallet.saldo.value() > event.getValor().value()) {
+      if (wallet.saldo.value() >= event.getValor().value()) {
 
         Transferencia transferencia = new Transferencia(
             event.getTransferenciaID(),
+            event.getWalletDestino(),
             new Estado(TipoDeEstado.PENDIENTE),
             new FechayHora(LocalDate.now()),
             event.getValor(),
