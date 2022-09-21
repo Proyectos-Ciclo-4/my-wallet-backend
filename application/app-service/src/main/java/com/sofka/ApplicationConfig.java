@@ -18,15 +18,21 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 )
 public class ApplicationConfig {
 
-  public static final String EXCHANGE = "wallet-core";
+  //RABBIT MQ Config
+  public static final String EXCHANGE = "core-posts";
 
+  public static final String GENERAL_QUEUE = "events.general";
+
+  public static final String GENERAL_ROUTING_KEY = "routingKey.general";
+
+  /* The rabbit template will now be implemented on RabbitMQEventBus
   @Bean
   public RabbitAdmin rabbitAdmin(RabbitTemplate rabbitTemplate) {
     var admin = new RabbitAdmin(rabbitTemplate);
     admin.declareExchange(new TopicExchange(EXCHANGE));
 
     return admin;
-  }
+  } */
 
   @Bean
   public CorsWebFilter corsWebFilter() {

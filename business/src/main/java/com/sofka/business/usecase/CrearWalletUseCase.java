@@ -2,7 +2,6 @@ package com.sofka.business.usecase;
 
 import co.com.sofka.domain.generic.DomainEvent;
 import com.sofka.business.usecase.gateway.UsuarioRepositorio;
-import com.sofka.domain.wallet.Usuario;
 import com.sofka.domain.wallet.Wallet;
 import com.sofka.domain.wallet.comandos.CrearWallet;
 import reactor.core.publisher.Flux;
