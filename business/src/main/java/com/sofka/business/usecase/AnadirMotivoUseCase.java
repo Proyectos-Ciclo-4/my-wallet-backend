@@ -4,7 +4,6 @@ import co.com.sofka.domain.generic.DomainEvent;
 import com.sofka.business.usecase.gateway.WalletDomainEventRepository;
 import com.sofka.domain.wallet.Wallet;
 import com.sofka.domain.wallet.comandos.AnadirMotivo;
-import com.sofka.domain.wallet.comandos.CrearWallet;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

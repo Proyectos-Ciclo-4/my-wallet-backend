@@ -1,2 +1,11 @@
-package com.sofka.generic;public interface EventBus {
+package com.sofka.generic;
+
+import co.com.sofka.domain.generic.DomainEvent;
+
+public interface EventBus {
+
+  void publish(DomainEvent event);
+
+  void publishError(Throwable errorEvent);
+
 }

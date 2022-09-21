@@ -1,4 +1,4 @@
-package com.sofka.generic.handle;
+package com.sofka.handle;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.reactive.function.server.RouterFunctions;

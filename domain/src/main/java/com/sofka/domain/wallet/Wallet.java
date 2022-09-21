@@ -37,7 +37,6 @@ public class Wallet extends AggregateEvent<WalletID> {
 
   protected List<Transferencia> transferencias;
 
-
   public Wallet(WalletID entityId, UsuarioID usuarioID, Saldo saldo, List<Motivo> motivos) {
     super(entityId);
     subscribe(new WalletChange(this));

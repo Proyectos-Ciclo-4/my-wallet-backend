@@ -1,4 +1,4 @@
-package com.sofka.generic.handle.model;
+package com.sofka.handle.model;
 
 import java.util.List;
 import lombok.Data;

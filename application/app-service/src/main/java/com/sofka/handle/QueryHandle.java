@@ -1,8 +1,8 @@
-package com.sofka.generic.handle;
+package com.sofka.handle;
 
 import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 
-import com.sofka.generic.handle.model.HistoryListModel;
+import com.sofka.handle.model.HistoryListModel;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.http.MediaType;

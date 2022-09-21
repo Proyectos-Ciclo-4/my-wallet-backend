@@ -1,7 +1,6 @@
-package com.sofka.generic.handle;
+package com.sofka.generic;
 
 import co.com.sofka.domain.generic.DomainEvent;
-import com.sofka.generic.StoredEvent;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
