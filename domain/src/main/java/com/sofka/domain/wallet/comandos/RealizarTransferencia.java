@@ -7,9 +7,9 @@ import com.sofka.domain.wallet.objetosdevalor.Motivo;
 import com.sofka.domain.wallet.objetosdevalor.TransferenciaID;
 import com.sofka.domain.wallet.objetosdevalor.WalletID;
 
-public class CrearTransferencia extends Command {
+public class RealizarTransferencia extends Command {
 
-    private final WalletID walletID;
+    private final WalletID walletDestino;
 
     private final TransferenciaID transferenciaID;
 
@@ -19,16 +19,16 @@ public class CrearTransferencia extends Command {
 
     private final Motivo motivo;
 
-    public CrearTransferencia(WalletID walletID, TransferenciaID transferenciaID, Estado estadoDeTransferencia, Cantidad valor, Motivo motivo) {
-        this.walletID = walletID;
+    public RealizarTransferencia(WalletID walletDestino, TransferenciaID transferenciaID, Estado estadoDeTransferencia, Cantidad valor, Motivo motivo) {
+        this.walletDestino = walletDestino;
         this.transferenciaID = transferenciaID;
         this.estadoDeTransferencia = estadoDeTransferencia;
         this.valor = valor;
         this.motivo = motivo;
     }
 
-    public WalletID getWalletID() {
-        return walletID;
+    public WalletID getWalletDestino() {
+        return walletDestino;
     }
 
     public TransferenciaID getTransferenciaID() {
