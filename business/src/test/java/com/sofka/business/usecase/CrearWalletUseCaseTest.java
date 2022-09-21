@@ -48,7 +48,6 @@ class CrearWalletUseCaseTest {
     listaMotivos.add(motivo2);
     var command = new CrearWallet(walletId, usuarioId, saldo, listaMotivos);
 
-    //   when(repository.obtenerEventos("wallet1")).thenReturn(history());
     when(usuarioRepositorio.obtenerDatosUsuario("usuario1")).thenReturn(history2());
 
     StepVerifier.create(useCase.apply(Mono.just(command))).expectNextMatches(domainEvent -> {
