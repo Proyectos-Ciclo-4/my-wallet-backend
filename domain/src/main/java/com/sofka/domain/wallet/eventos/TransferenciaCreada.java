@@ -9,7 +9,7 @@ import com.sofka.domain.wallet.objetosdevalor.WalletID;
 
 public class TransferenciaCreada extends DomainEvent {
 
-    private final WalletID walletID;
+    private final WalletID walletDestino;
 
     private final TransferenciaID transferenciaID;
 
@@ -19,17 +19,17 @@ public class TransferenciaCreada extends DomainEvent {
 
     private final Motivo motivo;
 
-    public TransferenciaCreada(WalletID walletID, TransferenciaID transferenciaID, Estado estadoDeTransferencia, Cantidad valor, Motivo motivo) {
+    public TransferenciaCreada(WalletID walletDestino, TransferenciaID transferenciaID, Estado estadoDeTransferencia, Cantidad valor, Motivo motivo) {
         super("com.sofka.domain.wallet.TransferenciaCreada");
-        this.walletID = walletID;
+        this.walletDestino = walletDestino;
         this.transferenciaID = transferenciaID;
         this.estadoDeTransferencia = estadoDeTransferencia;
         this.valor = valor;
         this.motivo = motivo;
     }
 
-    public WalletID getWalletID() {
-        return walletID;
+    public WalletID getWalletDestino() {
+        return walletDestino;
     }
 
     public TransferenciaID getTransferenciaID() {

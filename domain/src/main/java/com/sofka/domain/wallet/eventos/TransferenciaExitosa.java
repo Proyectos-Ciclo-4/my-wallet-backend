@@ -1,35 +1,33 @@
 package com.sofka.domain.wallet.eventos;
 
 import co.com.sofka.domain.generic.DomainEvent;
-import com.sofka.domain.wallet.objetosdevalor.Estado;
+import com.sofka.domain.wallet.objetosdevalor.Cantidad;
 import com.sofka.domain.wallet.objetosdevalor.TransferenciaID;
-import com.sofka.domain.wallet.objetosdevalor.WalletID;
 
 public class TransferenciaExitosa extends DomainEvent {
 
-  private final WalletID walletID;
-
   private final TransferenciaID transferenciaID;
 
-  private final Estado estadoDeTransferencia;
+  private Cantidad cantidad = new Cantidad(0.0);
 
-  public TransferenciaExitosa(WalletID walletID, TransferenciaID transferenciaID,
-      Estado estadoDeTransferencia) {
+  public TransferenciaExitosa(TransferenciaID transferenciaID,
+      Cantidad cantidad) {
     super("com.sofka.domain.wallet.TransferenciaExitosa");
-    this.walletID = walletID;
     this.transferenciaID = transferenciaID;
-    this.estadoDeTransferencia = estadoDeTransferencia;
+    this.cantidad = cantidad;
   }
 
-  public WalletID getWalletID() {
-    return walletID;
+  public TransferenciaExitosa(TransferenciaID transferenciaID
+      ) {
+    super("com.sofka.domain.wallet.TransferenciaExitosa");
+    this.transferenciaID = transferenciaID;
   }
 
   public TransferenciaID getTransferenciaID() {
     return transferenciaID;
   }
 
-  public Estado getEstadoDeTransferencia() {
-    return estadoDeTransferencia;
+  public Cantidad getCantidad() {
+    return cantidad;
   }
 }

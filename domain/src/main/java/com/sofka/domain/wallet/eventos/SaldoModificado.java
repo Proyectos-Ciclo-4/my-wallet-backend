@@ -1,26 +1,34 @@
 package com.sofka.domain.wallet.eventos;
 
 import co.com.sofka.domain.generic.DomainEvent;
-import com.sofka.domain.wallet.objetosdevalor.Saldo;
+import com.sofka.domain.wallet.objetosdevalor.Cantidad;
 import com.sofka.domain.wallet.objetosdevalor.WalletID;
 
 public class SaldoModificado extends DomainEvent {
 
-    private final WalletID walletID;
+  private final WalletID walletID;
 
-    private final Saldo saldo;
+  private final Cantidad cantidad;
 
-    public SaldoModificado(WalletID walletID, Saldo saldo) {
-        super("com.sofka.domain.wallet.SaldoModificado");
-        this.walletID = walletID;
-        this.saldo = saldo;
-    }
+  public SaldoModificado(WalletID walletID, Cantidad cantidad) {
+    super("com.sofka.domain.wallet.SaldoModificado");
+    this.walletID = walletID;
+    this.cantidad = cantidad;
+  }
 
-    public WalletID getWalletID() {
-        return walletID;
-    }
+  public WalletID getWalletID() {
+    return walletID;
+  }
 
-    public Saldo getSaldo() {
-        return saldo;
-    }
+  public Cantidad getCantidad() {
+    return cantidad;
+  }
+
+  @Override
+  public String toString() {
+    return "SaldoModificado{" +
+        "walletID=" + walletID +
+        ", cantidad=" + cantidad +
+        '}';
+  }
 }

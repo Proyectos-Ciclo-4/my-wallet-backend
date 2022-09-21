@@ -4,7 +4,7 @@ import co.com.sofka.domain.generic.Identity;
 
 public class WalletID extends Identity {
 
-    public WalletID() {}
+    public WalletID() {super();}
 
     public WalletID(String id) {
         super(id);
