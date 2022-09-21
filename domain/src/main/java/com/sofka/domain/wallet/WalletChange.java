@@ -57,12 +57,23 @@ public class WalletChange extends EventChange {
     });
 
     apply((TransferenciaCreada event) -> {
-      Transferencia transferencia = new Transferencia(
-          event.getTransferenciaID(),
-          new Estado(TipoDeEstado.PENDIENTE),
-          new FechayHora(LocalDate.now()),
-          event.getValor(),
-          event.getMotivo());
+
+      if (wallet.saldo.value() > event.getValor().value()) {
+
+        Transferencia transferencia = new Transferencia(
+            event.getTransferenciaID(),
+            new Estado(TipoDeEstado.PENDIENTE),
+            new FechayHora(LocalDate.now()),
+            event.getValor(),
+            event.getMotivo());
+
+        wallet.transferencias.add(transferencia);
+
+      } else {
+        throw new IllegalArgumentException(
+            "No se puede crear una transferencia de mayor valor al saldo de la wallet asociada.");
+      }
+
     });
 
     apply((TransferenciaExitosa event) -> {
@@ -76,7 +87,5 @@ public class WalletChange extends EventChange {
           .orElseThrow();
       transferencia.setEstado(new Estado(TipoDeEstado.RECHAZADA));
     });
-
-
   }
 }
