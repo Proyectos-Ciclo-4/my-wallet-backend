@@ -77,10 +77,9 @@ public class Wallet extends AggregateEvent<WalletID> {
     appendChange(new ContactoEliminado(walletID, usuarioID));
   }
 
-  public void anadirMotivo(WalletID walletID, Motivo motivo) {
-    Objects.requireNonNull(walletID);
+  public void anadirMotivo(Motivo motivo) {
     Objects.requireNonNull(motivo);
-    appendChange(new MotivoCreado(walletID, motivo));
+    appendChange(new MotivoCreado(motivo));
   }
 
   public void crearTransferencia(WalletID walletID, TransferenciaID transferenciaID, Estado estado,
