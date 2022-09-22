@@ -35,7 +35,7 @@ public class SocketController {
 
   @OnOpen
   public void onOpen(Session session, @PathParam("correlationId") String correlationId) {
-//    logger.info("Connect by " + correlationId);
+    logger.info("Connect by " + correlationId);
     var map = sessions.getOrDefault(correlationId, new HashMap<>());
     logger.info(sessions.containsKey(correlationId) ? "Contains" : "Not contains");
     logger.info(sessions.keySet().toString());

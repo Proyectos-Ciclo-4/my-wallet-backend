@@ -11,7 +11,7 @@ public class ContactoEliminado extends DomainEvent {
   private final UsuarioID contactoID;
 
   public ContactoEliminado(WalletID walletID, UsuarioID contactoID) {
-    super("com.sofka.domain.wallet.ContactoEliminado");
+    super("com.sofka.domain.wallet.eventos.ContactoEliminado");
     this.walletID = walletID;
     this.contactoID = contactoID;
   }

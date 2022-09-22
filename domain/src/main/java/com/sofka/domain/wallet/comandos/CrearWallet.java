@@ -7,39 +7,17 @@ import com.sofka.domain.wallet.objetosdevalor.UsuarioID;
 import com.sofka.domain.wallet.objetosdevalor.WalletID;
 
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class CrearWallet extends Command {
 
-    private final WalletID walletID;
+  private WalletID walletID;
 
-    private final UsuarioID usuarioID;
-
-    private final Saldo saldo;
-
-    private final List<Motivo> motivos;
-
-    public CrearWallet(WalletID walletID, UsuarioID usuarioID, Saldo saldo, List<Motivo> motivos) {
-        this.walletID = walletID;
-        this.usuarioID = usuarioID;
-        this.saldo = saldo;
-        this.motivos = motivos;
-    }
-
-    public WalletID getWalletID() {
-        return walletID;
-    }
-
-    public UsuarioID getUsuarioID() {
-        return usuarioID;
-    }
-
-    public Saldo getSaldo() {
-        return saldo;
-    }
-
-    public List<Motivo> getMotivos() {
-        return motivos;
-    }
-
+  private UsuarioID usuarioID;
 
 }

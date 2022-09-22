@@ -17,7 +17,7 @@ public class UsuarioAsignado extends DomainEvent {
   private final Telefono numero;
 
   public UsuarioAsignado(UsuarioID usuarioID, Nombre nombre, Email email, Telefono numero) {
-    super("com.sofka.domain.wallet.UsuarioAsignado");
+    super("com.sofka.domain.wallet.eventos.UsuarioAsignado");
     this.usuarioID = usuarioID;
     this.nombre = nombre;
     this.email = email;

@@ -1,13 +1,9 @@
 package com.sofka.bus;
 
 
-import co.com.sofka.domain.generic.DomainEvent;
 import com.sofka.ApplicationConfig;
 import com.sofka.GsonEventSerializer;
 import com.sofka.SocketController;
-import org.springframework.amqp.rabbit.annotation.Exchange;
-import org.springframework.amqp.rabbit.annotation.Queue;
-import org.springframework.amqp.rabbit.annotation.QueueBinding;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
@@ -25,30 +21,34 @@ public class RabbitMQEventConsumer {
   }
 
   @RabbitListener(queues = ApplicationConfig.GENERAL_QUEUE)
-  public void receivedMessage(String received) {
+  /*public void receivedMessage(String received) {
     var event = serializer.deserialize(received, DomainEvent.class);
     ws.send(event.aggregateRootId(), event);
   }
+*/
 
 
-  /*
 
-  @RabbitListener(bindings = @QueueBinding(
+ /* @RabbitListener(bindings = @QueueBinding(
       value = @Queue(value = "proxy.handles", durable = "true"),
       exchange = @Exchange(value = ApplicationConfig.EXCHANGE, type = "topic"),
       key = "example.#"
-  ))
+  ))*/
   public void receivedMessage(Message<String> message) {
     var notification = Notification.from(message.getPayload());
     try {
       var event = serializer.deserialize(
           notification.getBody(), Class.forName(notification.getType())
       );
+
+      var userId = notification.getBody();
+      System.out.println(userId);
+
       ws.send(event.aggregateRootId(), event);
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
     }
   }
-  */
+
 
 }

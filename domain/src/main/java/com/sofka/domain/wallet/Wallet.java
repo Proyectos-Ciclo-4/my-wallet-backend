@@ -21,6 +21,8 @@ import com.sofka.domain.wallet.objetosdevalor.Telefono;
 import com.sofka.domain.wallet.objetosdevalor.TransferenciaID;
 import com.sofka.domain.wallet.objetosdevalor.UsuarioID;
 import com.sofka.domain.wallet.objetosdevalor.WalletID;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -29,7 +31,7 @@ public class Wallet extends AggregateEvent<WalletID> {
 
   protected Saldo saldo;
 
-  protected List<Motivo> motivos;
+  protected List<Motivo> motivos = List.of(new Motivo("Indefinido"));
 
   protected Usuario dueño;
 
@@ -40,7 +42,7 @@ public class Wallet extends AggregateEvent<WalletID> {
   public Wallet(WalletID entityId, UsuarioID usuarioID, Saldo saldo, List<Motivo> motivos) {
     super(entityId);
     subscribe(new WalletChange(this));
-    appendChange(new WalletCreada(entityId, usuarioID, saldo, motivos)).apply();
+    appendChange(new WalletCreada(entityId, usuarioID, saldo)).apply();
   }
 
   private Wallet(WalletID entityId) {
@@ -50,9 +52,7 @@ public class Wallet extends AggregateEvent<WalletID> {
 
   public static Wallet from(WalletID walletID, List<DomainEvent> events) {
     Wallet wallet = new Wallet(walletID);
-    events.forEach(event -> {
-      wallet.applyEvent(event);
-    });
+    events.forEach(wallet::applyEvent);
     return wallet;
   }
 
@@ -76,19 +76,19 @@ public class Wallet extends AggregateEvent<WalletID> {
     appendChange(new ContactoEliminado(walletID, usuarioID));
   }
 
-  public void anadirMotivo(Motivo motivo) {
+  public void anadirMotivo(String motivo) {
     Objects.requireNonNull(motivo);
-    appendChange(new MotivoCreado(motivo));
+    appendChange(new MotivoCreado(new Motivo(motivo)));
   }
 
-  public void crearTransferencia(WalletID walletID, TransferenciaID transferenciaID, Estado estado,
+  public void crearTransferencia(WalletID walletDestinoID, TransferenciaID transferenciaID,
       Cantidad cantidad, Motivo motivo) {
-    Objects.requireNonNull(walletID);
+    Objects.requireNonNull(walletDestinoID);
     Objects.requireNonNull(transferenciaID);
-    Objects.requireNonNull(estado);
     Objects.requireNonNull(cantidad);
     Objects.requireNonNull(motivo);
-    appendChange(new TransferenciaCreada(walletID, transferenciaID, estado, cantidad, motivo));
+    appendChange(
+        new TransferenciaCreada(walletDestinoID, transferenciaID, cantidad, motivo));
   }
 
   public void concretarTransferencia(TransferenciaID transferenciaID

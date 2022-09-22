@@ -2,7 +2,9 @@ package com.sofka.bus;
 
 import com.google.gson.Gson;
 import java.time.Instant;
+import lombok.Data;
 
+@Data
 public class Notification {
 
   private final String type;
@@ -42,5 +44,4 @@ public class Notification {
   public static Notification from(String aNotification) {
     return new Notification().deserialize(aNotification);
   }
-
 }

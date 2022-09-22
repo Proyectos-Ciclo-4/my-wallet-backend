@@ -24,11 +24,10 @@ public class RealizarTransferenciaUseCase extends UseCaseForCommand<RealizarTran
               var walletId = realizarTransferencia.getWalletDestino();
               var wallet = Wallet.from(walletId, domainEvents);
               var transferenciaID = realizarTransferencia.getTransferenciaID();
-              var estado = realizarTransferencia.getEstadoDeTransferencia();
               var cantidad = realizarTransferencia.getValor();
               var motivo = realizarTransferencia.getMotivo();
 
-              wallet.crearTransferencia(walletId, transferenciaID, estado, cantidad, motivo);
+              wallet.crearTransferencia(walletId, transferenciaID, cantidad, motivo);
 
               return wallet.getUncommittedChanges();
             })

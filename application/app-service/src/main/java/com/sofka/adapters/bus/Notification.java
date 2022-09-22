@@ -1,7 +1,6 @@
 package com.sofka.adapters.bus;
 
 import com.google.gson.Gson;
-
 import java.time.Instant;
 
 public class Notification {

@@ -3,7 +3,9 @@ package com.sofka.generic.materialize;
 import com.sofka.domain.wallet.eventos.SaldoModificado;
 import com.sofka.domain.wallet.eventos.UsuarioAsignado;
 import com.sofka.domain.wallet.eventos.WalletCreada;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
@@ -28,7 +30,7 @@ public class WalletMaterializeHandler {
 
     data.put("_id", walletCreada.getWalletID());
     data.put("usuario", walletCreada.getUsuarioID().value());
-    data.put("motivos", walletCreada.getMotivos());
+    data.put("motivos", new ArrayList<>(List.of("Indefinido")));
     data.put("saldo", walletCreada.getSaldo().value());
 
     template.save(data, COLLECTION_VIEW).block();

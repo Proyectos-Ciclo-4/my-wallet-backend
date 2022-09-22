@@ -11,7 +11,7 @@ public class SaldoModificado extends DomainEvent {
   private final Cantidad cantidad;
 
   public SaldoModificado(WalletID walletID, Cantidad cantidad) {
-    super("com.sofka.domain.wallet.SaldoModificado");
+    super("com.sofka.domain.wallet.eventos.SaldoModificado");
     this.walletID = walletID;
     this.cantidad = cantidad;
   }

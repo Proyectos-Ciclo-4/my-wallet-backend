@@ -10,7 +10,7 @@ public class ContactoAnadido extends DomainEvent {
     private final Usuario contacto;
 
     public ContactoAnadido( WalletID walletID, Usuario contacto) {
-        super("com.sofka.domain.wallet.ContactoAnadido");
+        super("com.sofka.domain.wallet.eventos.ContactoAnadido");
         this.walletID = walletID;
         this.contacto = contacto;
     }

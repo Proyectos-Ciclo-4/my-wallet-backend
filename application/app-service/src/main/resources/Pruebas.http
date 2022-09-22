@@ -1,0 +1,11 @@
+POST http://localhost:8084/new/wallet
+Content-Type: application/json
+
+{
+  "walletID": "1234567890",
+  "usuarioID": "1"
+}
+
+//private final WalletID walletID;
+//private final UsuarioID usuarioID;
+//private final Saldo saldo;

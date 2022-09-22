@@ -21,10 +21,8 @@ public class StoredEvent {
 
 
   public static StoredEvent wrapEvent(DomainEvent domainEvent, EventSerializer eventSerializer) {
-    return new StoredEvent(domainEvent.getClass().getCanonicalName(),
-        new Date(),
-        eventSerializer.serialize(domainEvent)
-    );
+    return new StoredEvent(domainEvent.getClass().getCanonicalName(), new Date(),
+        eventSerializer.serialize(domainEvent));
   }
 
 
@@ -60,8 +58,7 @@ public class StoredEvent {
 
   public DomainEvent deserializeEvent(EventSerializer eventSerializer) {
     try {
-      return eventSerializer
-          .deserialize(this.getEventBody(), Class.forName(this.getTypeName()));
+      return eventSerializer.deserialize(this.getEventBody(), Class.forName(this.getTypeName()));
     } catch (ClassNotFoundException e) {
       throw new DeserializeException(e.getCause());
     }
@@ -74,5 +71,4 @@ public class StoredEvent {
 
     String serialize(DomainEvent object);
   }
-
 }

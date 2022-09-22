@@ -28,7 +28,6 @@ public class WalletChange extends EventChange {
     apply((WalletCreada event) -> {
       wallet.saldo = new Saldo(100.00);
       wallet.dueño = null;
-      wallet.motivos = new ArrayList<Motivo>();
       wallet.contactos = new ArrayList<Usuario>();
       wallet.transferencias = new ArrayList<Transferencia>();
     });

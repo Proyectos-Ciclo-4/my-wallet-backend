@@ -8,7 +8,7 @@ public class MotivoCreado extends DomainEvent {
   private final Motivo descripcion;
 
   public MotivoCreado(Motivo descripcion) {
-    super("com.sofka.domain.wallet.MotivoCreado");
+    super("com.sofka.domain.wallet.eventos.MotivoCreado");
     this.descripcion = descripcion;
   }
 
