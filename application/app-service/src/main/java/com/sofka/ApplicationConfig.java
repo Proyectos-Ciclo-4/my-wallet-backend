@@ -19,7 +19,7 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 public class ApplicationConfig {
 
   //RABBIT MQ Config
-  public static final String EXCHANGE = "core-posts";
+  public static final String EXCHANGE = "wallet-posts";
 
   public static final String GENERAL_QUEUE = "events.general";
 

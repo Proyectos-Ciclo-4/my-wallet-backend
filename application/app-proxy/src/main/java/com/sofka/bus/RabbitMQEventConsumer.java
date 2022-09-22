@@ -1,9 +1,11 @@
 package com.sofka.bus;
 
 
+import co.com.sofka.domain.generic.DomainEvent;
 import com.sofka.ApplicationConfig;
 import com.sofka.GsonEventSerializer;
 import com.sofka.SocketController;
+import com.sofka.generic.StoredEvent.EventSerializer;
 import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.QueueBinding;
@@ -14,16 +16,23 @@ import org.springframework.stereotype.Component;
 @Component
 public class RabbitMQEventConsumer {
 
-  private final GsonEventSerializer serializer;
+  private final EventSerializer serializer;
 
   private final SocketController ws;
 
-  public RabbitMQEventConsumer(GsonEventSerializer serializer, SocketController ws) {
+  public RabbitMQEventConsumer(EventSerializer serializer, SocketController ws) {
     this.serializer = serializer;
     this.ws = ws;
   }
 
+  @RabbitListener(queues = ApplicationConfig.EXCHANGE)
+  public void receivedMessage(String received) {
+    var event = serializer.deserialize(received, DomainEvent.class);
+    ws.send(event.aggregateRootId(), event);
+  }
 
+
+  /*
   @RabbitListener(bindings = @QueueBinding(
       value = @Queue(value = "proxy.handles", durable = "true"),
       exchange = @Exchange(value = ApplicationConfig.EXCHANGE, type = "topic"),
@@ -40,6 +49,6 @@ public class RabbitMQEventConsumer {
       e.printStackTrace();
     }
   }
-
+  */
 
 }
