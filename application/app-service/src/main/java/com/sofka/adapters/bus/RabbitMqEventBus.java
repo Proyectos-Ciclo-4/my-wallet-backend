@@ -1,7 +1,6 @@
 package com.sofka.adapters.bus;
 
 import co.com.sofka.domain.generic.DomainEvent;
-import com.google.gson.Gson;
 import com.sofka.ApplicationConfig;
 import com.sofka.generic.EventBus;
 import com.sofka.generic.StoredEvent.EventSerializer;
@@ -13,7 +12,7 @@ public class RabbitMqEventBus implements EventBus {
 
   private final RabbitTemplate rabbitTemplate;
   private final EventSerializer serializer;
-  private final Gson gson = new Gson();
+//  private final Gson gson = new Gson();
 
   public RabbitMqEventBus(RabbitTemplate rabbitTemplate, EventSerializer eventSerializer) {
     this.rabbitTemplate = rabbitTemplate;
@@ -22,9 +21,12 @@ public class RabbitMqEventBus implements EventBus {
 
   @Override
   public void publish(DomainEvent event) {
+
+    Notification notification = new Notification(event.getClass().getTypeName(),serializer.serialize(event));
+
     rabbitTemplate.convertAndSend(
         ApplicationConfig.EXCHANGE, ApplicationConfig.GENERAL_ROUTING_KEY,
-        serializer.serialize(event)
+        notification.serialize().getBytes()
     );
   }
 

@@ -1,10 +1,8 @@
-package com.sofka.bus;
+package com.sofka.adapters.bus;
 
 import com.google.gson.Gson;
 import java.time.Instant;
-import lombok.Data;
 
-@Data
 public class Notification {
 
   private final String type;

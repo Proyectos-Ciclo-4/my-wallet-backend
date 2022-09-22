@@ -9,7 +9,7 @@ public class TransferenciaFallida extends DomainEvent {
 
   public TransferenciaFallida(TransferenciaID transferenciaID
   ) {
-    super("com.sofka.domain.wallet.TransferenciaFallida");
+    super("com.sofka.domain.wallet.eventos.TransferenciaFallida");
     this.transferenciaID = transferenciaID;
   }
 

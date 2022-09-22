@@ -12,6 +12,4 @@ public class AppSocket {
   public static void main(String[] args) {
     SpringApplication.run(AppSocket.class, args);
   }
-
-
 }
