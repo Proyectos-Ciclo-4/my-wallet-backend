@@ -39,12 +39,22 @@ public class WalletMaterializeHandler {
   @EventListener
   public void handleUsuarioAsignado(UsuarioAsignado usuarioAsignado) {
     var update = new Update();
+    HashMap<String, String> usuario= new HashMap<>();
+
     update.set("usuario", usuarioAsignado.getUsuarioID().value());
+
+//    usuario.put("uuid", usuarioAsignado.getEmail());
+//    usuarioAsignado.getNombre();
+//    usuarioAsignado.getNumero();
 
     template.updateFirst(
         filtrarPorIdDeWallet(usuarioAsignado.aggregateRootId()), update,
         COLLECTION_VIEW).block();
+
+    //template.save()
   }
+
+
 
   @EventListener
   public void handleSaldoModificado(SaldoModificado saldoModificado) {

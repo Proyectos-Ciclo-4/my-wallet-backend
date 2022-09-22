@@ -50,5 +50,22 @@ public class RabbitMQEventConsumer {
     }
   }
 
+  @RabbitListener(queues = ApplicationConfig.REGISTER_QUEUE)
+  public void receivedRegister(Message<String> message) {
+    var notification = Notification.from(message.getPayload());
+    try {
+      var event = serializer.deserialize(
+          notification.getBody(), Class.forName(notification.getType())
+      );
+
+      var userId = notification.getBody();
+      System.out.println(userId);
+
+      ws.send(event.aggregateRootId(), event);
+    } catch (ClassNotFoundException e) {
+      e.printStackTrace();
+    }
+  }
+
 
 }

@@ -10,9 +10,9 @@ import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 @Configuration
 public class ApplicationConfig {
 
-  public static final String EXCHANGE = "events.general";
-
   public static final String GENERAL_QUEUE = "events.general";
+
+  public static final String REGISTER_QUEUE = "events.register";
 
   /*
   @Bean
