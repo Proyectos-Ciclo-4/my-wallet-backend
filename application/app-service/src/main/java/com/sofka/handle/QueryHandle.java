@@ -19,19 +19,19 @@ public class QueryHandle {
 
   public QueryHandle(ReactiveMongoTemplate template) {
     this.template = template;
-    this.errorHandler = errorHandler;
+//    this.errorHandler = errorHandler;
   }
 
   @Bean
-  public RouterFunction<ServerResponse> history() {
-    return RouterFunctions.route(GET("/history/{walletId}"),
-
-        request -> template.find(findByWalletId(request.pathVariable("walletId")),
-                HistoryListModel.class, "gameview").collectList().flatMap(
-                list -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(
-                    BodyInserters.fromPublisher(Flux.fromIterable(list), HistoryListModel.class)))
-            .onErrorResume(errorHandler::error));
-  }
+//  public RouterFunction<ServerResponse> history() {
+//    return RouterFunctions.route(GET("/history/{walletId}"),
+//
+//        request -> template.find(findByWalletId(request.pathVariable("walletId")),
+//                HistoryListModel.class, "gameview").collectList().flatMap(
+//                list -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(
+//                    BodyInserters.fromPublisher(Flux.fromIterable(list), HistoryListModel.class)))
+//            .onErrorResume(errorHandler::error));
+//  }
 
   private void findByWalletId(String pathVariable) {
   }
