@@ -30,6 +30,15 @@ public class RabbitMqEventBus implements EventBus {
     );
   }
 
+  @Override
+  public void publishRegister(DomainEvent event){
+    Notification notification = new Notification(event.getClass().getTypeName(),serializer.serialize(event));
+
+    rabbitTemplate.convertAndSend(
+        ApplicationConfig.EXCHANGE, ApplicationConfig.REGISTER_ROUTING_KEY,
+        notification.serialize().getBytes()
+    );
+  }
   /*
   @Override
   public void publishError(Throwable errorEvent) {

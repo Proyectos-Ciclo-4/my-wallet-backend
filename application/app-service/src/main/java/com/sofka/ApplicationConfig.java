@@ -1,6 +1,9 @@
 package com.sofka;
 
 import java.util.List;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -18,13 +21,26 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 )
 public class ApplicationConfig {
 
-  //RABBIT MQ Config
-  public static final String EXCHANGE = "wallet-posts";
-
-  public static final String GENERAL_QUEUE = "events.general";
+  public static final String EXCHANGE = "core-posts";
 
   public static final String GENERAL_ROUTING_KEY = "routingKey.general";
 
+  public static final String REGISTER_ROUTING_KEY = "routingKey.register";
+
+  public static final String PROXY_QUEUE_REGISTER = "events.proxy.register";
+
+  public static final String PROXY_ROUTING_KEY_REGISTER = "routingKey.proxy.register";
+
+  //Esto crea la Queue?
+  @Bean
+  public Queue routingCreatedQueue(){
+    return new Queue(PROXY_QUEUE_REGISTER);
+  }
+
+  @Bean
+  public Binding BindingToPostCreatedQueue() {
+    return BindingBuilder.bind(routingCreatedQueue()).to(new TopicExchange(EXCHANGE)).with(PROXY_ROUTING_KEY_REGISTER);
+  }
   /* The rabbit template will now be implemented on RabbitMQEventBus
   @Bean
   public RabbitAdmin rabbitAdmin(RabbitTemplate rabbitTemplate) {
