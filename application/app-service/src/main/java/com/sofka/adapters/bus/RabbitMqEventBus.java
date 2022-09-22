@@ -6,7 +6,9 @@ import com.sofka.ApplicationConfig;
 import com.sofka.generic.EventBus;
 import com.sofka.generic.StoredEvent.EventSerializer;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.stereotype.Component;
 
+@Component
 public class RabbitMqEventBus implements EventBus {
 
   private final RabbitTemplate rabbitTemplate;
