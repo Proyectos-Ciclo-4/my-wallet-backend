@@ -1,6 +1,7 @@
 package com.sofka.bus;
 
 
+import co.com.sofka.domain.generic.DomainEvent;
 import com.sofka.ApplicationConfig;
 import com.sofka.GsonEventSerializer;
 import com.sofka.SocketController;
@@ -23,6 +24,14 @@ public class RabbitMQEventConsumer {
     this.ws = ws;
   }
 
+  @RabbitListener(queues = ApplicationConfig.GENERAL_QUEUE)
+  public void receivedMessage(String received) {
+    var event = serializer.deserialize(received, DomainEvent.class);
+    ws.send(event.aggregateRootId(), event);
+  }
+
+
+  /*
 
   @RabbitListener(bindings = @QueueBinding(
       value = @Queue(value = "proxy.handles", durable = "true"),
@@ -40,6 +49,6 @@ public class RabbitMQEventConsumer {
       e.printStackTrace();
     }
   }
-
+  */
 
 }
