@@ -13,12 +13,12 @@ import reactor.core.publisher.Mono;
 public class UserRepository implements UsuarioRepositorio {
 
   @Override
-  public Mono<Usuario> obtenerDatosUsuario(String id) {
+  public Mono<Usuario> obtenerDatosUsuario(String email, String telefono) {
     var usuarioId = UsuarioID.of("123");
     var nombre = new Nombre("Juan");
-    var email = new Email("daniel@gmail.com");
-    var telefono = new Telefono("123456789");
+    var emaill = new Email("daniel@gmail.com");
+    var telefonoo = new Telefono("123456789");
 
-    return Mono.just(new Usuario(usuarioId, nombre, email, telefono));
+    return Mono.just(new Usuario(usuarioId, nombre, emaill, telefonoo));
   }
 }

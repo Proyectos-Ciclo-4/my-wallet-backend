@@ -21,7 +21,6 @@ public class RabbitMqEventBus implements EventBus {
 
   @Override
   public void publish(DomainEvent event) {
-
     Notification notification = new Notification(event.getClass().getTypeName(),
         serializer.serialize(event));
     rabbitTemplate.convertAndSend(
@@ -32,6 +31,7 @@ public class RabbitMqEventBus implements EventBus {
 
   @Override
   public void publishRegister(DomainEvent event) {
+    System.out.println("publishRegister");
     Notification notification = new Notification(event.getClass().getTypeName(),
         serializer.serialize(event));
     rabbitTemplate.convertAndSend(

@@ -10,10 +10,10 @@ import com.sofka.domain.wallet.eventos.TransferenciaCreada;
 import com.sofka.domain.wallet.eventos.TransferenciaExitosa;
 import com.sofka.domain.wallet.eventos.TransferenciaFallida;
 import com.sofka.domain.wallet.eventos.UsuarioAsignado;
+import com.sofka.domain.wallet.eventos.UsuarioExistente;
 import com.sofka.domain.wallet.eventos.WalletCreada;
 import com.sofka.domain.wallet.objetosdevalor.Cantidad;
 import com.sofka.domain.wallet.objetosdevalor.Email;
-import com.sofka.domain.wallet.objetosdevalor.Estado;
 import com.sofka.domain.wallet.objetosdevalor.Motivo;
 import com.sofka.domain.wallet.objetosdevalor.Nombre;
 import com.sofka.domain.wallet.objetosdevalor.Saldo;
@@ -21,8 +21,6 @@ import com.sofka.domain.wallet.objetosdevalor.Telefono;
 import com.sofka.domain.wallet.objetosdevalor.TransferenciaID;
 import com.sofka.domain.wallet.objetosdevalor.UsuarioID;
 import com.sofka.domain.wallet.objetosdevalor.WalletID;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -39,13 +37,13 @@ public class Wallet extends AggregateEvent<WalletID> {
 
   protected List<Transferencia> transferencias;
 
-  public Wallet(WalletID entityId, UsuarioID usuarioID, Saldo saldo, List<Motivo> motivos) {
-    super(entityId);
+  public Wallet(UsuarioID usuarioID, Saldo saldo) {
+    super(WalletID.of(usuarioID.value()));
     subscribe(new WalletChange(this));
     appendChange(new WalletCreada(entityId, usuarioID, saldo)).apply();
   }
 
-  private Wallet(WalletID entityId) {
+  public Wallet(WalletID entityId) {
     super(entityId);
     subscribe(new WalletChange(this));
   }
@@ -99,6 +97,10 @@ public class Wallet extends AggregateEvent<WalletID> {
     appendChange(new TransferenciaExitosa(transferenciaID));
   }
 
+  public void rechazarCreacion(String usuarioId) {
+    appendChange(new UsuarioExistente(usuarioId));
+  }
+
   public void cancelarTransferencia(TransferenciaID transferenciaID) {
     Objects.requireNonNull(transferenciaID);
 
@@ -121,4 +123,6 @@ public class Wallet extends AggregateEvent<WalletID> {
     return contactos.stream().filter((usuario -> usuario.identity().equals(usuarioID)))
         .findFirst();
   }
+
+
 }
