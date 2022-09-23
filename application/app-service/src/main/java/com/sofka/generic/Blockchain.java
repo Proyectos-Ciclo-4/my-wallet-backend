@@ -1,10 +1,17 @@
 package com.sofka.generic;
 
 import co.com.sofka.domain.generic.DomainEvent;
+import com.sofka.adapters.repositories.WalletEventRepository;
+import com.sofka.domain.wallet.Wallet;
+import com.sofka.domain.wallet.objetosdevalor.TransferenciaID;
+import com.sofka.domain.wallet.objetosdevalor.WalletID;
 import com.sofka.generic.StoredEvent.EventSerializer;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -17,20 +24,25 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
 @Component
-public class Blockchain {
+public class Blockchain  {
 
-  static OkHttpClient client = new OkHttpClient();
-  private static URL POST_URL = new URL("http://localhost:8084/blockchain/wallet");
+  private static URL POST_URL;
 
-  private static URL GET_URL = new URL("http://localhost:8084/blockchain/wallet");
+  private static URL GET_URL;
+
+  private static OkHttpClient client = new OkHttpClient();
+
+  private static BlockchainTransactionIdRepository transactionIDrepo;
+
   @Autowired
-  private static final EventSerializer serializer = null;
+  private static EventSerializer serializer;
 
   public Blockchain(EventSerializer serializer) throws MalformedURLException {
-    this.serializer = serializer;
+    Blockchain.serializer = serializer;
+    POST_URL = new URL("");
+    GET_URL = new URL("");
   }
 
-  
   
   //TODO verificar tokens en los header
 
@@ -49,30 +61,33 @@ public class Blockchain {
     return call.execute();
   }
 
-  public static Flux<TransferenciaBlockchain> getTransactionsFromID(String walletID){
-      
-    //IDrepo.getTransactionIDs(WalletID).collect().flatMapIterable(transactionID ---> {})
-    
-    var transactionID = "12345"; //Mock transaction ID
-    
+  public static Response getFromBlockchain(String id) throws IOException{
+
     Request request = new Request.Builder()
-          .url(GET_URL + transactionID)
-          .build();
+        .url(GET_URL + id)
+        .build();
 
     Call call = client.newCall(request);
-    call.enqueue(new Callback() {
-      public void onResponse(Call call, Response response) throws IOException {
-          // ...
-        }
-        
-        public void onFailure(Call call, IOException e) {
-          System.out.println("Failed");
-        }
-      });
-    
-    //collectList()
-    
-    return null;
+
+    return call.execute();
+  }
+
+  //Esto no es reactivo y probablemente no es funcional... esperemos que funcione!
+  public List<DomainEvent> getTransactionHistory(String walletID) throws IOException{
+
+    List<DomainEvent> transacciones = new ArrayList<>();
+
+    transactionIDrepo.getTransactionsIDs(walletID)
+        .toStream().collect(Collectors.toList()).forEach(Id -> {
+          try {
+            var response = getFromBlockchain(Id);
+            var transaccion = serializer.deserialize(response.body().string(), DomainEvent.class);
+            transacciones.add(transaccion);
+          } catch (IOException e) {
+            throw new RuntimeException(e);
+          }
+        });
+    return transacciones;
   }
 
 }

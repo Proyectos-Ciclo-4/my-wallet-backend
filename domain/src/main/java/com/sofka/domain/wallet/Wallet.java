@@ -121,4 +121,8 @@ public class Wallet extends AggregateEvent<WalletID> {
     return contactos.stream().filter((usuario -> usuario.identity().equals(usuarioID)))
         .findFirst();
   }
+
+  public List<Transferencia> getTransferencias() {
+    return transferencias;
+  }
 }
