@@ -16,7 +16,7 @@ import org.springframework.data.mongodb.core.query.Update;
 @Configuration
 public class WalletMaterializeHandler {
 
-  private static final String COLLECTION_VIEW = "wallet";
+  private static final String COLLECTION_VIEW = "wallet_data";
 
   private final ReactiveMongoTemplate template;
 
@@ -43,8 +43,7 @@ public class WalletMaterializeHandler {
 
     update.set("usuario", usuarioAsignado.getUsuarioID().value());
 
-    usuario.put("uuid", usuarioAsignado.getEmail().value());
-    usuario.put("nombre", usuarioAsignado.getNombre().value());
+    usuario.put("email", usuarioAsignado.getEmail().value());
     usuario.put("numero", usuarioAsignado.getNumero().value());
 
     template.updateFirst(filtrarPorIdDeWallet(usuarioAsignado.aggregateRootId()), update,
