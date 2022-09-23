@@ -35,6 +35,7 @@ public class RabbitMQEventConsumer {
 
   @RabbitListener(queues = ApplicationConfig.REGISTER_QUEUE)
   public void receivedRegister(Message<String> message) {
+    System.out.println("Received register: " + message.getPayload());
     var notification = Notification.from(message.getPayload());
 
     try {
@@ -43,13 +44,8 @@ public class RabbitMQEventConsumer {
 
       var notificationBody = notification.getBody();
 
-     /* if (notificationBody.contains("UsuarioExistente")) {
-        var userId = notificationBody.split(":")[2].split("}")[0].replaceAll("\"", "");
-        ws.send(event.aggregateRootId(), event);
-      }*/
-//      var userId = notificationBody.split(":")[2].split("}")[0].replaceAll("\"", "");
       var userId = notificationBody.split(":")[2].split("}")[0].replaceAll("\"", "");
-      System.out.println("zx");
+
       ws.send(userId, event);
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
@@ -63,8 +59,8 @@ public class RabbitMQEventConsumer {
   }
 */
 
- /* @RabbitListener(bindings = @QueueBinding(
-      value = @Queue(value = "proxy.handles", durable = "true"),
-      exchange = @Exchange(value = ApplicationConfig.EXCHANGE, type = "topic"),
-      key = "example.#"
-  ))*/
+/*
+@RabbitListener(bindings = @QueueBinding(
+    value = @Queue(value = ApplicationConfig.REGISTER_QUEUE, durable = "true"),
+    exchange = @Exchange(value = ApplicationConfig.REGISTER_QUEUE, type = "topic")
+))*/

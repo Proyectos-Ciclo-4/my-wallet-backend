@@ -1,6 +1,7 @@
 package com.sofka.adapters.repositories;
 
 import co.com.sofka.domain.generic.DomainEvent;
+import com.sofka.domain.wallet.Usuario;
 import com.sofka.generic.StoredEvent;
 import com.sofka.generic.StoredEvent.EventSerializer;
 import java.util.Comparator;
@@ -21,6 +22,12 @@ public class EventStoreRepository implements com.sofka.generic.EventStoreReposit
   public EventStoreRepository(ReactiveMongoTemplate template, EventSerializer eventSerializer) {
     this.template = template;
     this.eventSerializer = eventSerializer;
+  }
+
+  public Mono<Usuario> getUser(String email, String telefono) {
+    return template.findOne(
+        Query.query(Criteria.where("email").is(email).and("telefono").is(telefono)),
+        Usuario.class);
   }
 
   @Override

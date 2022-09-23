@@ -23,19 +23,19 @@ public class CrearWalletUseCase extends UseCaseForCommand<CrearWallet> {
       var usuario = usuarioRepositorio.obtenerDatosUsuario(command.getEmail().value(),
           command.getTelefono().value()).block();
 
-
-        var wallet = new Wallet(WalletID.of("z"));
+      if (usuario == null) {
+        var wallet = new Wallet(WalletID.of(""));
         wallet.rechazarCreacion(command.getUsuarioID().value());
+
         return Flux.fromIterable(wallet.getUncommittedChanges());
+      }
 
-
-   /*   var wallet = new Wallet(command.getUsuarioID(), new Saldo(100.00));
+      var wallet = new Wallet(command.getUsuarioID(), new Saldo(100.00));
 
       wallet.asignarUsuario(command.getUsuarioID(), usuario.getNombre(), usuario.getEmail(),
           usuario.getTelefono());
 
-      return Flux.fromIterable(wallet.getUncommittedChanges());*/
-
+      return Flux.fromIterable(wallet.getUncommittedChanges());
     });
   }
 }
