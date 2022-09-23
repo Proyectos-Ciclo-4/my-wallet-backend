@@ -12,7 +12,7 @@ public class ApplicationConfig {
 
   public static final String GENERAL_QUEUE = "events.general";
 
-  public static final String REGISTER_QUEUE = "events.register";
+  public static final String REGISTER_QUEUE = "events.proxy.register";
 
   public static final String REGISTER_EXCHANGE = "register";
 

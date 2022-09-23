@@ -39,9 +39,7 @@ public class RabbitMQEventConsumer {
     }
   }
 
-  @RabbitListener(bindings = @QueueBinding(value = @Queue(value = "routingKey.register", durable = "true"),
-      exchange = @Exchange(value = ApplicationConfig.REGISTER_EXCHANGE, type = "topic"),
-      key = "register.#"))
+  @RabbitListener(queues = ApplicationConfig.REGISTER_QUEUE)
   public void receivedRegister(Message<String> message) {
     var notification = Notification.from(message.getPayload());
     try {
