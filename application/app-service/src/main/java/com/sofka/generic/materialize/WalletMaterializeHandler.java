@@ -39,30 +39,26 @@ public class WalletMaterializeHandler {
   @EventListener
   public void handleUsuarioAsignado(UsuarioAsignado usuarioAsignado) {
     var update = new Update();
-    HashMap<String, String> usuario= new HashMap<>();
+    HashMap<String, String> usuario = new HashMap<>();
 
     update.set("usuario", usuarioAsignado.getUsuarioID().value());
 
-//    usuario.put("uuid", usuarioAsignado.getEmail());
-//    usuarioAsignado.getNombre();
-//    usuarioAsignado.getNumero();
+    usuario.put("uuid", usuarioAsignado.getEmail().value());
+    usuario.put("nombre", usuarioAsignado.getNombre().value());
+    usuario.put("numero", usuarioAsignado.getNumero().value());
 
-    template.updateFirst(
-        filtrarPorIdDeWallet(usuarioAsignado.aggregateRootId()), update,
+    template.updateFirst(filtrarPorIdDeWallet(usuarioAsignado.aggregateRootId()), update,
         COLLECTION_VIEW).block();
 
-    //template.save()
+    template.save(usuario, "usuarios").block();
   }
-
-
 
   @EventListener
   public void handleSaldoModificado(SaldoModificado saldoModificado) {
     var update = new Update();
     update.set("saldo", saldoModificado.getCantidad().value());
 
-    template.updateFirst(
-        filtrarPorIdDeWallet(saldoModificado.aggregateRootId()), update,
+    template.updateFirst(filtrarPorIdDeWallet(saldoModificado.aggregateRootId()), update,
         COLLECTION_VIEW).block();
   }
 

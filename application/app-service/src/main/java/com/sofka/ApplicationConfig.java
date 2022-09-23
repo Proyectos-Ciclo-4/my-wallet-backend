@@ -23,6 +23,8 @@ public class ApplicationConfig {
 
   public static final String EXCHANGE = "core-posts";
 
+  public static final String REGISTER_EXCHANGE = "register";
+
   public static final String GENERAL_ROUTING_KEY = "routingKey.general";
 
   public static final String REGISTER_ROUTING_KEY = "routingKey.register";

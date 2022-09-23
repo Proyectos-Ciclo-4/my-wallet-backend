@@ -14,6 +14,9 @@ public class ApplicationConfig {
 
   public static final String REGISTER_QUEUE = "events.register";
 
+  public static final String REGISTER_EXCHANGE = "register";
+
+
   /*
   @Bean
   public RabbitAdmin rabbitAdmin(RabbitTemplate rabbitTemplate) {
