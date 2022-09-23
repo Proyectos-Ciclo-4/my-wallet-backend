@@ -22,7 +22,8 @@ public class RabbitMqEventBus implements EventBus {
   @Override
   public void publish(DomainEvent event) {
 
-    Notification notification = new Notification(event.getClass().getTypeName(),serializer.serialize(event));
+    Notification notification = new Notification(event.getClass().getTypeName(),
+        serializer.serialize(event));
 
     rabbitTemplate.convertAndSend(
         ApplicationConfig.EXCHANGE, ApplicationConfig.GENERAL_ROUTING_KEY,
@@ -31,11 +32,12 @@ public class RabbitMqEventBus implements EventBus {
   }
 
   @Override
-  public void publishRegister(DomainEvent event){
-    Notification notification = new Notification(event.getClass().getTypeName(),serializer.serialize(event));
+  public void publishRegister(DomainEvent event) {
+    Notification notification = new Notification(event.getClass().getTypeName(),
+        serializer.serialize(event));
 
     rabbitTemplate.convertAndSend(
-        ApplicationConfig.EXCHANGE, ApplicationConfig.REGISTER_ROUTING_KEY,
+        ApplicationConfig.REGISTER_EXCHANGE, ApplicationConfig.REGISTER_ROUTING_KEY,
         notification.serialize().getBytes()
     );
   }

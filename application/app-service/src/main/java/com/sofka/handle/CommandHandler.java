@@ -16,9 +16,9 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 @Configuration
 public class CommandHandler {
 
-  private final IntegrationHandle integrationHandle;
+  private final RegisterIntegrationHandle integrationHandle;
 
-  public CommandHandler(IntegrationHandle integrationHandle) {
+  public CommandHandler(RegisterIntegrationHandle integrationHandle) {
     this.integrationHandle = integrationHandle;
   }
 
