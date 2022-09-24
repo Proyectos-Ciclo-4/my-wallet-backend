@@ -2,24 +2,24 @@ package com.sofka.handle.model;
 
 public class BlockchainTransactionMongoModel {
 
-  private String usuarioID;
+  private String walletID;
 
   private String blockchainTransactionID;
 
-  public BlockchainTransactionMongoModel(String usuarioID, String blockchainTransactionID) {
-    this.usuarioID = usuarioID;
+  public BlockchainTransactionMongoModel(String walletID, String blockchainTransactionID) {
+    this.walletID = walletID;
     this.blockchainTransactionID = blockchainTransactionID;
   }
 
   public BlockchainTransactionMongoModel(){
   }
 
-  public String getUsuarioID() {
-    return usuarioID;
+  public String getWalletID() {
+    return walletID;
   }
 
-  public void setUsuarioID(String usuarioID) {
-    this.usuarioID = usuarioID;
+  public void setWalletID(String walletID) {
+    this.walletID = walletID;
   }
 
   public String getBlockchainTransactionID() {

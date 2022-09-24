@@ -1,10 +1,6 @@
 package com.sofka.generic;
 
 import co.com.sofka.domain.generic.DomainEvent;
-import com.sofka.adapters.repositories.WalletEventRepository;
-import com.sofka.domain.wallet.Wallet;
-import com.sofka.domain.wallet.objetosdevalor.TransferenciaID;
-import com.sofka.domain.wallet.objetosdevalor.WalletID;
 import com.sofka.generic.StoredEvent.EventSerializer;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -13,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -21,7 +16,6 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Flux;
 
 @Component
 public class Blockchain  {
@@ -46,7 +40,7 @@ public class Blockchain  {
   
   //TODO verificar tokens en los header
 
-  public static Response postEvent(DomainEvent event) throws IOException {
+  public static Response postEventToBlockchain(DomainEvent event) throws IOException {
 
     RequestBody formBody = new FormBody.Builder()
         .add("event", serializer.serialize(event))
@@ -77,7 +71,7 @@ public class Blockchain  {
 
     List<DomainEvent> transacciones = new ArrayList<>();
 
-    transactionIDrepo.getTransactionsIDs(walletID)
+    transactionIDrepo.getTransactionBlockchainsIDs(walletID)
         .toStream().collect(Collectors.toList()).forEach(Id -> {
           try {
             var response = getFromBlockchain(Id);

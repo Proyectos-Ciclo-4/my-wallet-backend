@@ -18,8 +18,8 @@ public class BlockchainTransactionIdRepository implements
   }
 
   @Override
-  public Flux<String> getTransactionsIDs(String usuarioID) {
-    var query = new Query(Criteria.where("blockchainTransactionID").is(usuarioID));
+  public Flux<String> getTransactionBlockchainsIDs(String walletID) {
+    var query = new Query(Criteria.where("walletID").is(walletID));
     return template.find(query, BlockchainTransactionMongoModel.class)
         .map(blockchainTransactionMongoModel -> {
           return blockchainTransactionMongoModel.getBlockchainTransactionID();
@@ -27,8 +27,8 @@ public class BlockchainTransactionIdRepository implements
   }
 
   @Override
-  public void saveTransactionID(String userID, String transactionID) {
-      template.save(new BlockchainTransactionMongoModel(userID,transactionID));
+  public void saveTransactionBlockchainID(String walletID, String transactionBlockchainID) {
+      template.save(new BlockchainTransactionMongoModel(walletID,transactionBlockchainID));
   }
 
 }

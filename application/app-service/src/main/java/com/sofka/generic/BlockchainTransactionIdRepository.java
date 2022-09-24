@@ -5,7 +5,7 @@ import reactor.core.publisher.Mono;
 
 public interface BlockchainTransactionIdRepository {
 
-  Flux<String> getTransactionsIDs(String usuarioID);
+  Flux<String> getTransactionBlockchainsIDs(String transactionID);
 
-  void saveTransactionID(String userID, String transactionID);
+  void saveTransactionBlockchainID(String transactionID, String transactionBlockchainID);
 }
