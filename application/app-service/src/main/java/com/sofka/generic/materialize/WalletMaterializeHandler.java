@@ -6,6 +6,7 @@ import com.sofka.domain.wallet.eventos.WalletCreada;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
@@ -14,6 +15,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
 @Configuration
+@Slf4j
 public class WalletMaterializeHandler {
 
   private static final String COLLECTION_VIEW = "wallet_data";
@@ -26,6 +28,7 @@ public class WalletMaterializeHandler {
 
   @EventListener
   public void handleWalletCreada(WalletCreada walletCreada) {
+    log.info("Materializing WalletCreada event: {}", walletCreada);
     var data = new HashMap<>();
 
     data.put("_id", walletCreada.getWalletID());
@@ -38,6 +41,8 @@ public class WalletMaterializeHandler {
 
   @EventListener
   public void handleUsuarioAsignado(UsuarioAsignado usuarioAsignado) {
+    log.info("Materializing UsuarioAsignado event: {}", usuarioAsignado);
+
     var update = new Update();
     HashMap<String, String> usuario = new HashMap<>();
 
@@ -54,6 +59,7 @@ public class WalletMaterializeHandler {
 
   @EventListener
   public void handleSaldoModificado(SaldoModificado saldoModificado) {
+    log.info("Materializing SaldoModificado event: {}", saldoModificado);
     var update = new Update();
     update.set("saldo", saldoModificado.getCantidad().value());
 
