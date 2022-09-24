@@ -27,6 +27,15 @@ public class BlockchainTransactionIdRepository implements
   }
 
   @Override
+  public Mono<String> getTrsnasacionBlockhainID(String transactionID) {
+    var query = new Query(Criteria.where("transactionID").is(transactionID));
+    return template.findOne(query, BlockchainTransactionMongoModel.class)
+        .map(blockchainTransactionMongoModel -> {
+          return blockchainTransactionMongoModel.getBlockchainTransactionID();
+        });
+  }
+
+  @Override
   public void saveTransactionBlockchainID(String walletID, String transactionBlockchainID) {
       template.save(new BlockchainTransactionMongoModel(walletID,transactionBlockchainID));
   }

@@ -11,7 +11,6 @@ import com.sofka.domain.wallet.objetosdevalor.WalletID;
 public class Transferencia extends Entity<TransferenciaID> {
 
   private WalletID walletDestino;
-
   private Estado estado;
   private FechayHora fechayHora;
   private Cantidad cantidad;

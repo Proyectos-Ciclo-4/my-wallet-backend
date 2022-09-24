@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
 public class Blockchain  {
 
   private static URL POST_URL;
-
   private static URL GET_URL;
 
   private static OkHttpClient client = new OkHttpClient();
@@ -33,8 +32,7 @@ public class Blockchain  {
 
   public Blockchain(EventSerializer serializer) throws MalformedURLException {
     Blockchain.serializer = serializer;
-    POST_URL = new URL("");
-    GET_URL = new URL("");
+
   }
 
   
