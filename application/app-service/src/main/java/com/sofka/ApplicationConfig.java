@@ -33,16 +33,16 @@ public class ApplicationConfig {
 
   public static final String PROXY_ROUTING_KEY_REGISTER = "routingKey.proxy.register";
 
-  //Esto crea la Queue?
-  @Bean
-  public Queue routingCreatedQueue(){
-    return new Queue(PROXY_QUEUE_REGISTER);
-  }
+//  @Bean
+//  public Queue routingCreatedQueue(){
+//    return new Queue(PROXY_QUEUE_REGISTER);
+//  }
 
-  @Bean
-  public Binding BindingToPostCreatedQueue() {
-    return BindingBuilder.bind(routingCreatedQueue()).to(new TopicExchange(EXCHANGE)).with(PROXY_ROUTING_KEY_REGISTER);
-  }
+//  @Bean
+//  public Binding BindingToPostCreatedQueue() {
+//    return BindingBuilder.bind(routingCreatedQueue()).to(new TopicExchange(EXCHANGE)).with(PROXY_ROUTING_KEY_REGISTER);
+//  }
+
   /* The rabbit template will now be implemented on RabbitMQEventBus
   @Bean
   public RabbitAdmin rabbitAdmin(RabbitTemplate rabbitTemplate) {

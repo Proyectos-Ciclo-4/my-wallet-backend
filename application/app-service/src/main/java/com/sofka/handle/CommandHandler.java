@@ -6,6 +6,7 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 
 import com.sofka.business.usecase.CrearWalletUseCase;
 import com.sofka.domain.wallet.comandos.CrearWallet;
+import com.sofka.generic.helpers.Validators;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -18,8 +19,11 @@ public class CommandHandler {
 
   private final RegisterIntegrationHandle integrationHandle;
 
-  public CommandHandler(RegisterIntegrationHandle integrationHandle) {
+  private final Validators validators;
+
+  public CommandHandler(RegisterIntegrationHandle integrationHandle, Validators validators) {
     this.integrationHandle = integrationHandle;
+    this.validators = validators;
   }
 
 //  private final Error
@@ -28,11 +32,9 @@ public class CommandHandler {
   public RouterFunction<ServerResponse> create(CrearWalletUseCase useCase) {
     return route(
         POST("/new/wallet").and(accept(MediaType.APPLICATION_JSON)),
-
         request -> useCase.andThen(integrationHandle)
-            .apply(request.bodyToMono(CrearWallet.class))
-            .then(ServerResponse.ok().build())
+            .apply(validators.validateUser(request.bodyToMono(CrearWallet.class)))
+            .then(ServerResponse.ok().build()));
 //            .onErrorResume(errorHandler::error)
-    );
   }
 }

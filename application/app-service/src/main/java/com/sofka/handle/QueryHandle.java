@@ -1,21 +1,22 @@
 package com.sofka.handle;
 
-import com.sofka.domain.wallet.Wallet;
+import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
+
+import com.sofka.generic.materialize.model.WalletModel;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.RouterFunction;
+import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
-import org.springframework.web.servlet.function.RouterFunctions;
-import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
-import static org.springframework.web.reactive.function.server.RequestPredicates.accept;
-
-import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
+import reactor.core.publisher.Mono;
 
 
+@Configuration
 public class QueryHandle {
 
   private final ReactiveMongoTemplate template;
@@ -26,17 +27,19 @@ public class QueryHandle {
 //    this.errorHandler = errorHandler;
   }
 
-  /*
   @Bean
   public RouterFunction<ServerResponse> isCreated() {
-
     return RouterFunctions.route(
-        GET("/wallet/{userId}"),
-        request -> template.findOne(filterByUserId(request.pathVariable("userId")), Wallet.class, "wallet")
-
-    )
+        GET("/wallet/{walletId}"),
+        request -> template.findOne(filterByWalletId(request.pathVariable("walletId")),
+                WalletModel.class, "wallet_data")
+            .flatMap(element -> ServerResponse.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromPublisher(Mono.just(element), WalletModel.class)))
+    );
   }
 
+  /*
   @Bean
   public RouterFunction<ServerResponse> verifyUser(){
     return RouterFunctions.route(
@@ -47,8 +50,8 @@ public class QueryHandle {
   }
  */
 
-  public Query filterByUserId(String userId) {
-    return new Query(Criteria.where("userId").is(userId));
+  public Query filterByWalletId(String userId) {
+    return new Query(Criteria.where("usuario").is(userId));
   }
 
 //  public RouterFunction<ServerResponse> history() {
@@ -61,6 +64,6 @@ public class QueryHandle {
 //            .onErrorResume(errorHandler::error));
 //  }
 
-  private void findByWalletId(String pathVariable) {
-  }
+/*  private void findByWalletId(String pathVariable) {
+  }*/
 }

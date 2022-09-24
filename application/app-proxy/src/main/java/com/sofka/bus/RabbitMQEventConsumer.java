@@ -4,9 +4,6 @@ package com.sofka.bus;
 import com.sofka.ApplicationConfig;
 import com.sofka.GsonEventSerializer;
 import com.sofka.SocketController;
-import org.springframework.amqp.rabbit.annotation.Exchange;
-import org.springframework.amqp.rabbit.annotation.Queue;
-import org.springframework.amqp.rabbit.annotation.QueueBinding;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
@@ -30,9 +27,6 @@ public class RabbitMQEventConsumer {
       var event = serializer.deserialize(notification.getBody(),
           Class.forName(notification.getType()));
 
-      var userId = notification.getBody();
-      System.out.println(userId);
-
       ws.send(event.aggregateRootId(), event);
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
@@ -41,12 +35,15 @@ public class RabbitMQEventConsumer {
 
   @RabbitListener(queues = ApplicationConfig.REGISTER_QUEUE)
   public void receivedRegister(Message<String> message) {
+    System.out.println("Received register: " + message.getPayload());
     var notification = Notification.from(message.getPayload());
+
     try {
       var event = serializer.deserialize(notification.getBody(),
           Class.forName(notification.getType()));
 
       var notificationBody = notification.getBody();
+
       var userId = notificationBody.split(":")[2].split("}")[0].replaceAll("\"", "");
 
       ws.send(userId, event);
@@ -56,17 +53,14 @@ public class RabbitMQEventConsumer {
   }
 }
 
-
  /*public void receivedMessage(String received) {
     var event = serializer.deserialize(received, DomainEvent.class);
     ws.send(event.aggregateRootId(), event);
   }
 */
 
-
-
- /* @RabbitListener(bindings = @QueueBinding(
-      value = @Queue(value = "proxy.handles", durable = "true"),
-      exchange = @Exchange(value = ApplicationConfig.EXCHANGE, type = "topic"),
-      key = "example.#"
-  ))*/
+/*
+@RabbitListener(bindings = @QueueBinding(
+    value = @Queue(value = ApplicationConfig.REGISTER_QUEUE, durable = "true"),
+    exchange = @Exchange(value = ApplicationConfig.REGISTER_QUEUE, type = "topic")
+))*/

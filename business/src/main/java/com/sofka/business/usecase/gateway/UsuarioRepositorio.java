@@ -5,6 +5,6 @@ import reactor.core.publisher.Mono;
 
 public interface UsuarioRepositorio {
 
-  Mono<Usuario> obtenerDatosUsuario(String id);
+  Mono<Usuario> obtenerDatosUsuario(String email, String telefono);
 
 }

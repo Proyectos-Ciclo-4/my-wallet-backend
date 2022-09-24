@@ -1,5 +1,6 @@
 package com.sofka;
 
+import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -17,14 +18,15 @@ public class ApplicationConfig {
   public static final String REGISTER_EXCHANGE = "register";
 
 
-  /*
   @Bean
   public RabbitAdmin rabbitAdmin(RabbitTemplate rabbitTemplate) {
     var admin = new RabbitAdmin(rabbitTemplate);
-    admin.declareExchange(new TopicExchange(EXCHANGE));
+    admin.declareExchange(new TopicExchange(REGISTER_QUEUE));
+    var queue = new Queue(REGISTER_QUEUE, true, false, false);
+    admin.declareQueue(queue);
+
     return admin;
   }
- */
 
   @Bean
   public ServerEndpointExporter serverEndpointExporter() {
