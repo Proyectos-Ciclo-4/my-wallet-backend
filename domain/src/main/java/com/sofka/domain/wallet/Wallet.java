@@ -82,7 +82,6 @@ public class Wallet extends AggregateEvent<WalletID> {
   public void crearTransferencia(WalletID walletDestinoID, TransferenciaID transferenciaID,
       Cantidad cantidad, Motivo motivo) {
     Objects.requireNonNull(walletDestinoID);
-    Objects.requireNonNull(transferenciaID);
     Objects.requireNonNull(cantidad);
     Objects.requireNonNull(motivo);
     appendChange(

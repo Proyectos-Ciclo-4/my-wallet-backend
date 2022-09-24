@@ -12,6 +12,15 @@ import reactor.core.publisher.Mono;
 
 public class ValidarTransferenciaUseCase extends UseCaseForEvent<TransferenciaCreada>{
 
+  @Override
+  public Flux<DomainEvent> apply(Mono<TransferenciaCreada> transferenciaCreadaMono) {
+    return null;
+  }
+}
+
+
+/*{
+
   private final WalletDomainEventRepository repository;
 
   private final BlockchainRepository repositoryBlockchain;
@@ -51,4 +60,4 @@ public class ValidarTransferenciaUseCase extends UseCaseForEvent<TransferenciaCr
           })
     })
   }
-}
+}*/

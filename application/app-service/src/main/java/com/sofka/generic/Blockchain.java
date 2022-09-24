@@ -18,10 +18,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Blockchain  {
+public class Blockchain {
 
   private static URL POST_URL;
   private static URL GET_URL;
+
+  static {
+    try {
+      GET_URL = new URL("http://localhost:8090/api/collections/blockchain/records/2hrwvpz8a9zp22v");
+    } catch (MalformedURLException e) {
+      throw new RuntimeException(e);
+    }
+  }
 
   private static OkHttpClient client = new OkHttpClient();
 
@@ -35,10 +43,9 @@ public class Blockchain  {
 
   }
 
-  
   //TODO verificar tokens en los header
 
-  public static Response postEventToBlockchain(DomainEvent event) throws IOException {
+  public Response postEventToBlockchain(DomainEvent event) {
 
     RequestBody formBody = new FormBody.Builder()
         .add("event", serializer.serialize(event))
@@ -50,10 +57,16 @@ public class Blockchain  {
         .build();
 
     Call call = client.newCall(request);
-    return call.execute();
+    try {
+      return call.execute();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    return null;
   }
 
-  public static Response getFromBlockchain(String id) throws IOException{
+  public Response getFromBlockchain(String id) {
 
     Request request = new Request.Builder()
         .url(GET_URL + id)
@@ -61,11 +74,15 @@ public class Blockchain  {
 
     Call call = client.newCall(request);
 
-    return call.execute();
+    try {
+      return call.execute();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   //Esto no es reactivo y probablemente no es funcional... esperemos que funcione!
-  public List<DomainEvent> getTransactionHistory(String walletID) throws IOException{
+  public List<DomainEvent> getTransactionHistory(String walletID) throws IOException {
 
     List<DomainEvent> transacciones = new ArrayList<>();
 

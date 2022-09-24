@@ -31,23 +31,19 @@ public class RabbitMqEventBus implements EventBus {
         serializer.serialize(event));
     eventPublisher.publishEvent(event);
 
-    rabbitTemplate.convertAndSend(
-        ApplicationConfig.EXCHANGE, ApplicationConfig.GENERAL_ROUTING_KEY,
-        notification.serialize().getBytes()
-    );
+    rabbitTemplate.convertAndSend(ApplicationConfig.EXCHANGE, ApplicationConfig.GENERAL_ROUTING_KEY,
+        notification.serialize().getBytes());
   }
 
   @Override
   public void publishRegister(DomainEvent event) {
-    System.out.println("publishRegister");
     Notification notification = new Notification(event.getClass().getTypeName(),
         serializer.serialize(event));
+
     eventPublisher.publishEvent(event);
 
-    rabbitTemplate.convertAndSend(
-        ApplicationConfig.EXCHANGE, ApplicationConfig.PROXY_ROUTING_KEY_REGISTER,
-        notification.serialize().getBytes()
-    );
+    rabbitTemplate.convertAndSend(ApplicationConfig.EXCHANGE,
+        ApplicationConfig.PROXY_ROUTING_KEY_REGISTER, notification.serialize().getBytes());
   }
   /*
   @Override

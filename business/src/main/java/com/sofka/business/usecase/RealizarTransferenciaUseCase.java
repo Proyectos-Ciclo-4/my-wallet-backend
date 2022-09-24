@@ -9,28 +9,28 @@ import reactor.core.publisher.Mono;
 
 public class RealizarTransferenciaUseCase extends UseCaseForCommand<RealizarTransferencia> {
 
-  private final WalletDomainEventRepository repository;
+  private final WalletDomainEventRepository walletsRepository;
 
-  public RealizarTransferenciaUseCase(WalletDomainEventRepository repository) {
-    this.repository = repository;
+  public RealizarTransferenciaUseCase(WalletDomainEventRepository walletsRepository) {
+    this.walletsRepository = walletsRepository;
   }
 
   @Override
   public Flux<DomainEvent> apply(Mono<RealizarTransferencia> realizarTransferenciaMono) {
-    return realizarTransferenciaMono.flatMapMany(realizarTransferencia ->
-        repository.obtenerEventos(realizarTransferencia.getWalletDestino().value())
-            .collectList()
+    return realizarTransferenciaMono.flatMapMany(
+        realizarTransferencia -> walletsRepository.obtenerEventos(
+                realizarTransferencia.getWalletDestino().value()).collectList()
             .flatMapIterable(domainEvents -> {
-              var walletId = realizarTransferencia.getWalletDestino();
-              var wallet = Wallet.from(walletId, domainEvents);
-              var transferenciaID = realizarTransferencia.getTransferenciaID();
+              var walletDestino = realizarTransferencia.getWalletDestino();
+              var walletPropia = realizarTransferencia.getWalletOrigen();
+
+              var wallet = Wallet.from(walletPropia, domainEvents);
               var cantidad = realizarTransferencia.getValor();
               var motivo = realizarTransferencia.getMotivo();
 
-              wallet.crearTransferencia(walletId, transferenciaID, cantidad, motivo);
+              wallet.crearTransferencia(walletDestino, null, cantidad, motivo);
 
               return wallet.getUncommittedChanges();
-            })
-    );
+            }));
   }
 }
