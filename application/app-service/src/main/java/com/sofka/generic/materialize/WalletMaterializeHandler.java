@@ -52,6 +52,7 @@ public class WalletMaterializeHandler {
 
     update.set("usuario", usuarioAsignado.getUsuarioID().value());
 
+    usuario.put("usuarioId", usuarioAsignado.getUsuarioID().value());
     usuario.put("email", usuarioAsignado.getEmail().value());
     usuario.put("numero", usuarioAsignado.getNumero().value());
 

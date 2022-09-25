@@ -31,3 +31,6 @@ Content-Type: application/json
   "valor": 17.0,
   "motivo": "Pago de servicios"
 }
+
+###
+GET http://localhost:8084/wallet/3007508112

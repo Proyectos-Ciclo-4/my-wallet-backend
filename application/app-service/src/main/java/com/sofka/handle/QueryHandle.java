@@ -2,6 +2,7 @@ package com.sofka.handle;
 
 import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 
+import com.sofka.generic.materialize.model.UserModel;
 import com.sofka.generic.materialize.model.WalletModel;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,6 +40,22 @@ public class QueryHandle {
     );
   }
 
+  @Bean
+  public RouterFunction<ServerResponse> findByPhoneNumber() {
+    return RouterFunctions.route(
+        GET("/wallet/{telefono}"),
+        request -> template.findOne(filterByPhoneNumber(request.pathVariable("telefono")),
+                UserModel.class, "usuarios")
+            .flatMap(element -> {
+                  System.out.println(element);
+
+                  return ServerResponse.ok()
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .body(BodyInserters.fromPublisher(Mono.just(element), UserModel.class));
+                }
+            ));
+  }
+
   /*
   @Bean
   public RouterFunction<ServerResponse> verifyUser(){
@@ -50,20 +67,11 @@ public class QueryHandle {
   }
  */
 
-  public Query filterByWalletId(String userId) {
+  private Query filterByWalletId(String userId) {
     return new Query(Criteria.where("usuario").is(userId));
   }
 
-//  public RouterFunction<ServerResponse> history() {
-//    return RouterFunctions.route(GET("/history/{walletId}"),
-//
-//        request -> template.find(findByWalletId(request.pathVariable("walletId")),
-//                HistoryListModel.class, "gameview").collectList().flatMap(
-//                list -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(
-//                    BodyInserters.fromPublisher(Flux.fromIterable(list), HistoryListModel.class)))
-//            .onErrorResume(errorHandler::error));
-//  }
-
-/*  private void findByWalletId(String pathVariable) {
-  }*/
+  private Query filterByPhoneNumber(String phoneNumber) {
+    return new Query(Criteria.where("numero").is(phoneNumber));
+  }
 }
