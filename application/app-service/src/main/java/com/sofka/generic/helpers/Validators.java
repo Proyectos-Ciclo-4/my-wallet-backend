@@ -1,10 +1,15 @@
 package com.sofka.generic.helpers;
 
+import co.com.sofka.domain.generic.Command;
+import co.com.sofka.domain.generic.DomainEvent;
 import com.sofka.business.usecase.gateway.UsuarioRepositorio;
 import com.sofka.business.usecase.gateway.WalletDomainEventRepository;
 import com.sofka.domain.wallet.comandos.CrearWallet;
 import com.sofka.domain.wallet.comandos.RealizarTransferencia;
+import com.sofka.domain.wallet.comandos.AnadirContacto;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -36,6 +41,23 @@ public class Validators {
             }
 
             return Mono.just(crearWallet);
+          });
+        });
+  }
+
+  public Mono<AnadirContacto> validateUserExists(Mono<AnadirContacto> command) {
+    return command.flatMap(
+        anadirContacto -> {
+          log.info("Validating user {} exists", anadirContacto);
+
+          return usuarioRepositorio.obtenerDatosUsuario(anadirContacto.getEmail(),anadirContacto.getTelefono()).flatMap(usuarioData -> {
+
+            if (!usuarioData) {
+              log.error("User doesn't have an account associated");
+              return Mono.error(new RuntimeException("El usuario no tiene una cuenta o wallet asociada"));
+            }
+
+            return Mono.just(anadirContacto);
           });
         });
   }

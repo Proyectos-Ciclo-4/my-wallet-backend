@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 public class AnadirContacto extends Command {
 
   private String walletID;
-  private String contacto;
+  private String nombre;
+  private String email;
+  private String telefono;
 
 }

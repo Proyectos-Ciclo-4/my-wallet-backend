@@ -14,6 +14,7 @@ import com.sofka.domain.wallet.objetosdevalor.Estado;
 import com.sofka.domain.wallet.objetosdevalor.Estado.TipoDeEstado;
 import com.sofka.domain.wallet.objetosdevalor.FechayHora;
 import com.sofka.domain.wallet.objetosdevalor.Saldo;
+import com.sofka.domain.wallet.objetosdevalor.UsuarioID;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -34,7 +35,7 @@ public class WalletChange extends EventChange {
     });
 
     apply((ContactoAnadido event) -> {
-      wallet.contactos.add(event.getContacto());
+      wallet.contactos.add(new Usuario(new UsuarioID(),event.getNombre(),event.getEmail(),event.getTelefono()));
     });
 
     apply((ContactoEliminado event) -> {

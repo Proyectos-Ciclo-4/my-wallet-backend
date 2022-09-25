@@ -62,10 +62,11 @@ public class Wallet extends AggregateEvent<WalletID> {
     appendChange(new UsuarioAsignado(usuarioID, nombre, email, telefono));
   }
 
-  public void anadirContacto(WalletID walletID, Usuario usuario) {
-    Objects.requireNonNull(walletID);
-    Objects.requireNonNull(usuario);
-    appendChange(new ContactoAnadido(walletID, usuario));
+  public void anadirContacto(Nombre nombre,Email email,Telefono telefono) {
+    Objects.requireNonNull(nombre);
+    Objects.requireNonNull(email);
+    Objects.requireNonNull(telefono);
+    appendChange(new ContactoAnadido(nombre, email, telefono));
   }
 
   public void eliminarContacto(WalletID walletID, UsuarioID usuarioID) {

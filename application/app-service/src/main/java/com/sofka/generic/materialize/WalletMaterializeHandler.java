@@ -38,6 +38,7 @@ public class WalletMaterializeHandler {
     data.put("walletId", walletCreada.getWalletID().value());
     data.put("usuario", walletCreada.getUsuarioID().value());
     data.put("motivos", new ArrayList<>(List.of("Indefinido")));
+    //TODO data.put("contactos", newArraylist<>()));
     data.put("saldo", walletCreada.getSaldo().value());
 
     return template.save(data, COLLECTION_VIEW);
