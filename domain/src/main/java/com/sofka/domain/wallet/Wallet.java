@@ -106,10 +106,10 @@ public class Wallet extends AggregateEvent<WalletID> {
     appendChange(new TransferenciaFallida(transferenciaID));
   }
 
-  public void ModificarSaldo(WalletID walletID, Cantidad cantidad) {
+  public void ModificarSaldo(WalletID walletID, Cantidad cantidad, TransferenciaID transferenciaID) {
     Objects.requireNonNull(walletID);
     Objects.requireNonNull(cantidad);
-    appendChange(new SaldoModificado(walletID, cantidad));
+    appendChange(new SaldoModificado(walletID, cantidad, transferenciaID));
   }
 
   public Optional<Transferencia> getTransferenciaPorId(TransferenciaID transferenciaID) {

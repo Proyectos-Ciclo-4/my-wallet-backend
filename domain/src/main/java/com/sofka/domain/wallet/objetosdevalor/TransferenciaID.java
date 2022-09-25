@@ -5,6 +5,7 @@ import co.com.sofka.domain.generic.Identity;
 public class TransferenciaID extends Identity {
 
   public TransferenciaID() {
+    super();
   }
 
   public TransferenciaID(String id) {

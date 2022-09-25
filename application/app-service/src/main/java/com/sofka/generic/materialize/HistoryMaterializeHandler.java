@@ -1,5 +1,6 @@
 package com.sofka.generic.materialize;
 
+import com.mongodb.client.result.UpdateResult;
 import com.sofka.domain.wallet.eventos.TransferenciaCreada;
 import com.sofka.domain.wallet.eventos.TransferenciaExitosa;
 import com.sofka.domain.wallet.eventos.TransferenciaFallida;
@@ -36,7 +37,7 @@ public class HistoryMaterializeHandler {
     var data = new HashMap<>();
 
     data.put("walletId", transferenciaCreada.aggregateRootId());
-    data.put("transferencia_id", "");
+    data.put("transferencia_id", transferenciaCreada.getTransferenciaID().value());
     data.put("valor", transferenciaCreada.getValor().value());
     data.put("estado", transferenciaCreada.getEstadoDeTransferencia().value().name());
     data.put("destino", transferenciaCreada.getWalletDestino().value());
@@ -56,13 +57,15 @@ public class HistoryMaterializeHandler {
   }
 
   @EventListener
-  public void handleTransferenciaExitosa(TransferenciaExitosa transferenciaExitosa) {
+  public Mono<UpdateResult> handleTransferenciaExitosa(TransferenciaExitosa transferenciaExitosa) {
+    log.info("Materializando transferencia exitosa");
+
     var update = new Update();
     update.set("estado", "EXITOSA");
 
-    template.updateFirst(
+    return template.updateFirst(
         filtrarPorIdDeTransferencia(transferenciaExitosa.getTransferenciaID().value()), update,
-        COLLECTION_VIEW).block();
+        COLLECTION_VIEW);
   }
 
 

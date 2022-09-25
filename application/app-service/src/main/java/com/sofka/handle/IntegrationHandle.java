@@ -1,8 +1,8 @@
 package com.sofka.handle;
 
 import co.com.sofka.domain.generic.DomainEvent;
+import com.sofka.domain.wallet.eventos.SaldoModificado;
 import com.sofka.domain.wallet.eventos.TransferenciaExitosa;
-import com.sofka.domain.wallet.objetosdevalor.TransferenciaID;
 import com.sofka.generic.EventBus;
 import com.sofka.generic.EventStoreRepository;
 import com.sofka.generic.StoredEvent;
@@ -41,40 +41,30 @@ public class IntegrationHandle implements Function<Flux<DomainEvent>, Mono<Void>
     return domainEventFlux.flatMap(domainEvent -> {
           var stored = StoredEvent.wrapEvent(domainEvent, eventSerializer);
 
-          return repository.saveEvent("wallet", domainEvent.aggregateRootId(), stored)
-              .log()
+          return repository.saveEvent("wallet", domainEvent.aggregateRootId(), stored).log()
               .thenReturn(domainEvent);
         }).doOnNext(eventBus::publish).collect(Collectors.toList())
-        .doOnNext(events -> events.forEach(applicationEventPublisher::publishEvent)).flatMap(
-            domainEvents -> {
+        .doOnNext(events -> events.forEach(applicationEventPublisher::publishEvent))
+        .flatMap(domainEvents -> {
 
-              log.info("Eventos publicados: {}", domainEvents);
+          log.info("Eventos publicados: {}", domainEvents);
 
-              var saldosModificados = domainEvents.stream().filter(
-                      domainEvent -> domainEvent.getClass().getSimpleName().equals("SaldoModificado"))
-                  .count();
+          var eventos = domainEvents.size();
 
-              if (saldosModificados == 2) {
-                var transferecia = new TransferenciaExitosa(TransferenciaID.of("z"));
-                transferecia.setAggregateRootId(domainEvents.get(0).aggregateRootId());
+          if (eventos == 2) {
 
-                applicationEventPublisher.publishEvent(transferecia);
-              }
+            log.info("Emitiendo transferencia exitosa");
+            var saldoModificado = (SaldoModificado) domainEvents.get(0);
 
-              return Mono.empty();
-            }
-        ).then();
+            var transferecia = new TransferenciaExitosa(saldoModificado.getTransferenciaID());
+            transferecia.setAggregateRootId(saldoModificado.aggregateRootId());
 
+            applicationEventPublisher.publishEvent(transferecia);
+          }
+
+          return Mono.empty();
+        }).then();
   }
-
- /* public Mono<Void> applyWithOutPublish(Flux<DomainEvent> domainEventFlux) {
-    return domainEventFlux.flatMap(domainEvent -> {
-      var stored = StoredEvent.wrapEvent(domainEvent, eventSerializer);
-
-      return repository.saveEvent("wallet", domainEvent.aggregateRootId(), stored)
-          .thenReturn(domainEvent);
-    }).doOnNext(eventBus::publish).then();
-  }*/
 
   @Override
   public <V> Function<V, Mono<Void>> compose(

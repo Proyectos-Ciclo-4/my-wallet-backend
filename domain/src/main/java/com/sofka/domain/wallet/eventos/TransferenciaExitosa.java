@@ -6,7 +6,7 @@ import com.sofka.domain.wallet.objetosdevalor.TransferenciaID;
 
 public class TransferenciaExitosa extends DomainEvent {
 
-  private final TransferenciaID transferenciaID;
+  private TransferenciaID transferenciaID;
 
   public TransferenciaExitosa(TransferenciaID transferenciaID
   ) {
@@ -16,5 +16,9 @@ public class TransferenciaExitosa extends DomainEvent {
 
   public TransferenciaID getTransferenciaID() {
     return transferenciaID;
+  }
+
+  public void setTransferenciaID(TransferenciaID transferenciaID) {
+    this.transferenciaID = transferenciaID;
   }
 }

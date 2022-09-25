@@ -1,20 +1,21 @@
+### Crear wallet
 POST http://localhost:8084/new/wallet
 Content-Type: application/json
 
 {
-  "usuarioID": "2",
-  "telefono": "120391230",
-  "email": "daniel@gmail.com"
+  "usuarioID": "1",
+  "telefono": "0129321930",
+  "email": "asdladjk@gmail.com"
 }
 
-###
+### Transaciones
 
 POST http://localhost:8084/new/transaction/
 Content-Type: application/json
 
 {
-  "walletOrigen": "2",
-  "walletDestino": "3",
+  "walletOrigen": "1",
+  "walletDestino": "2",
   "valor": 17.0,
   "motivo": "Pago de servicios"
 }

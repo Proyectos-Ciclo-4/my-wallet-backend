@@ -37,9 +37,11 @@ public class ValidarTransferenciaUseCase extends UseCaseForEvent<TransferenciaCr
 
                       var cantidadWalletOrigen = new Cantidad(cantidad.value() * -1);
 
-                      walletDestino.ModificarSaldo(walletDestinoID, cantidad);
+                      walletDestino.ModificarSaldo(walletDestinoID, cantidad,
+                          transferenciaCreada.getTransferenciaID());
 
-                      walletOrigen.ModificarSaldo(walletOrigenID, cantidadWalletOrigen);
+                      walletOrigen.ModificarSaldo(walletOrigenID, cantidadWalletOrigen,
+                          transferenciaCreada.getTransferenciaID());
 
                       Flux<DomainEvent> uncommitedChangesWalletOrigen = Flux.fromIterable(
                           walletOrigen.getUncommittedChanges());
