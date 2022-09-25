@@ -2,7 +2,19 @@ POST http://localhost:8084/new/wallet
 Content-Type: application/json
 
 {
-  "usuarioID": "2",
-  "telefono": "1232456789",
-  "email": "dan2iel@gmail.com"
+  "usuarioID": "3",
+  "telefono": "0321",
+  "email": "mario@gmail.com"
+}
+
+###
+
+POST http://localhost:8084/new/transaction/
+Content-Type: application/json
+
+{
+  "walletOrigen": "2",
+  "walletDestino": "3",
+  "valor": 17.0,
+  "motivo": "Pago de servicios"
 }
