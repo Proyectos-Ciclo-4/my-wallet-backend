@@ -63,7 +63,7 @@ public class HistoryMaterializeHandler {
     var update = new Update();
     update.set("estado", "EXITOSA");
 
-    return template.updateFirst(
+    return template.updateMulti(
         filtrarPorIdDeTransferencia(transferenciaExitosa.getTransferenciaID().value()), update,
         COLLECTION_VIEW);
   }

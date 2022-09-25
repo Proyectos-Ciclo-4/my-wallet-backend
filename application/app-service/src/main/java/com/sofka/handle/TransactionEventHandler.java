@@ -34,10 +34,10 @@ public class TransactionEventHandler {
   }
 
   @EventListener
-  public void onTransactionCreated(TransferenciaCreada event) {
+  public Mono<Void> onTransactionCreated(TransferenciaCreada event) {
     log.info("Procesando transferencia creada");
 
-    handle.apply(validarTransferenciaUseCase.apply(Mono.just(event))).block();
+    return handle.apply(validarTransferenciaUseCase.apply(Mono.just(event)));
   }
 
   @EventListener

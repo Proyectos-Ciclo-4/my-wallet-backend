@@ -3,10 +3,22 @@ POST http://localhost:8084/new/wallet
 Content-Type: application/json
 
 {
-  "usuarioID": "1",
-  "telefono": "0129321930",
-  "email": "asdladjk@gmail.com"
+  "usuarioID": "2",
+  "telefono": "210398230",
+  "email": "alsdkj@gmail.com"
 }
+
+###
+
+POST http://localhost:8084/new/wallet
+Content-Type: application/json
+
+{
+  "usuarioID": "1",
+  "telefono": "210398230",
+  "email": "david@gmail.com"
+}
+
 
 ### Transaciones
 

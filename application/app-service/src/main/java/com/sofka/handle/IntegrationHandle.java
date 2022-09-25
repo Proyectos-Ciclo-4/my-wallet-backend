@@ -49,7 +49,8 @@ public class IntegrationHandle implements Function<Flux<DomainEvent>, Mono<Void>
 
           log.info("Eventos publicados: {}", domainEvents);
 
-          var eventos = domainEvents.size();
+          var eventos = domainEvents.stream().filter(event -> event instanceof SaldoModificado)
+              .map(event -> (SaldoModificado) event).count();
 
           if (eventos == 2) {
 
