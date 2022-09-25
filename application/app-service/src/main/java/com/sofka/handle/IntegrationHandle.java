@@ -43,6 +43,15 @@ public class IntegrationHandle implements Function<Flux<DomainEvent>, Mono<Void>
         .doOnNext(events -> events.forEach(applicationEventPublisher::publishEvent)).then();
   }
 
+  public Mono<Void> applyWithOutPublish(Flux<DomainEvent> domainEventFlux) {
+    return domainEventFlux.flatMap(domainEvent -> {
+      var stored = StoredEvent.wrapEvent(domainEvent, eventSerializer);
+
+      return repository.saveEvent("wallet", domainEvent.aggregateRootId(), stored)
+          .thenReturn(domainEvent);
+    }).doOnNext(eventBus::publish).then();
+  }
+
   @Override
   public <V> Function<V, Mono<Void>> compose(
       Function<? super V, ? extends Flux<DomainEvent>> before) {

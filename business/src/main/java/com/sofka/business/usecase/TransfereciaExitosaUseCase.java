@@ -26,12 +26,6 @@ public class TransfereciaExitosaUseCase extends UseCaseForEvent<TransferenciaExi
               var wall = Wallet.from(WalletID.of(transferenciaExitosa.aggregateRootId()),
                   domainEvents);
 
-              var walletId = WalletID.of(transferenciaExitosa.aggregateRootId());
-              var cantidad = new Cantidad(transferenciaExitosa.getCantidad().value() * -1);
-
-              wall.concretarTransferencia(transferenciaExitosa.getTransferenciaID());
-              wall.ModificarSaldo(walletId, cantidad);
-
               return wall.getUncommittedChanges();
             })
     );

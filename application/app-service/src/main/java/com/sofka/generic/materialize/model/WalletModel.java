@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class WalletModel {
 
-  private String _id;
+  private String walletId;
 
   private String usuario;
 

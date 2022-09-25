@@ -2,9 +2,9 @@ POST http://localhost:8084/new/wallet
 Content-Type: application/json
 
 {
-  "usuarioID": "3",
-  "telefono": "0321",
-  "email": "mario@gmail.com"
+  "usuarioID": "2",
+  "telefono": "120391230",
+  "email": "daniel@gmail.com"
 }
 
 ###

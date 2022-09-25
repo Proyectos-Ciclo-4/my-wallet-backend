@@ -1,7 +1,6 @@
 package com.sofka.business.usecase;
 
 import co.com.sofka.domain.generic.DomainEvent;
-import com.sofka.business.usecase.gateway.BlockchainRepository;
 import com.sofka.business.usecase.gateway.WalletDomainEventRepository;
 import com.sofka.domain.wallet.Wallet;
 import com.sofka.domain.wallet.eventos.TransferenciaCreada;
@@ -12,22 +11,17 @@ import reactor.core.publisher.Mono;
 
 public class ValidarTransferenciaUseCase extends UseCaseForEvent<TransferenciaCreada> {
 
-
   private final WalletDomainEventRepository repository;
 
-  private final BlockchainRepository repositoryBlockchain;
-
-  public ValidarTransferenciaUseCase(WalletDomainEventRepository repository,
-      BlockchainRepository repositoryBlockchain) {
+  public ValidarTransferenciaUseCase(WalletDomainEventRepository repository) {
     this.repository = repository;
-    this.repositoryBlockchain = repositoryBlockchain;
   }
 
   @Override
   public Flux<DomainEvent> apply(Mono<TransferenciaCreada> transferenciaCreadaMono) {
-    return transferenciaCreadaMono.flatMapMany(transferenciaCreada ->
-        repository.obtenerEventos(transferenciaCreada.aggregateRootId()).collectList()
-            .flatMapMany(
+    return transferenciaCreadaMono.flatMapMany(
+        transferenciaCreada -> repository.obtenerEventos(transferenciaCreada.aggregateRootId())
+            .collectList().flatMapMany(
                 eventsWalletOrigen -> getEventsWalletDestino(transferenciaCreada).collectList()
                     .flatMapMany(eventsWalletDestino -> {
 
@@ -36,6 +30,7 @@ public class ValidarTransferenciaUseCase extends UseCaseForEvent<TransferenciaCr
 
                       var walletDestinoID = WalletID.of(
                           transferenciaCreada.getWalletDestino().value());
+
                       var walletDestino = Wallet.from(walletDestinoID, eventsWalletDestino);
 
                       var cantidad = transferenciaCreada.getValor();

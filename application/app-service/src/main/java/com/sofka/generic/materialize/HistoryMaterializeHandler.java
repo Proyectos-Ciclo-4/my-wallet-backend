@@ -5,6 +5,7 @@ import com.sofka.domain.wallet.eventos.TransferenciaExitosa;
 import com.sofka.domain.wallet.eventos.TransferenciaFallida;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
@@ -12,9 +13,11 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.scheduling.annotation.EnableAsync;
+import reactor.core.publisher.Mono;
 
 @EnableAsync
 @Configuration
+@Slf4j
 public class HistoryMaterializeHandler {
 
   private static final String COLLECTION_VIEW = "history";
@@ -26,17 +29,20 @@ public class HistoryMaterializeHandler {
   }
 
   @EventListener
-  public void handleTransferenciaRealiazada(TransferenciaCreada transferenciaCreada) {
+  public Mono<HashMap<Object, Object>> handleTransferenciaRealiazada(
+      TransferenciaCreada transferenciaCreada) {
+
+    log.info("Procesando transferencia creada");
     var data = new HashMap<>();
 
     data.put("_id", transferenciaCreada.aggregateRootId());
-    data.put("transferencia_id", transferenciaCreada.getTransferenciaID().value());
+    data.put("transferencia_id", "");
     data.put("valor", transferenciaCreada.getValor().value());
     data.put("estado", transferenciaCreada.getEstadoDeTransferencia().value().name());
     data.put("destino", transferenciaCreada.getWalletDestino().value());
     data.put("motivo", transferenciaCreada.getMotivo().value());
     data.put("fecha", LocalDateTime.now());
-    template.save(data, COLLECTION_VIEW).block();
+    return template.save(data, COLLECTION_VIEW);
   }
 
   @EventListener

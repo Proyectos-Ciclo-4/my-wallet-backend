@@ -1,5 +1,6 @@
 package com.sofka.generic.materialize;
 
+import com.mongodb.client.result.UpdateResult;
 import com.sofka.domain.wallet.eventos.SaldoModificado;
 import com.sofka.domain.wallet.eventos.UsuarioAsignado;
 import com.sofka.domain.wallet.eventos.WalletCreada;
@@ -34,7 +35,7 @@ public class WalletMaterializeHandler {
     log.info("Materializing WalletCreada event: {}", walletCreada);
     var data = new HashMap<>();
 
-    data.put("_id", walletCreada.getWalletID());
+    data.put("walletId", walletCreada.getWalletID().value());
     data.put("usuario", walletCreada.getUsuarioID().value());
     data.put("motivos", new ArrayList<>(List.of("Indefinido")));
     data.put("saldo", walletCreada.getSaldo().value());
@@ -60,16 +61,21 @@ public class WalletMaterializeHandler {
   }
 
   @EventListener
-  public void handleSaldoModificado(SaldoModificado saldoModificado) {
+  public Mono<UpdateResult> handleSaldoModificado(SaldoModificado saldoModificado) {
     log.info("Materializing SaldoModificado event: {}", saldoModificado);
     var update = new Update();
-    update.set("saldo", saldoModificado.getCantidad().value());
+    update.inc("saldo", saldoModificado.getCantidad().value());
 
-    template.updateFirst(filtrarPorIdDeWallet(saldoModificado.aggregateRootId()), update,
-        COLLECTION_VIEW).block();
+    return template.updateFirst(filtrarPorIdDeWallet(saldoModificado.aggregateRootId()), update,
+        COLLECTION_VIEW).flatMap(updateResult -> {
+
+      log.info("Saldo actualizado {}", updateResult);
+
+      return Mono.just(updateResult);
+    });
   }
 
   private Query filtrarPorIdDeWallet(String walletId) {
-    return new Query(Criteria.where("_id").is(walletId));
+    return new Query(Criteria.where("walletId").is(walletId));
   }
 }
