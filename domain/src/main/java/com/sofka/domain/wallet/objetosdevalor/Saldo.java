@@ -4,13 +4,15 @@ import co.com.sofka.domain.generic.ValueObject;
 
 public class Saldo implements ValueObject<Double> {
 
-    private final Double monto;
+  private final Double monto;
 
-    public Saldo(Double monto) {
-        this.monto = monto;
-    }
+  public Saldo(Double monto) {
+    this.monto = monto;
+  }
 
-    @Override
-    public Double value(){return this.monto;}
+  @Override
+  public Double value() {
+    return this.monto;
+  }
 
 }

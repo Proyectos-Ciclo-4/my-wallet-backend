@@ -12,13 +12,13 @@ public class TransferenciaExitosa extends DomainEvent {
 
   public TransferenciaExitosa(TransferenciaID transferenciaID,
       Cantidad cantidad) {
-    super("com.sofka.domain.wallet.TransferenciaExitosa");
+    super("com.sofka.domain.wallet.eventos.TransferenciaExitosa");
     this.transferenciaID = transferenciaID;
     this.cantidad = cantidad;
   }
 
   public TransferenciaExitosa(TransferenciaID transferenciaID
-      ) {
+  ) {
     super("com.sofka.domain.wallet.TransferenciaExitosa");
     this.transferenciaID = transferenciaID;
   }

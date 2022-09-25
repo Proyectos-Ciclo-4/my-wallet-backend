@@ -10,10 +10,10 @@ import com.sofka.domain.wallet.eventos.TransferenciaCreada;
 import com.sofka.domain.wallet.eventos.TransferenciaExitosa;
 import com.sofka.domain.wallet.eventos.TransferenciaFallida;
 import com.sofka.domain.wallet.eventos.UsuarioAsignado;
+import com.sofka.domain.wallet.eventos.UsuarioExistente;
 import com.sofka.domain.wallet.eventos.WalletCreada;
 import com.sofka.domain.wallet.objetosdevalor.Cantidad;
 import com.sofka.domain.wallet.objetosdevalor.Email;
-import com.sofka.domain.wallet.objetosdevalor.Estado;
 import com.sofka.domain.wallet.objetosdevalor.Motivo;
 import com.sofka.domain.wallet.objetosdevalor.Nombre;
 import com.sofka.domain.wallet.objetosdevalor.Saldo;
@@ -29,7 +29,7 @@ public class Wallet extends AggregateEvent<WalletID> {
 
   protected Saldo saldo;
 
-  protected List<Motivo> motivos;
+  protected List<Motivo> motivos = List.of(new Motivo("Indefinido"));
 
   protected Usuario dueño;
 
@@ -37,23 +37,20 @@ public class Wallet extends AggregateEvent<WalletID> {
 
   protected List<Transferencia> transferencias;
 
-
-  public Wallet(WalletID entityId, UsuarioID usuarioID, Saldo saldo, List<Motivo> motivos) {
-    super(entityId);
+  public Wallet(UsuarioID usuarioID, Saldo saldo) {
+    super(WalletID.of(usuarioID.value()));
     subscribe(new WalletChange(this));
-    appendChange(new WalletCreada(entityId, usuarioID, saldo, motivos)).apply();
+    appendChange(new WalletCreada(entityId, usuarioID, saldo)).apply();
   }
 
-  private Wallet(WalletID entityId) {
+  public Wallet(WalletID entityId) {
     super(entityId);
     subscribe(new WalletChange(this));
   }
 
   public static Wallet from(WalletID walletID, List<DomainEvent> events) {
     Wallet wallet = new Wallet(walletID);
-    events.forEach(event -> {
-      wallet.applyEvent(event);
-    });
+    events.forEach(wallet::applyEvent);
     return wallet;
   }
 
@@ -77,19 +74,18 @@ public class Wallet extends AggregateEvent<WalletID> {
     appendChange(new ContactoEliminado(walletID, usuarioID));
   }
 
-  public void anadirMotivo(Motivo motivo) {
+  public void anadirMotivo(String motivo) {
     Objects.requireNonNull(motivo);
-    appendChange(new MotivoCreado(motivo));
+    appendChange(new MotivoCreado(new Motivo(motivo)));
   }
 
-  public void crearTransferencia(WalletID walletID, TransferenciaID transferenciaID, Estado estado,
+  public void crearTransferencia(WalletID walletDestinoID, TransferenciaID transferenciaID,
       Cantidad cantidad, Motivo motivo) {
-    Objects.requireNonNull(walletID);
-    Objects.requireNonNull(transferenciaID);
-    Objects.requireNonNull(estado);
+    Objects.requireNonNull(walletDestinoID);
     Objects.requireNonNull(cantidad);
     Objects.requireNonNull(motivo);
-    appendChange(new TransferenciaCreada(walletID, transferenciaID, estado, cantidad, motivo));
+    appendChange(
+        new TransferenciaCreada(walletDestinoID, transferenciaID, cantidad, motivo));
   }
 
   public void concretarTransferencia(TransferenciaID transferenciaID
@@ -98,6 +94,10 @@ public class Wallet extends AggregateEvent<WalletID> {
     Objects.requireNonNull(transferenciaID);
 
     appendChange(new TransferenciaExitosa(transferenciaID));
+  }
+
+  public void rechazarCreacion(String usuarioId) {
+    appendChange(new UsuarioExistente(usuarioId));
   }
 
   public void cancelarTransferencia(TransferenciaID transferenciaID) {
@@ -122,4 +122,6 @@ public class Wallet extends AggregateEvent<WalletID> {
     return contactos.stream().filter((usuario -> usuario.identity().equals(usuarioID)))
         .findFirst();
   }
+
+
 }

@@ -1,0 +1,8 @@
+POST http://localhost:8084/new/wallet
+Content-Type: application/json
+
+{
+  "usuarioID": "2",
+  "telefono": "1232456789",
+  "email": "dan2iel@gmail.com"
+}
