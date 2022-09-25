@@ -43,16 +43,12 @@ public class QueryHandle {
   @Bean
   public RouterFunction<ServerResponse> findByPhoneNumber() {
     return RouterFunctions.route(
-        GET("/wallet/{telefono}"),
+        GET("/walletByTelefono/{telefono}"),
         request -> template.findOne(filterByPhoneNumber(request.pathVariable("telefono")),
                 UserModel.class, "usuarios")
-            .flatMap(element -> {
-                  System.out.println(element);
-
-                  return ServerResponse.ok()
-                      .contentType(MediaType.APPLICATION_JSON)
-                      .body(BodyInserters.fromPublisher(Mono.just(element), UserModel.class));
-                }
+            .flatMap(element -> ServerResponse.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromPublisher(Mono.just(element), UserModel.class))
             ));
   }
 
@@ -72,6 +68,7 @@ public class QueryHandle {
   }
 
   private Query filterByPhoneNumber(String phoneNumber) {
+    System.out.println("filter otw");
     return new Query(Criteria.where("numero").is(phoneNumber));
   }
 }
