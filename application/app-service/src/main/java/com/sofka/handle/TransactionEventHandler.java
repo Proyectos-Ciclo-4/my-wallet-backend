@@ -7,6 +7,7 @@ import org.springframework.context.event.EventListener;
 
 @Configuration
 public class TransactionEventHandler {
+
   private final Blockchain blockchain;
 
   public TransactionEventHandler(Blockchain blockchain) {

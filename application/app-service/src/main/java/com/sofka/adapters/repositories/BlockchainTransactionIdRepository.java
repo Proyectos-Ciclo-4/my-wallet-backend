@@ -1,7 +1,6 @@
 package com.sofka.adapters.repositories;
 
 import com.sofka.handle.model.BlockchainTransactionMongoModel;
-import java.util.Comparator;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -37,7 +36,7 @@ public class BlockchainTransactionIdRepository implements
 
   @Override
   public void saveTransactionBlockchainID(String walletID, String transactionBlockchainID) {
-      template.save(new BlockchainTransactionMongoModel(walletID,transactionBlockchainID));
+    template.save(new BlockchainTransactionMongoModel(walletID, transactionBlockchainID));
   }
 
 }

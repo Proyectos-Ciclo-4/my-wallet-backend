@@ -1,7 +1,6 @@
 package com.sofka.domain.wallet.eventos;
 
 import co.com.sofka.domain.generic.DomainEvent;
-import com.sofka.domain.wallet.Usuario;
 import com.sofka.domain.wallet.objetosdevalor.UsuarioID;
 import com.sofka.domain.wallet.objetosdevalor.WalletID;
 

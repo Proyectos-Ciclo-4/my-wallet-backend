@@ -38,19 +38,23 @@ public class HistoryMaterializeHandler {
   }
 
   @EventListener
-  public void handleTransferenciaFallida(TransferenciaFallida transfereciaFallida){
+  public void handleTransferenciaFallida(TransferenciaFallida transfereciaFallida) {
     var update = new Update();
     update.set("estado", "RECHAZADA");
 
-    template.updateFirst(filtrarPorIdDeTransferencia(transfereciaFallida.getTransferenciaID().value()), update, COLLECTION_VIEW).block();
+    template.updateFirst(
+        filtrarPorIdDeTransferencia(transfereciaFallida.getTransferenciaID().value()), update,
+        COLLECTION_VIEW).block();
   }
 
   @EventListener
-  public void handleTransferenciaExitosa(TransferenciaExitosa transferenciaExitosa){
+  public void handleTransferenciaExitosa(TransferenciaExitosa transferenciaExitosa) {
     var update = new Update();
     update.set("estado", "EXITOSA");
 
-    template.updateFirst(filtrarPorIdDeTransferencia(transferenciaExitosa.getTransferenciaID().value()), update, COLLECTION_VIEW).block();
+    template.updateFirst(
+        filtrarPorIdDeTransferencia(transferenciaExitosa.getTransferenciaID().value()), update,
+        COLLECTION_VIEW).block();
   }
 
   private Query filtrarPorIdDeTransferencia(String transfereciaFallida) {

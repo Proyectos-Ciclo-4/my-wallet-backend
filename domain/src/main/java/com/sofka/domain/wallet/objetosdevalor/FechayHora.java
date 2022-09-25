@@ -1,17 +1,18 @@
 package com.sofka.domain.wallet.objetosdevalor;
 
 import co.com.sofka.domain.generic.ValueObject;
-
 import java.time.LocalDate;
 
 public class FechayHora implements ValueObject<LocalDate> {
 
-    private final LocalDate fecha;
+  private final LocalDate fecha;
 
-    public FechayHora(LocalDate fechayhora) {
-        this.fecha = fechayhora;
-    }
+  public FechayHora(LocalDate fechayhora) {
+    this.fecha = fechayhora;
+  }
 
-    @Override
-    public LocalDate value(){return this.fecha;}
+  @Override
+  public LocalDate value() {
+    return this.fecha;
+  }
 }

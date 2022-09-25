@@ -1,12 +1,8 @@
 package com.sofka;
 
 import java.util.List;
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
-import org.springframework.amqp.rabbit.core.RabbitAdmin;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -21,36 +17,21 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 )
 public class ApplicationConfig {
 
-  public static final String EXCHANGE = "core-posts";
+  @Value("${wallet.general.queue.name}")
+  private String walletGeneralQueueName;
 
-  public static final String REGISTER_EXCHANGE = "register";
+  @Value("${wallet.register.queue.name}")
+  private String walletRegisterQueueName;
 
-  public static final String GENERAL_ROUTING_KEY = "routingKey.general";
+  @Bean(name = "walletGeneralQueue")
+  public Queue walletGeneralQueue() {
+    return new Queue(walletGeneralQueueName, true);
+  }
 
-  public static final String REGISTER_ROUTING_KEY = "routingKey.register";
-
-  public static final String PROXY_QUEUE_REGISTER = "events.proxy.register";
-
-  public static final String PROXY_ROUTING_KEY_REGISTER = "routingKey.proxy.register";
-
-//  @Bean
-//  public Queue routingCreatedQueue(){
-//    return new Queue(PROXY_QUEUE_REGISTER);
-//  }
-
-//  @Bean
-//  public Binding BindingToPostCreatedQueue() {
-//    return BindingBuilder.bind(routingCreatedQueue()).to(new TopicExchange(EXCHANGE)).with(PROXY_ROUTING_KEY_REGISTER);
-//  }
-
-  /* The rabbit template will now be implemented on RabbitMQEventBus
-  @Bean
-  public RabbitAdmin rabbitAdmin(RabbitTemplate rabbitTemplate) {
-    var admin = new RabbitAdmin(rabbitTemplate);
-    admin.declareExchange(new TopicExchange(EXCHANGE));
-
-    return admin;
-  } */
+  @Bean(name = "walletRegisterQueue")
+  public Queue walletRegisterQueue() {
+    return new Queue(walletRegisterQueueName, true);
+  }
 
   @Bean
   public CorsWebFilter corsWebFilter() {

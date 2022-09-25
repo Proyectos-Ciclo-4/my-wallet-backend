@@ -4,7 +4,6 @@ import co.com.sofka.domain.generic.Command;
 import com.sofka.domain.wallet.objetosdevalor.Email;
 import com.sofka.domain.wallet.objetosdevalor.Telefono;
 import com.sofka.domain.wallet.objetosdevalor.UsuarioID;
-import com.sofka.domain.wallet.objetosdevalor.WalletID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

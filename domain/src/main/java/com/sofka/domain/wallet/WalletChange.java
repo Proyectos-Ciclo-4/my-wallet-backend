@@ -1,7 +1,6 @@
 package com.sofka.domain.wallet;
 
 import co.com.sofka.domain.generic.EventChange;
-import com.sofka.domain.wallet.comandos.ModificarSaldo;
 import com.sofka.domain.wallet.eventos.ContactoAnadido;
 import com.sofka.domain.wallet.eventos.ContactoEliminado;
 import com.sofka.domain.wallet.eventos.MotivoCreado;
@@ -11,12 +10,9 @@ import com.sofka.domain.wallet.eventos.TransferenciaExitosa;
 import com.sofka.domain.wallet.eventos.TransferenciaFallida;
 import com.sofka.domain.wallet.eventos.UsuarioAsignado;
 import com.sofka.domain.wallet.eventos.WalletCreada;
-import com.sofka.domain.wallet.objetosdevalor.Cantidad;
 import com.sofka.domain.wallet.objetosdevalor.Estado;
 import com.sofka.domain.wallet.objetosdevalor.Estado.TipoDeEstado;
 import com.sofka.domain.wallet.objetosdevalor.FechayHora;
-import com.sofka.domain.wallet.objetosdevalor.Motivo;
-
 import com.sofka.domain.wallet.objetosdevalor.Saldo;
 import java.time.LocalDate;
 import java.util.ArrayList;

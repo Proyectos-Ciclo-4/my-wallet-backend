@@ -1,11 +1,8 @@
 package com.sofka.business.usecase;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import co.com.sofka.domain.generic.DomainEvent;
 import com.sofka.business.usecase.gateway.WalletDomainEventRepository;
 import com.sofka.domain.wallet.comandos.AnadirMotivo;
-import com.sofka.domain.wallet.comandos.CrearWallet;
 import com.sofka.domain.wallet.eventos.MotivoCreado;
 import com.sofka.domain.wallet.eventos.WalletCreada;
 import com.sofka.domain.wallet.objetosdevalor.Motivo;

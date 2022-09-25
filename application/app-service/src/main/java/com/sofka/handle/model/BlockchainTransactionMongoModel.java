@@ -11,7 +11,7 @@ public class BlockchainTransactionMongoModel {
     this.blockchainTransactionID = blockchainTransactionID;
   }
 
-  public BlockchainTransactionMongoModel(){
+  public BlockchainTransactionMongoModel() {
   }
 
   public String getWalletID() {
