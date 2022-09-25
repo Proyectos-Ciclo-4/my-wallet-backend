@@ -35,7 +35,7 @@ public class HistoryMaterializeHandler {
     log.info("Procesando transferencia creada");
     var data = new HashMap<>();
 
-    data.put("_id", transferenciaCreada.aggregateRootId());
+    data.put("walletId", transferenciaCreada.aggregateRootId());
     data.put("transferencia_id", "");
     data.put("valor", transferenciaCreada.getValor().value());
     data.put("estado", transferenciaCreada.getEstadoDeTransferencia().value().name());
@@ -64,6 +64,7 @@ public class HistoryMaterializeHandler {
         filtrarPorIdDeTransferencia(transferenciaExitosa.getTransferenciaID().value()), update,
         COLLECTION_VIEW).block();
   }
+
 
   private Query filtrarPorIdDeTransferencia(String transfereciaFallida) {
     return new Query(Criteria.where("transferencia_id").is(transfereciaFallida));

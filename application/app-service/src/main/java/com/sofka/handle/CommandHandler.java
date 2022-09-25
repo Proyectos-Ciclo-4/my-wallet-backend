@@ -58,6 +58,6 @@ public class CommandHandler {
   private HandlerFilterFunction<ServerResponse, ServerResponse> handleRuntimeException() {
     return (request, next) -> next.handle(request)
         .onErrorResume(RuntimeException.class,
-            e -> ServerResponse.badRequest().bodyValue(e.getMessage()));
+            e -> ServerResponse.badRequest().bodyValue(e.getCause()));
   }
 }

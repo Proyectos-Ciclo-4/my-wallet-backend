@@ -8,15 +8,6 @@ public class TransferenciaExitosa extends DomainEvent {
 
   private final TransferenciaID transferenciaID;
 
-  private Cantidad cantidad = new Cantidad(0.0);
-
-  public TransferenciaExitosa(TransferenciaID transferenciaID,
-      Cantidad cantidad) {
-    super("com.sofka.domain.wallet.eventos.TransferenciaExitosa");
-    this.transferenciaID = transferenciaID;
-    this.cantidad = cantidad;
-  }
-
   public TransferenciaExitosa(TransferenciaID transferenciaID
   ) {
     super("com.sofka.domain.wallet.TransferenciaExitosa");
@@ -25,9 +16,5 @@ public class TransferenciaExitosa extends DomainEvent {
 
   public TransferenciaID getTransferenciaID() {
     return transferenciaID;
-  }
-
-  public Cantidad getCantidad() {
-    return cantidad;
   }
 }

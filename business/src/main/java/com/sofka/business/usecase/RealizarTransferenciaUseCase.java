@@ -4,6 +4,7 @@ import co.com.sofka.domain.generic.DomainEvent;
 import com.sofka.business.usecase.gateway.WalletDomainEventRepository;
 import com.sofka.domain.wallet.Wallet;
 import com.sofka.domain.wallet.comandos.RealizarTransferencia;
+import com.sofka.domain.wallet.objetosdevalor.TransferenciaID;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -28,7 +29,7 @@ public class RealizarTransferenciaUseCase extends UseCaseForCommand<RealizarTran
               var cantidad = realizarTransferencia.getValor();
               var motivo = realizarTransferencia.getMotivo();
 
-              wallet.crearTransferencia(walletDestino, null, cantidad, motivo);
+              wallet.crearTransferencia(walletDestino, TransferenciaID.of("z"), cantidad, motivo);
 
               return wallet.getUncommittedChanges();
             }));

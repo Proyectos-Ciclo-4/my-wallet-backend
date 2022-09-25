@@ -32,7 +32,7 @@ public class EventStoreRepository implements com.sofka.generic.EventStoreReposit
 
   @Override
   public Flux<DomainEvent> getEventsBy(String aggregateName, String aggregateRootId) {
-    var query = new Query(Criteria.where("_id").is(aggregateRootId));
+    var query = new Query(Criteria.where("aggregateRootId").is(aggregateRootId));
 
     return template.find(query, DocumentEventStored.class, aggregateName)
         .sort(Comparator.comparing(event -> event.getStoredEvent().getOccurredOn()))

@@ -67,12 +67,7 @@ public class WalletMaterializeHandler {
     update.inc("saldo", saldoModificado.getCantidad().value());
 
     return template.updateFirst(filtrarPorIdDeWallet(saldoModificado.aggregateRootId()), update,
-        COLLECTION_VIEW).flatMap(updateResult -> {
-
-      log.info("Saldo actualizado {}", updateResult);
-
-      return Mono.just(updateResult);
-    });
+        COLLECTION_VIEW);
   }
 
   private Query filtrarPorIdDeWallet(String walletId) {

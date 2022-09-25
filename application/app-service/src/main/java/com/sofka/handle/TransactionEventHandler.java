@@ -1,7 +1,9 @@
 package com.sofka.handle;
 
+import com.sofka.business.usecase.TransfereciaExitosaUseCase;
 import com.sofka.business.usecase.ValidarTransferenciaUseCase;
 import com.sofka.domain.wallet.eventos.TransferenciaCreada;
+import com.sofka.domain.wallet.eventos.TransferenciaExitosa;
 import com.sofka.generic.Blockchain;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -16,14 +18,18 @@ public class TransactionEventHandler {
 
   private final Blockchain blockchain;
 
-  private final ValidarTransferenciaUseCase useCase;
+  private final ValidarTransferenciaUseCase validarTransferenciaUseCase;
+
+  private final TransfereciaExitosaUseCase transfereciaExitosaUseCase;
 
   private final IntegrationHandle handle;
 
-  public TransactionEventHandler(Blockchain blockchain, ValidarTransferenciaUseCase useCase,
-      IntegrationHandle handle) {
+  public TransactionEventHandler(Blockchain blockchain,
+      ValidarTransferenciaUseCase validarTransferenciaUseCase,
+      TransfereciaExitosaUseCase transfereciaExitosaUseCase, IntegrationHandle handle) {
     this.blockchain = blockchain;
-    this.useCase = useCase;
+    this.validarTransferenciaUseCase = validarTransferenciaUseCase;
+    this.transfereciaExitosaUseCase = transfereciaExitosaUseCase;
     this.handle = handle;
   }
 
@@ -31,6 +37,13 @@ public class TransactionEventHandler {
   public void onTransactionCreated(TransferenciaCreada event) {
     log.info("Procesando transferencia creada");
 
-    handle.apply(useCase.apply(Mono.just(event))).block();
+    handle.apply(validarTransferenciaUseCase.apply(Mono.just(event))).block();
+  }
+
+  @EventListener
+  public Mono<Void> onTransactionSuccess(TransferenciaExitosa event) {
+    log.info("Procesando transferencia exitosa");
+
+    return handle.apply(transfereciaExitosaUseCase.apply(Mono.just(event)));
   }
 }
