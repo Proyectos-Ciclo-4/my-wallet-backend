@@ -18,11 +18,7 @@ public class RabbitMqEventBus implements EventBus {
 
   private final RabbitTemplate rabbitTemplate;
 
-//  private final ApplicationEventPublisher eventPublisher;
-
-
   private final Queue generalQueue;
-
 
   private final Queue registerQueue;
 
@@ -33,7 +29,6 @@ public class RabbitMqEventBus implements EventBus {
       @Qualifier("walletRegisterQueue") Queue registerQueue, EventSerializer eventSerializer) {
 
     this.rabbitTemplate = rabbitTemplate;
-//    this.eventPublisher = eventPublisher;
     this.generalQueue = generalQueue;
     this.registerQueue = registerQueue;
     this.serializer = eventSerializer;
@@ -46,8 +41,6 @@ public class RabbitMqEventBus implements EventBus {
         serializer.serialize(event));
 
     rabbitTemplate.convertAndSend(generalQueue.getName(), notification.serialize().getBytes());
-
-//    eventPublisher.publishEvent(event);
   }
 
   @Override
@@ -58,8 +51,6 @@ public class RabbitMqEventBus implements EventBus {
         serializer.serialize(event));
 
     rabbitTemplate.convertAndSend(registerQueue.getName(), notification.serialize().getBytes());
-
-//    eventPublisher.publishEvent(event);
   }
   /*
   @Override
@@ -68,5 +59,4 @@ public class RabbitMqEventBus implements EventBus {
         serializer.;
   }
   */
-
 }

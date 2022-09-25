@@ -7,6 +7,8 @@ import com.sofka.generic.EventStoreRepository;
 import com.sofka.generic.StoredEvent;
 import com.sofka.generic.StoredEvent.EventSerializer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -20,13 +22,17 @@ public class RegisterIntegrationHandle implements Function<Flux<DomainEvent>, Mo
 
   private final EventBus eventBus;
 
+  private final ApplicationEventPublisher applicationEventPublisher;
+
 
   public RegisterIntegrationHandle(EventStoreRepository repository, EventSerializer eventSerializer,
-      EventBus eventBus, UsuarioRepositorio usuarioRepositorio) {
+      EventBus eventBus, UsuarioRepositorio usuarioRepositorio,
+      ApplicationEventPublisher applicationEventPublisher) {
 
     this.repository = repository;
     this.eventSerializer = eventSerializer;
     this.eventBus = eventBus;
+    this.applicationEventPublisher = applicationEventPublisher;
   }
 
   @Override
@@ -37,7 +43,10 @@ public class RegisterIntegrationHandle implements Function<Flux<DomainEvent>, Mo
 
       return repository.saveEvent("wallet", domainEvent.aggregateRootId(), stored)
           .thenReturn(domainEvent);
-    }).doOnNext(eventBus::publishRegister).then();
+    }).doOnNext(eventBus::publishRegister).collect(Collectors.toList())
+        .doOnNext(events -> events.forEach(applicationEventPublisher::publishEvent))
+        .then();
+//    (applicationEventPublisher::publishEvent).then();
   }
 
   @Override

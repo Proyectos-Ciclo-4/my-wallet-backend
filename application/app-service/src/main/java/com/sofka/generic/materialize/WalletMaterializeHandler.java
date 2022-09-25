@@ -13,7 +13,10 @@ import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.scheduling.annotation.EnableAsync;
+import reactor.core.publisher.Mono;
 
+@EnableAsync
 @Configuration
 @Slf4j
 public class WalletMaterializeHandler {
@@ -27,7 +30,7 @@ public class WalletMaterializeHandler {
   }
 
   @EventListener
-  public void handleWalletCreada(WalletCreada walletCreada) {
+  public Mono<HashMap<Object, Object>> handleWalletCreada(WalletCreada walletCreada) {
     log.info("Materializing WalletCreada event: {}", walletCreada);
     var data = new HashMap<>();
 
@@ -36,11 +39,11 @@ public class WalletMaterializeHandler {
     data.put("motivos", new ArrayList<>(List.of("Indefinido")));
     data.put("saldo", walletCreada.getSaldo().value());
 
-    template.save(data, COLLECTION_VIEW).block();
+    return template.save(data, COLLECTION_VIEW);
   }
 
   @EventListener
-  public void handleUsuarioAsignado(UsuarioAsignado usuarioAsignado) {
+  public Mono<Object> handleUsuarioAsignado(UsuarioAsignado usuarioAsignado) {
     log.info("Materializing UsuarioAsignado event: {}", usuarioAsignado);
 
     var update = new Update();
@@ -51,10 +54,9 @@ public class WalletMaterializeHandler {
     usuario.put("email", usuarioAsignado.getEmail().value());
     usuario.put("numero", usuarioAsignado.getNumero().value());
 
-    template.updateFirst(filtrarPorIdDeWallet(usuarioAsignado.aggregateRootId()), update,
-        COLLECTION_VIEW).block();
-
-    template.save(usuario, "usuarios").block();
+    return template.updateFirst(filtrarPorIdDeWallet(usuarioAsignado.aggregateRootId()), update,
+        COLLECTION_VIEW).flatMap(updateResult ->
+        template.save(usuario, "usuarios"));
   }
 
   @EventListener

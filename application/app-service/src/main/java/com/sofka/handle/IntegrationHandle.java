@@ -6,6 +6,8 @@ import com.sofka.generic.EventStoreRepository;
 import com.sofka.generic.StoredEvent;
 import com.sofka.generic.StoredEvent.EventSerializer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -17,24 +19,28 @@ public class IntegrationHandle implements Function<Flux<DomainEvent>, Mono<Void>
 
   private final StoredEvent.EventSerializer eventSerializer;
 
+  private final ApplicationEventPublisher applicationEventPublisher;
+
   private final EventBus eventBus;
 
   public IntegrationHandle(EventStoreRepository repository, EventSerializer eventSerializer,
-      EventBus eventBus) {
+      ApplicationEventPublisher applicationEventPublisher, EventBus eventBus) {
 
     this.repository = repository;
     this.eventSerializer = eventSerializer;
+    this.applicationEventPublisher = applicationEventPublisher;
     this.eventBus = eventBus;
   }
 
   @Override
   public Mono<Void> apply(Flux<DomainEvent> domainEventFlux) {
     return domainEventFlux.flatMap(domainEvent -> {
-      var stored = StoredEvent.wrapEvent(domainEvent, eventSerializer);
+          var stored = StoredEvent.wrapEvent(domainEvent, eventSerializer);
 
-      return repository.saveEvent("wallet", domainEvent.aggregateRootId(), stored)
-          .thenReturn(domainEvent);
-    }).doOnNext(eventBus::publish).then();
+          return repository.saveEvent("wallet", domainEvent.aggregateRootId(), stored)
+              .thenReturn(domainEvent);
+        }).doOnNext(eventBus::publish).collect(Collectors.toList())
+        .doOnNext(events -> events.forEach(applicationEventPublisher::publishEvent)).then();
   }
 
   @Override

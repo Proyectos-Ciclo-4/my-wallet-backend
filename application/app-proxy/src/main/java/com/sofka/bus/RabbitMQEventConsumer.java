@@ -6,6 +6,7 @@ import com.sofka.SocketController;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.messaging.Message;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -22,7 +23,7 @@ public class RabbitMQEventConsumer {
   }
 
   @RabbitListener(queues = {"${wallet.general.queue.name}"})
-  public void receivedMessage(Message<String> message) {
+  public void receivedMessage(@Payload Message<String> message) {
     log.info("Received message from general queue: {}", message.getPayload());
 
     var notification = Notification.from(message.getPayload());
@@ -37,7 +38,7 @@ public class RabbitMQEventConsumer {
   }
 
   @RabbitListener(queues = {"${wallet.register.queue.name}"})
-  public void receivedRegister(Message<String> message) {
+  public void receivedRegister(@Payload Message<String> message) {
     log.info("Received message from register queue: {}", message.getPayload());
 
     var notification = Notification.from(message.getPayload());
@@ -56,15 +57,3 @@ public class RabbitMQEventConsumer {
     }
   }
 }
-
- /*public void receivedMessage(String received) {
-    var event = serializer.deserialize(received, DomainEvent.class);
-    ws.send(event.aggregateRootId(), event);
-  }
-*/
-
-/*
-@RabbitListener(bindings = @QueueBinding(
-    value = @Queue(value = ApplicationConfig.REGISTER_QUEUE, durable = "true"),
-    exchange = @Exchange(value = ApplicationConfig.REGISTER_QUEUE, type = "topic")
-))*/

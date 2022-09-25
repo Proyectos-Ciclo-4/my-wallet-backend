@@ -23,6 +23,9 @@ public class ApplicationConfig {
   @Value("${wallet.register.queue.name}")
   private String walletRegisterQueueName;
 
+  @Value("${wallet.internal.queue.name}")
+  private String internalQueueName;
+
   @Bean(name = "walletGeneralQueue")
   public Queue walletGeneralQueue() {
     return new Queue(walletGeneralQueueName, true);
@@ -32,6 +35,11 @@ public class ApplicationConfig {
   public Queue walletRegisterQueue() {
     return new Queue(walletRegisterQueueName, true);
   }
+
+/*  @Bean(name = "walletInternalQueue")
+  public Queue walletInternalQueue() {
+    return new Queue(internalQueueName, true);
+  }*/
 
   @Bean
   public CorsWebFilter corsWebFilter() {
