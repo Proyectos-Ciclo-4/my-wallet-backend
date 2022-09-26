@@ -23,17 +23,20 @@ public class HistoryMaterializeHandler {
 
   private static final String COLLECTION_VIEW = "history";
 
+  private final WalletMaterializeHandler walletDataHandler;
+
   private final ReactiveMongoTemplate template;
 
-  public HistoryMaterializeHandler(ReactiveMongoTemplate template) {
+  public HistoryMaterializeHandler(ReactiveMongoTemplate template, WalletMaterializeHandler walletDataHandler) {
     this.template = template;
+    this.walletDataHandler = walletDataHandler;
   }
 
   @EventListener
   public Mono<HashMap<Object, Object>> handleTransferenciaRealiazada(
       TransferenciaCreada transferenciaCreada) {
 
-    log.info("Procesando transferencia creada");
+    log.info("Materializando transferencia creada");
     var data = new HashMap<>();
 
     data.put("walletId", transferenciaCreada.aggregateRootId());
@@ -43,6 +46,9 @@ public class HistoryMaterializeHandler {
     data.put("destino", transferenciaCreada.getWalletDestino().value());
     data.put("motivo", transferenciaCreada.getMotivo().value());
     data.put("fecha", LocalDateTime.now());
+
+    //walletDataHandler.appendToWalletHistory(data,transferenciaCreada.aggregateRootId());
+
     return template.save(data, COLLECTION_VIEW);
   }
 
