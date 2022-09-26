@@ -12,6 +12,10 @@ public class WalletModel {
 
   private List<String> motivos;
 
+  private List<String> contactos;
+
+  private List<String> ultimasTransacciones;
+
   private Double saldo;
 
 }

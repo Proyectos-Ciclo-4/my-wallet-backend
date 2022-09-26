@@ -28,6 +28,8 @@ public class QueryHandle {
 //    this.errorHandler = errorHandler;
   }
 
+
+  //TODO 1 esto ahora debe retornar las ultimas 3 transacciones
   @Bean
   public RouterFunction<ServerResponse> isCreated() {
     return RouterFunctions.route(
@@ -51,6 +53,8 @@ public class QueryHandle {
                 .body(BodyInserters.fromPublisher(Mono.just(element), UserModel.class))
             ));
   }
+
+  //TODO GET historial de la blockchain
 
   /*
   @Bean

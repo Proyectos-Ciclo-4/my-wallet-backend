@@ -30,6 +30,8 @@ public class WalletMaterializeHandler {
     this.template = template;
   }
 
+  //TODO modificar materializacion para añadir las ultimas 3 transacciones y solo las ultimas 3.
+
   @EventListener
   public Mono<HashMap<Object, Object>> handleWalletCreada(WalletCreada walletCreada) {
     log.info("Materializing WalletCreada event: {}", walletCreada);
@@ -38,7 +40,8 @@ public class WalletMaterializeHandler {
     data.put("walletId", walletCreada.getWalletID().value());
     data.put("usuario", walletCreada.getUsuarioID().value());
     data.put("motivos", new ArrayList<>(List.of("Indefinido")));
-    //TODO data.put("contactos", newArraylist<>()));
+    data.put("contactos", new ArrayList<>());
+    data.put("ultimasTransacciones", new ArrayList<>());
     data.put("saldo", walletCreada.getSaldo().value());
 
     return template.save(data, COLLECTION_VIEW);

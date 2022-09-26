@@ -51,6 +51,7 @@ public class CommandHandler {
             .then(ServerResponse.ok().build())).filter(handleRuntimeException());
   }
 
+  //TODO probar la creacion de contactos
   @Bean
   public RouterFunction<ServerResponse> contact(AnadirContactoUseCase useCase) {
     return route(POST("/new/contact/").and(accept(MediaType.APPLICATION_JSON)),
@@ -58,6 +59,11 @@ public class CommandHandler {
             .apply(validators.validateUserExists(request.bodyToMono(AnadirContacto.class)))
             .then(ServerResponse.ok().build())).filter(handleRuntimeException());
   }
+
+  //TODO crear motivos
+
+
+
 
   private HandlerFilterFunction<ServerResponse, ServerResponse> handleRuntimeException() {
     return (request, next) -> next.handle(request).onErrorResume(RuntimeException.class,
