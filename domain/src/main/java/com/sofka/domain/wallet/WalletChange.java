@@ -55,7 +55,6 @@ public class WalletChange extends EventChange {
     apply((TransferenciaCreada event) -> {
 
       if (wallet.saldo.value() >= event.getValor().value()) {
-        System.out.println();
         Transferencia transferencia = new Transferencia(
             event.getTransferenciaID(),
             event.getWalletDestino(),

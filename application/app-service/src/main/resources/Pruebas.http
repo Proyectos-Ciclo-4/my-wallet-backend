@@ -26,9 +26,9 @@ POST http://localhost:8084/new/transaction/
 Content-Type: application/json
 
 {
-  "walletOrigen": "1",
   "walletDestino": "2",
-  "valor": 17.0,
+  "walletOrigen": "1",
+  "valor": 17,
   "motivo": "Pago de servicios"
 }
 
