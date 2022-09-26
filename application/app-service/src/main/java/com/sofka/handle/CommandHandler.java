@@ -23,12 +23,12 @@ public class CommandHandler {
 
   private final RegisterIntegrationHandle integrationHandle;
 
-  private final IntegrationHandle generalHandle;
+  private final TransactionConfirmationHandle generalHandle;
 
   private final Validators validators;
 
   public CommandHandler(RegisterIntegrationHandle integrationHandle,
-      IntegrationHandle generalHandle, Validators validators) {
+      TransactionConfirmationHandle generalHandle, Validators validators) {
     this.integrationHandle = integrationHandle;
     this.generalHandle = generalHandle;
     this.validators = validators;

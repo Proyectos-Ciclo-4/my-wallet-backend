@@ -22,28 +22,36 @@ public class TransactionEventHandler {
 
   private final TransfereciaExitosaUseCase transfereciaExitosaUseCase;
 
-  private final IntegrationHandle handle;
+  private final TransactionConfirmationHandle handleConfirmation;
+
+  private final TransactionCreationHandle handleCreation;
+
 
   public TransactionEventHandler(Blockchain blockchain,
       ValidarTransferenciaUseCase validarTransferenciaUseCase,
-      TransfereciaExitosaUseCase transfereciaExitosaUseCase, IntegrationHandle handle) {
+      TransfereciaExitosaUseCase transfereciaExitosaUseCase, TransactionConfirmationHandle handleConfirmation,
+      TransactionCreationHandle handleCreation) {
     this.blockchain = blockchain;
     this.validarTransferenciaUseCase = validarTransferenciaUseCase;
     this.transfereciaExitosaUseCase = transfereciaExitosaUseCase;
-    this.handle = handle;
+    this.handleConfirmation = handleConfirmation;
+    this.handleCreation = handleCreation;
   }
 
+
+  //TODO se esta enviando la transaccion equivocada en transaction creada, llega el aggregate root del destinatario, deberia llegar del sender
   @EventListener
   public Mono<Void> onTransactionCreated(TransferenciaCreada event) {
     log.info("Procesando transferencia creada");
 
-    return handle.apply(validarTransferenciaUseCase.apply(Mono.just(event)));
+    return handleCreation.apply(validarTransferenciaUseCase.apply(Mono.just(event)));
   }
 
+  //TODO se estan escuchando varias veces estos eventos, algo emite nuevos eventos de transaccion exitosa
   @EventListener
   public Mono<Void> onTransactionSuccess(TransferenciaExitosa event) {
     log.info("Procesando transferencia exitosa");
 
-    return handle.apply(transfereciaExitosaUseCase.apply(Mono.just(event)));
+    return handleConfirmation.apply(transfereciaExitosaUseCase.apply(Mono.just(event)));
   }
 }

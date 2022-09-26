@@ -30,7 +30,6 @@ public class ValidarTransferenciaUseCase extends UseCaseForEvent<TransferenciaCr
 
                       var walletDestinoID = WalletID.of(
                           transferenciaCreada.getWalletDestino().value());
-
                       var walletDestino = Wallet.from(walletDestinoID, eventsWalletDestino);
 
                       var cantidad = transferenciaCreada.getValor();

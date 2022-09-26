@@ -17,17 +17,17 @@ import reactor.core.publisher.Mono;
 
 @Component
 @Slf4j
-public class IntegrationHandle implements Function<Flux<DomainEvent>, Mono<Void>> {
+public class TransactionCreationHandle implements Function<Flux<DomainEvent>, Mono<Void>> {
 
   private final EventStoreRepository repository;
 
-  private final StoredEvent.EventSerializer eventSerializer;
+  private final EventSerializer eventSerializer;
 
   private final ApplicationEventPublisher applicationEventPublisher;
 
   private final EventBus eventBus;
 
-  public IntegrationHandle(EventStoreRepository repository, EventSerializer eventSerializer,
+  public TransactionCreationHandle(EventStoreRepository repository, EventSerializer eventSerializer,
       ApplicationEventPublisher applicationEventPublisher, EventBus eventBus) {
 
     this.repository = repository;
@@ -46,23 +46,6 @@ public class IntegrationHandle implements Function<Flux<DomainEvent>, Mono<Void>
         }).doOnNext(eventBus::publish).collect(Collectors.toList())
         .doOnNext(events -> events.forEach(applicationEventPublisher::publishEvent))
         .flatMap(domainEvents -> {
-
-          log.info("Eventos publicados: {}", domainEvents);
-
-          var eventos = domainEvents.stream().filter(event -> event instanceof SaldoModificado)
-              .map(event -> (SaldoModificado) event).count();
-
-          if (eventos == 2) {
-
-            log.info("Emitiendo transferencia exitosa");
-            var saldoModificado = (SaldoModificado) domainEvents.get(0);
-
-            var transferecia = new TransferenciaExitosa(saldoModificado.getTransferenciaID());
-            transferecia.setAggregateRootId(saldoModificado.aggregateRootId());
-
-            applicationEventPublisher.publishEvent(transferecia);
-          }
-
           return Mono.empty();
         }).then();
   }

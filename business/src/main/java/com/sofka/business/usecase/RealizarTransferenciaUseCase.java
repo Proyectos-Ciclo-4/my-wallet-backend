@@ -39,16 +39,16 @@ public class RealizarTransferenciaUseCase extends UseCaseForCommand<RealizarTran
                      var cantidad = realizarTransferencia.getValor();
                      var motivo = realizarTransferencia.getMotivo();
 
-                     walletPropia.crearTransferencia(walletDestinoid, new TransferenciaID(), cantidad,
+                     walletDestino.crearTransferencia(walletDestinoid, new TransferenciaID(), cantidad,
                          motivo);
 
-                     walletDestino.crearTransferencia(walletDestinoid, new TransferenciaID(), cantidad,
+                     walletPropia.crearTransferencia(walletDestinoid, new TransferenciaID(), cantidad,
                          motivo);
 
                      var cambiosPropios = Flux.fromIterable(walletPropia.getUncommittedChanges());
                      var cambiosDeDestino = Flux.fromIterable(walletDestino.getUncommittedChanges());
 
-                     return Flux.concat(cambiosPropios, cambiosDeDestino);
+                     return Flux.concat(cambiosDeDestino, cambiosPropios);
                   });
             }));
   }
