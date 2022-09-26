@@ -2,9 +2,12 @@ package com.sofka.generic.materialize;
 
 import com.mongodb.client.result.UpdateResult;
 import com.sofka.domain.wallet.eventos.SaldoModificado;
+import com.sofka.domain.wallet.eventos.TransferenciaCreada;
 import com.sofka.domain.wallet.eventos.UsuarioAsignado;
 import com.sofka.domain.wallet.eventos.WalletCreada;
+import com.sofka.generic.materialize.model.TransactionModel;
 import com.sofka.generic.materialize.model.WalletModel;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -78,58 +81,47 @@ public class WalletMaterializeHandler {
         COLLECTION_VIEW);
   }
 
-  /*
-  public Mono<UpdateResult> appendToWalletHistory(HashMap<Object,Object> transactionData,String walletId) {
+  @EventListener
+  public Mono<UpdateResult> handleAppendTransaction(TransferenciaCreada transferenciaCreada){
 
-    //TODO findAll no retorna nada... :/
+    var walletQuery = filtrarPorIdDeWallet(transferenciaCreada.aggregateRootId());
+
+    log.info("Materializando y añadiendo a la wallet la transferencia");
+    var data = new TransactionModel(
+        transferenciaCreada.getTransferenciaID().value(),
+        transferenciaCreada.aggregateRootId(),
+        transferenciaCreada.getWalletDestino().value(),
+        transferenciaCreada.getValor().value(),
+        transferenciaCreada.getMotivo().value(),
+        LocalDateTime.now()
+    );
+
+    var transferencias = new ArrayList<>();
+    transferencias.add(data);
 
     var update = new Update();
-    var queryWallet = Query.query(Criteria.where("walletId").is(walletId));
+    update.set("ultimasTransferencias",data);
 
-    var all = template.findAll(WalletModel.class, COLLECTION_VIEW);
-    System.out.println(all.toStream().findFirst().get().toString());
-
-    var walletModel = template.findOne(queryWallet, WalletModel.class, COLLECTION_VIEW).block();
-
-    System.out.println(walletModel);
-
-    var ultimasTransacciones = walletModel.getUltimasTransacciones();
-
-    if (ultimasTransacciones.size() > 3) {
-      ultimasTransacciones.remove(2);
-      ultimasTransacciones.add(transactionData);
-      update.set("ultimasTransacciones", ultimasTransacciones);
-      return template.updateFirst(queryWallet, update,
-          COLLECTION_VIEW);
-    }
-
-    ultimasTransacciones.add(transactionData);
-    update.set("ultimasTransacciones", ultimasTransacciones);
-    return template.updateFirst(queryWallet, update, COLLECTION_VIEW);
-
-
-    /*
-    return this.template.findOne(queryWallet,WalletModel.class,COLLECTION_VIEW).flatMap(walletModel -> {
+    return template.findOne(walletQuery,WalletModel.class,COLLECTION_VIEW).flatMap(walletModel -> {
 
       System.out.println(walletModel);
+      return Mono.just(walletModel);
 
-      var ultimasTransacciones = walletModel.getUltimasTransacciones();
+    }).flatMap(walletModel -> {
 
-      if (ultimasTransacciones.size() > 3){
-        ultimasTransacciones.remove(2);
-        ultimasTransacciones.add(transactionData);
-        update.set("ultimasTransacciones",ultimasTransacciones);
-        return template.updateFirst(queryWallet, update,
-            COLLECTION_VIEW);
-      }
-
-      ultimasTransacciones.add(transactionData);
-      update.set("ultimasTransacciones",ultimasTransacciones);
-      return template.updateFirst(queryWallet, update, COLLECTION_VIEW);
-
+      return template.updateFirst(filtrarPorIdDeWallet(transferenciaCreada.aggregateRootId()), update,
+          COLLECTION_VIEW);
     });
-  }*/
 
+    /*
+    template.findAll(WalletModel.class,COLLECTION_VIEW).filter(
+        walletModel -> walletModel.getWalletId().equals(transferenciaCreada.aggregateRootId()))
+        .collectList().flatMap(walletModel -> {
+              System.out.println(walletModel);
+              return Mono.empty();
+            });
+    */
+  }
 
   private Query filtrarPorIdDeWallet(String walletId) {
     return new Query(Criteria.where("walletId").is(walletId));

@@ -14,7 +14,7 @@ public class WalletModel {
 
   private List<String> contactos;
 
-  private List<TransactionModel> ultimasTransacciones;
+  private List<TransactionModel> ultimasTransferencias;
 
   private Double saldo;
 
