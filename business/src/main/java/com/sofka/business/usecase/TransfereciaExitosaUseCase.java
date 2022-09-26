@@ -26,7 +26,6 @@ public class TransfereciaExitosaUseCase extends UseCaseForEvent<TransferenciaExi
               var wall = Wallet.from(WalletID.of(transferenciaExitosa.aggregateRootId()),
                   domainEvents);
 
-              System.out.println();
               wall.concretarTransferencia(transferenciaExitosa.getTransferenciaID());
 
               return wall.getUncommittedChanges();

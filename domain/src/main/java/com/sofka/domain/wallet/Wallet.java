@@ -94,6 +94,7 @@ public class Wallet extends AggregateEvent<WalletID> {
 
     Objects.requireNonNull(transferenciaID);
 
+    System.out.println("Creando transferencia exitosa en WALLET.class");
     appendChange(new TransferenciaExitosa(transferenciaID));
   }
 

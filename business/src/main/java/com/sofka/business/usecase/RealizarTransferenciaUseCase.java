@@ -20,25 +20,78 @@ public class RealizarTransferenciaUseCase extends UseCaseForCommand<RealizarTran
   public Flux<DomainEvent> apply(Mono<RealizarTransferencia> realizarTransferenciaMono) {
     return realizarTransferenciaMono.flatMapMany(
         realizarTransferencia -> walletsRepository.obtenerEventos(
-                realizarTransferencia.getWalletDestino().value()).collectList()
-            .flatMapMany(domainEvents -> {
-              var walletDestinoid = realizarTransferencia.getWalletDestino();
-              var walletPropiaId = realizarTransferencia.getWalletOrigen();
+                realizarTransferencia.getWalletOrigen().value()).collectList()
+            .flatMapMany(origenEvents -> {
+               return walletsRepository.obtenerEventos(realizarTransferencia.getWalletDestino().value())
+                  .collectList().flatMapMany(destinoEvents -> {
 
-              var walletPropia = Wallet.from(walletPropiaId, domainEvents);
-              var walletDestino = Wallet.from(walletDestinoid, domainEvents);
-              var cantidad = realizarTransferencia.getValor();
-              var motivo = realizarTransferencia.getMotivo();
+                     var walletDestinoid = realizarTransferencia.getWalletDestino();
+                     var walletPropiaId = realizarTransferencia.getWalletOrigen();
 
-              walletPropia.crearTransferencia(walletDestinoid, new TransferenciaID(), cantidad,
-                  motivo);
-              walletDestino.crearTransferencia(walletDestinoid, new TransferenciaID(), cantidad,
-                  motivo);
+                     System.out.println(walletPropiaId);
 
-              var cambiosPropios = Flux.fromIterable(walletPropia.getUncommittedChanges());
-              var cambiosDeDestino = Flux.fromIterable(walletDestino.getUncommittedChanges());
+                     System.out.println("Eventos registrados de la wallet propia:");
+                     origenEvents.forEach(event -> System.out.println(event.toString()));
+                     var walletPropia = Wallet.from(walletPropiaId, origenEvents);
+                     System.out.println("Eventos registrados de la wallet destino:");
+                     destinoEvents.forEach(event -> System.out.println(event.toString()));
+                     var walletDestino = Wallet.from(walletDestinoid, destinoEvents);
+                     var cantidad = realizarTransferencia.getValor();
+                     var motivo = realizarTransferencia.getMotivo();
 
-              return Flux.concat(cambiosPropios, cambiosDeDestino);
+                     walletPropia.crearTransferencia(walletDestinoid, new TransferenciaID(), cantidad,
+                         motivo);
+
+                     walletDestino.crearTransferencia(walletDestinoid, new TransferenciaID(), cantidad,
+                         motivo);
+
+                     var cambiosPropios = Flux.fromIterable(walletPropia.getUncommittedChanges());
+                     var cambiosDeDestino = Flux.fromIterable(walletDestino.getUncommittedChanges());
+
+                     return Flux.concat(cambiosPropios, cambiosDeDestino);
+                  });
             }));
   }
 }
+
+  /*
+
+  @Override
+  public Flux<DomainEvent> apply(Mono<RealizarTransferencia> realizarTransferenciaMono) {
+    return realizarTransferenciaMono.flatMapMany(
+        realizarTransferencia -> walletsRepository.obtenerEventos(
+                realizarTransferencia.getWalletOrigen().value()).collectList()
+            .flatMapMany(origenEvents -> {
+
+              walletsRepository.obtenerEventos(realizarTransferencia.getWalletDestino().value())
+                  .collectList().flatMap(destinoEvents -> {
+
+                    var walletDestinoid = realizarTransferencia.getWalletDestino();
+                    var walletPropiaId = realizarTransferencia.getWalletOrigen();
+
+                    System.out.println(walletPropiaId);
+
+                    System.out.println("Eventos registrados de la wallet propia:");
+                    origenEvents.forEach(event -> System.out.println(event.toString()));
+                    var walletPropia = Wallet.from(walletPropiaId, origenEvents);
+                    System.out.println("Eventos registrados de la wallet destino:");
+                    destinoEvents.forEach(event -> System.out.println(event.toString()));
+                    var walletDestino = Wallet.from(walletDestinoid, destinoEvents);
+                    var cantidad = realizarTransferencia.getValor();
+                    var motivo = realizarTransferencia.getMotivo();
+
+                    walletPropia.crearTransferencia(walletDestinoid, new TransferenciaID(), cantidad,
+                        motivo);
+
+                    walletDestino.crearTransferencia(walletDestinoid, new TransferenciaID(), cantidad,
+                        motivo);
+
+                    var cambiosPropios = Flux.fromIterable(walletPropia.getUncommittedChanges());
+                    var cambiosDeDestino = Flux.fromIterable(walletDestino.getUncommittedChanges());
+
+                    return Flux.concat(cambiosPropios, cambiosDeDestino);
+                  });
+            }));
+  }
+}
+*/

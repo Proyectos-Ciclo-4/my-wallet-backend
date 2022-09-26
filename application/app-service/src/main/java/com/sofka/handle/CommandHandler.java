@@ -44,11 +44,13 @@ public class CommandHandler {
             .then(ServerResponse.ok().build())).filter(handleRuntimeException());
   }
 
+  //TODO bug con respecto a la transferencia de doubles.
+  //TODO bug con respecto a 2 transferencias
   @Bean
   public RouterFunction<ServerResponse> transaction(RealizarTransferenciaUseCase useCase) {
     return route(POST("/new/transaction/").and(accept(MediaType.APPLICATION_JSON)),
         request -> useCase.andThen(generalHandle).apply(validators.validateWallet(request))
-            .then(ServerResponse.ok().build())).filter(handleRuntimeException());
+            .then(ServerResponse.ok().build()));//.filter(handleRuntimeException());
   }
 
   //TODO probar la creacion de contactos
@@ -61,10 +63,6 @@ public class CommandHandler {
   }
 
   //TODO crear motivos
-
-
-
-
   private HandlerFilterFunction<ServerResponse, ServerResponse> handleRuntimeException() {
     return (request, next) -> next.handle(request).onErrorResume(RuntimeException.class,
         e -> ServerResponse.badRequest().bodyValue(e.getMessage()));

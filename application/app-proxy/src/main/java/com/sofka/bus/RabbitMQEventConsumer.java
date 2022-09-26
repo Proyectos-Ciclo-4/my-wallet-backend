@@ -22,6 +22,7 @@ public class RabbitMQEventConsumer {
     this.ws = ws;
   }
 
+  //TODO bug rabbitMQ escucha eventos infinitos
   @RabbitListener(queues = {"${wallet.general.queue.name}"})
   public void receivedMessage(@Payload Message<String> message) {
     log.info("Received message from general queue: {}", message.getPayload());

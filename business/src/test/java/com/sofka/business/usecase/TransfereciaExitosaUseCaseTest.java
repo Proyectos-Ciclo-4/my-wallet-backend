@@ -36,9 +36,8 @@ class TransfereciaExitosaUseCaseTest {
   private TransfereciaExitosaUseCase useCase;
 
   @Test
-  void transferenciaExitosa() {
-    var transferenciaExitosa = new TransferenciaExitosa(TransferenciaID.of("xxx-xxx"),
-        new Cantidad(101.0));
+  void TransferenciaExitosa() {
+    var transferenciaExitosa = new TransferenciaExitosa(TransferenciaID.of("xxx-xxx"));
     transferenciaExitosa.setAggregateRootId("w1");
 
     when(repository.obtenerEventos(transferenciaExitosa.aggregateRootId())).thenReturn(history());
@@ -61,7 +60,7 @@ class TransfereciaExitosaUseCaseTest {
     var saldo = new Saldo(100.0);
     var listaMotivos = List.of(new Motivo("Motivo 1"));
 
-    var walletCreada = new WalletCreada(walletId, usuarioId, saldo, listaMotivos);
+    var walletCreada = new WalletCreada(walletId, usuarioId, saldo);
 
     var walletDestino = WalletID.of("w1");
     var transferenciaId = TransferenciaID.of("xxx-xxx");
@@ -69,7 +68,7 @@ class TransfereciaExitosaUseCaseTest {
     var cantidad = new Cantidad(100.0);
     var motivo = new Motivo("Motivo 1");
 
-    var transferenciaCreada = new TransferenciaCreada(walletDestino, transferenciaId, estado,
+    var transferenciaCreada = new TransferenciaCreada(walletDestino, transferenciaId,
         cantidad, motivo);
 
     return Flux.just(walletCreada, transferenciaCreada);

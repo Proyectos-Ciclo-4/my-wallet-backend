@@ -73,7 +73,6 @@ public class WalletChange extends EventChange {
     });
 
     apply((TransferenciaExitosa event) -> {
-      System.out.println();
       Transferencia transferencia = wallet.getTransferenciaPorId(event.getTransferenciaID())
           .orElseThrow();
       transferencia.setEstado(new Estado(TipoDeEstado.EXITOSA));
