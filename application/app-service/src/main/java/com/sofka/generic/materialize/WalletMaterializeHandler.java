@@ -78,19 +78,37 @@ public class WalletMaterializeHandler {
         COLLECTION_VIEW);
   }
 
-  public Mono<UpdateResult> appendToWalletHistory(HashMap<Object,Object> transactionData,String walletId){
+  /*
+  public Mono<UpdateResult> appendToWalletHistory(HashMap<Object,Object> transactionData,String walletId) {
 
     //TODO findAll no retorna nada... :/
 
     var update = new Update();
     var queryWallet = Query.query(Criteria.where("walletId").is(walletId));
 
-    var all = template.findAll(WalletModel.class,COLLECTION_VIEW);
+    var all = template.findAll(WalletModel.class, COLLECTION_VIEW);
     System.out.println(all.toStream().findFirst().get().toString());
 
-    //var x = template.findOne(queryWallet, WalletModel.class, COLLECTION_VIEW);
-    //System.out.println("Wallet model by findone: " + x.block());
+    var walletModel = template.findOne(queryWallet, WalletModel.class, COLLECTION_VIEW).block();
 
+    System.out.println(walletModel);
+
+    var ultimasTransacciones = walletModel.getUltimasTransacciones();
+
+    if (ultimasTransacciones.size() > 3) {
+      ultimasTransacciones.remove(2);
+      ultimasTransacciones.add(transactionData);
+      update.set("ultimasTransacciones", ultimasTransacciones);
+      return template.updateFirst(queryWallet, update,
+          COLLECTION_VIEW);
+    }
+
+    ultimasTransacciones.add(transactionData);
+    update.set("ultimasTransacciones", ultimasTransacciones);
+    return template.updateFirst(queryWallet, update, COLLECTION_VIEW);
+
+
+    /*
     return this.template.findOne(queryWallet,WalletModel.class,COLLECTION_VIEW).flatMap(walletModel -> {
 
       System.out.println(walletModel);
@@ -110,9 +128,11 @@ public class WalletMaterializeHandler {
       return template.updateFirst(queryWallet, update, COLLECTION_VIEW);
 
     });
-  }
+  }*/
+
 
   private Query filtrarPorIdDeWallet(String walletId) {
     return new Query(Criteria.where("walletId").is(walletId));
   }
+
 }

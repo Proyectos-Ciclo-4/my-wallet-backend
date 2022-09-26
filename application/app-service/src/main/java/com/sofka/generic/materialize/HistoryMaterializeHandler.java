@@ -4,6 +4,7 @@ import com.mongodb.client.result.UpdateResult;
 import com.sofka.domain.wallet.eventos.TransferenciaCreada;
 import com.sofka.domain.wallet.eventos.TransferenciaExitosa;
 import com.sofka.domain.wallet.eventos.TransferenciaFallida;
+import com.sofka.generic.materialize.model.TransactionModel;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import lombok.extern.slf4j.Slf4j;
@@ -33,12 +34,20 @@ public class HistoryMaterializeHandler {
   }
 
   @EventListener
-  public Mono<HashMap<Object, Object>> handleTransferenciaRealiazada(
+  public Mono<TransactionModel> handleTransferenciaRealiazada(
       TransferenciaCreada transferenciaCreada) {
 
     log.info("Materializando transferencia creada");
-    var data = new HashMap<>();
+    var data = new TransactionModel(
+        transferenciaCreada.getTransferenciaID().value(),
+        transferenciaCreada.aggregateRootId(),
+        transferenciaCreada.getWalletDestino().value(),
+        transferenciaCreada.getValor().value(),
+        transferenciaCreada.getMotivo().value(),
+        LocalDateTime.now()
+        );
 
+    /*
     data.put("walletId", transferenciaCreada.aggregateRootId());
     data.put("transferencia_id", transferenciaCreada.getTransferenciaID().value());
     data.put("valor", transferenciaCreada.getValor().value());
@@ -46,8 +55,8 @@ public class HistoryMaterializeHandler {
     data.put("destino", transferenciaCreada.getWalletDestino().value());
     data.put("motivo", transferenciaCreada.getMotivo().value());
     data.put("fecha", LocalDateTime.now());
-
-    //walletDataHandler.appendToWalletHistory(data,transferenciaCreada.aggregateRootId());
+     */
+    //TODO esto se vuelve bloqueante en la 2da peticion.
 
     return template.save(data, COLLECTION_VIEW);
   }
