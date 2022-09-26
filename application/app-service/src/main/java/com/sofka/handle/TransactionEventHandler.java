@@ -38,8 +38,6 @@ public class TransactionEventHandler {
     this.handleCreation = handleCreation;
   }
 
-
-  //TODO se esta enviando la transaccion equivocada en transaction creada, llega el aggregate root del destinatario, deberia llegar del sender
   @EventListener
   public Mono<Void> onTransactionCreated(TransferenciaCreada event) {
     log.info("Procesando transferencia creada");
@@ -47,7 +45,7 @@ public class TransactionEventHandler {
     return handleCreation.apply(validarTransferenciaUseCase.apply(Mono.just(event)));
   }
 
-  //TODO se estan escuchando varias veces estos eventos, algo emite nuevos eventos de transaccion exitosa
+  //TODO este listener no esta haciendo nada, si tratamos de que publique los eventos de transaccion exitosa quedará en bucle.
   @EventListener
   public Mono<Void> onTransactionSuccess(TransferenciaExitosa event) {
     log.info("Procesando transferencia exitosa");

@@ -10,6 +10,7 @@ import com.sofka.domain.wallet.eventos.TransferenciaExitosa;
 import com.sofka.domain.wallet.eventos.TransferenciaFallida;
 import com.sofka.domain.wallet.eventos.UsuarioAsignado;
 import com.sofka.domain.wallet.eventos.WalletCreada;
+import com.sofka.domain.wallet.objetosdevalor.BlockchainID;
 import com.sofka.domain.wallet.objetosdevalor.Estado;
 import com.sofka.domain.wallet.objetosdevalor.Estado.TipoDeEstado;
 import com.sofka.domain.wallet.objetosdevalor.FechayHora;
@@ -58,6 +59,7 @@ public class WalletChange extends EventChange {
         Transferencia transferencia = new Transferencia(
             event.getTransferenciaID(),
             event.getWalletDestino(),
+            new BlockchainID(""),
             new Estado(TipoDeEstado.PENDIENTE),
             new FechayHora(LocalDate.now()),
             event.getValor(),
