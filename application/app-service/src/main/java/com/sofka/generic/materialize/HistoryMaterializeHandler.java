@@ -34,7 +34,7 @@ public class HistoryMaterializeHandler {
   public Mono<HashMap<Object, Object>> handleTransferenciaRealiazada(
       TransferenciaCreada transferenciaCreada) {
 
-    log.info("Procesando transferencia creada");
+    log.info("Materializando transferencia creada {}", transferenciaCreada);
     var data = new HashMap<>();
 
     data.put("walletId", transferenciaCreada.aggregateRootId());

@@ -1,8 +1,6 @@
 package com.sofka.handle;
 
 import co.com.sofka.domain.generic.DomainEvent;
-import com.sofka.domain.wallet.eventos.SaldoModificado;
-import com.sofka.domain.wallet.eventos.TransferenciaExitosa;
 import com.sofka.generic.EventBus;
 import com.sofka.generic.EventStoreRepository;
 import com.sofka.generic.StoredEvent;
@@ -39,37 +37,17 @@ public class IntegrationHandle implements Function<Flux<DomainEvent>, Mono<Void>
   @Override
   public Mono<Void> apply(Flux<DomainEvent> domainEventFlux) {
     return domainEventFlux.flatMap(domainEvent -> {
+          log.info("Guardando el evento: {}", domainEvent);
+
           var stored = StoredEvent.wrapEvent(domainEvent, eventSerializer);
 
           return repository.saveEvent("wallet", domainEvent.aggregateRootId(), stored).log()
               .thenReturn(domainEvent);
         }).doOnNext(eventBus::publish).collect(Collectors.toList())
         .doOnNext(events -> events.forEach(applicationEventPublisher::publishEvent))
-        .flatMap(domainEvents -> {
+        .doOnNext(domainEvents ->
+            log.info("Eventos publicados: {}", domainEvents)).then();
 
-          log.info("Eventos publicados: {}", domainEvents);
-
-         /* var eventos = domainEvents.stream().filter(event -> event instanceof SaldoModificado)
-              .map(event -> (SaldoModificado) event).count();
-
-          if (eventos == 2) {
-
-            log.info("Emitiendo transferencia exitosa");
-            var saldoModificado = (SaldoModificado) domainEvents.get(0);
-            var saldoModificado2 = (SaldoModificado) domainEvents.get(1);
-
-            var transferecia1 = new TransferenciaExitosa(saldoModificado.getTransferenciaID());
-            transferecia1.setAggregateRootId(saldoModificado.aggregateRootId());
-
-            var transferecia2 = new TransferenciaExitosa(saldoModificado.getTransferenciaID());
-            transferecia2.setAggregateRootId(saldoModificado2.aggregateRootId());
-
-            applicationEventPublisher.publishEvent(transferecia1);
-            applicationEventPublisher.publishEvent(transferecia2);
-          }*/
-
-          return Mono.empty();
-        }).then();
   }
 
   public Mono<Void> handleShortcuts(Flux<DomainEvent> domainEventFlux) {

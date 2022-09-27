@@ -4,6 +4,7 @@ import co.com.sofka.domain.generic.DomainEvent;
 import com.sofka.business.usecase.gateway.WalletDomainEventRepository;
 import com.sofka.domain.wallet.Wallet;
 import com.sofka.domain.wallet.comandos.RealizarTransferencia;
+import java.util.ArrayList;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -40,13 +41,10 @@ public class RealizarTransferenciaUseCase extends UseCaseForCommand<RealizarTran
                   walletDestino.crearTransferencia(walletOrigen, walletDestinoID,
                       cantidad, motivo);
 
-                  var cambiosPropia = walletPropia.getUncommittedChanges();
-                  var cambiosDestino = walletDestino.getUncommittedChanges();
+                  var cambios = new ArrayList<>(walletPropia.getUncommittedChanges());
+                  cambios.addAll(walletDestino.getUncommittedChanges());
 
-                  var cambiosPropios = Flux.fromIterable(cambiosPropia);
-                  var cambiosDeDestino = Flux.fromIterable(cambiosDestino);
-
-                  return Flux.concat(cambiosPropios, cambiosDeDestino);
+                  return Flux.fromIterable(cambios);
                 })));
   }
 }

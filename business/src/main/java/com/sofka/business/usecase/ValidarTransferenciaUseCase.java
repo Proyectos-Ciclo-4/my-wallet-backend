@@ -4,10 +4,7 @@ import co.com.sofka.domain.generic.DomainEvent;
 import com.sofka.business.usecase.gateway.WalletDomainEventRepository;
 import com.sofka.domain.wallet.Wallet;
 import com.sofka.domain.wallet.eventos.TransferenciaCreada;
-import com.sofka.domain.wallet.eventos.TransferenciaValidada;
-import com.sofka.domain.wallet.objetosdevalor.Cantidad;
 import com.sofka.domain.wallet.objetosdevalor.WalletID;
-import java.util.ArrayList;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -22,62 +19,21 @@ public class ValidarTransferenciaUseCase extends UseCaseForEvent<TransferenciaCr
   @Override
   public Flux<DomainEvent> apply(Mono<TransferenciaCreada> transferenciaCreadaMono) {
     return transferenciaCreadaMono.flatMapMany(
-        transferenciaCreada -> repository.obtenerEventos(transferenciaCreada.aggregateRootId())
-            .collectList().flatMapMany(
-                eventsWalletOrigen -> getEventsWalletDestino(transferenciaCreada).collectList()
-                    .flatMapMany(eventsWalletDestino -> {
+        transferenciaCreada -> getEventsWallet(transferenciaCreada).collectList()
+            .flatMapMany(events -> {
+              var walletId = WalletID.of(transferenciaCreada.aggregateRootId());
+              var wallet = Wallet.from(walletId, events);
+              var transfereciaId = transferenciaCreada.getTransferenciaID();
+              var cantidad = transferenciaCreada.getWalletDestino().equals(walletId)
+                  ? transferenciaCreada.getValor() : transferenciaCreada.getValor().negate();
 
-                      var walletOrigenID = WalletID.of(transferenciaCreada.aggregateRootId());
-                      var walletOrigen = Wallet.from(walletOrigenID, eventsWalletOrigen);
+              wallet.ModificarSaldo(walletId, cantidad, transfereciaId);
 
-                      var walletDestinoID = WalletID.of(
-                          transferenciaCreada.getWalletDestino().value());
-
-                      var walletDestino = Wallet.from(walletDestinoID, eventsWalletDestino);
-
-                      var cantidad = transferenciaCreada.getValor();
-
-                      var cantidadWalletOrigen = new Cantidad(cantidad.value() * -1);
-
-                      walletDestino.ModificarSaldo(walletDestinoID, cantidad,
-                          transferenciaCreada.getTransferenciaID());
-
-                      walletOrigen.ModificarSaldo(walletOrigenID, cantidadWalletOrigen,
-                          transferenciaCreada.getTransferenciaID());
-
-                      var cambiosOrigen = walletOrigen.getUncommittedChanges();
-                      var cambiosDestino = walletDestino.getUncommittedChanges();
-                      var cambios = new ArrayList<>(cambiosOrigen);
-
-                      var transferenciaValida1 = new TransferenciaValidada(
-                          transferenciaCreada.getWalletOrigen(),
-                          transferenciaCreada.getWalletDestino(),
-                          transferenciaCreada.getTransferenciaID(), transferenciaCreada.getValor(),
-                          transferenciaCreada.getMotivo(),
-                          transferenciaCreada.getEstadoDeTransferencia());
-
-                      var transferenciaValida2 = new TransferenciaValidada(
-                          transferenciaCreada.getWalletOrigen(),
-                          transferenciaCreada.getWalletDestino(),
-                          transferenciaCreada.getTransferenciaID(), transferenciaCreada.getValor(),
-                          transferenciaCreada.getMotivo(),
-                          transferenciaCreada.getEstadoDeTransferencia());
-
-                      transferenciaValida1.setAggregateRootId(
-                          transferenciaCreada.aggregateRootId());
-
-                      transferenciaValida2.setAggregateRootId(
-                          transferenciaCreada.getWalletDestino().value());
-
-                      cambios.addAll(new ArrayList<>(cambiosDestino));
-                      cambios.add(transferenciaValida1);
-                      cambios.add(transferenciaValida2);
-
-                      return Flux.fromIterable(cambios);
-                    })));
+              return Flux.fromIterable(wallet.getUncommittedChanges());
+            }));
   }
 
-  private Flux<DomainEvent> getEventsWalletDestino(TransferenciaCreada transferenciaCreada) {
-    return repository.obtenerEventos(transferenciaCreada.getWalletDestino().value());
+  private Flux<DomainEvent> getEventsWallet(TransferenciaCreada transferenciaCreada) {
+    return repository.obtenerEventos(transferenciaCreada.aggregateRootId());
   }
 }

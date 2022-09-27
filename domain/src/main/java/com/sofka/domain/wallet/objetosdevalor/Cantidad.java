@@ -17,4 +17,8 @@ public class Cantidad implements ValueObject<Double> {
     return this.monto;
   }
 
+  public Cantidad negate() {
+    return new Cantidad(-this.monto);
+  }
+
 }

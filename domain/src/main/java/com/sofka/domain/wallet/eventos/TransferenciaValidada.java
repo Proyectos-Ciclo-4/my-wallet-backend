@@ -7,8 +7,10 @@ import com.sofka.domain.wallet.objetosdevalor.Motivo;
 import com.sofka.domain.wallet.objetosdevalor.TransferenciaID;
 import com.sofka.domain.wallet.objetosdevalor.WalletID;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
+@ToString
 public class TransferenciaValidada extends DomainEvent {
 
   private final WalletID walletOrigen;
