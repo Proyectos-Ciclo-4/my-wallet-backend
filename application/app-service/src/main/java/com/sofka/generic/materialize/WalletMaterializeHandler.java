@@ -4,6 +4,8 @@ import com.mongodb.client.result.UpdateResult;
 import com.sofka.domain.wallet.eventos.SaldoModificado;
 import com.sofka.domain.wallet.eventos.UsuarioAsignado;
 import com.sofka.domain.wallet.eventos.WalletCreada;
+import com.sofka.generic.materialize.model.TransaccionDeHistorial;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +41,7 @@ public class WalletMaterializeHandler {
     data.put("usuario", walletCreada.getUsuarioID().value());
     data.put("motivos", new ArrayList<>(List.of("Indefinido")));
     data.put("saldo", walletCreada.getSaldo().value());
+    data.put("historial", new ArrayList<>(List.of(new TransaccionDeHistorial(walletCreada.getWalletID().value(),walletCreada.getWalletID().value()))));
 
     return template.save(data, COLLECTION_VIEW);
   }

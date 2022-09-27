@@ -75,6 +75,21 @@ public class QueryHandle {
             ));
   }
 
+  @Bean
+  public RouterFunction<ServerResponse> userExistsEmail() {
+    return RouterFunctions.route(
+        GET("/walletByEmail/{email}"),
+        request -> template.findOne(filterByEmail(request.pathVariable("email")),
+                UserModel.class, "usuarios")
+            .flatMap(element -> {
+                  System.out.println(element);
+                  return ServerResponse.ok()
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .body(BodyInserters.fromPublisher(Mono.just(element), UserModel.class));
+                }
+            ));
+  }
+
   //Retorna true si existe el correo O el telefono, CUALQUIERA DE LOS DOS
   @Bean
   public RouterFunction<ServerResponse> userBothValidation() {
@@ -122,5 +137,9 @@ public class QueryHandle {
 
   private Query filterByPhoneNumber(String phoneNumber) {
     return new Query(Criteria.where("numero").is(phoneNumber));
+  }
+
+  private Query filterByEmail(String email) {
+    return new Query(Criteria.where("email").is(email));
   }
 }
