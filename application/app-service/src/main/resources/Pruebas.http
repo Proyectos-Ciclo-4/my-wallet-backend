@@ -33,4 +33,5 @@ Content-Type: application/json
 }
 
 ### Constular wallet
-GET http://localhost:8084/wallet/1234567890
+GET http://localhost:8084/wallet/1
+

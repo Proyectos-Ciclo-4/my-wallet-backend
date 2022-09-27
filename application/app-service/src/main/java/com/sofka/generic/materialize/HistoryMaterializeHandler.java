@@ -69,17 +69,12 @@ public class HistoryMaterializeHandler {
     return template.updateMulti(
         filtrarPorIdDeTransferencia(transferenciaExitosa.getTransferenciaID().value()), update,
         COLLECTION_VIEW).flatMap(updateResult -> template.updateMulti(
-        filtrarPorWalletsId(transferenciaExitosa.getWalletOrigen().value(),
-            transferenciaExitosa.getWalletDestino().value()), updateWalletHistory, "wallet_data"));
+        filtrarPorWalletsId(transferenciaExitosa.aggregateRootId()), updateWalletHistory,
+        "wallet_data"));
   }
 
   @NotNull
   private static Update updateWalletHistory(TransferenciaExitosa transferenciaExitosa) {
-
-//    if(transferenciaExitosa.aggregateRootId().equals(transferenciaExitosa.getWalletDestino().value()) ){
-//
-//    }
-
     var updateWalletHistory = new Update();
     var data = new HashMap<>();
     data.put("walletId", transferenciaExitosa.aggregateRootId());
@@ -94,8 +89,8 @@ public class HistoryMaterializeHandler {
     return updateWalletHistory;
   }
 
-  private Query filtrarPorWalletsId(String id1, String id2) {
-    return new Query(Criteria.where("walletId").in(id1, id2));
+  private Query filtrarPorWalletsId(String id) {
+    return new Query(Criteria.where("walletId").in(id));
   }
 
   private Query filtrarPorIdDeTransferencia(String transfereciaFallida) {

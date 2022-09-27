@@ -14,4 +14,5 @@ public class WalletModel {
 
   private Double saldo;
 
+  private List<TransaccionDeHistorial> historial;
 }
