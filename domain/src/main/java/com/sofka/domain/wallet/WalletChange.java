@@ -38,8 +38,7 @@ public class WalletChange extends EventChange {
     });
 
     apply((ContactoEliminado event) -> {
-      Usuario contactoAEliminar = wallet.getContactoPorId(event.getContactoID())
-          .orElseThrow();
+      Usuario contactoAEliminar = wallet.getContactoPorId(event.getContactoID()).orElseThrow();
       wallet.contactos.remove(contactoAEliminar);
     });
 
@@ -55,13 +54,9 @@ public class WalletChange extends EventChange {
 
       if (wallet.saldo.value() >= event.getValor().value()) {
         System.out.println();
-        Transferencia transferencia = new Transferencia(
-            event.getTransferenciaID(),
-            event.getWalletDestino(),
-            new Estado(TipoDeEstado.PENDIENTE),
-            new FechayHora(LocalDate.now()),
-            event.getValor(),
-            event.getMotivo());
+        Transferencia transferencia = new Transferencia(event.getTransferenciaID(),
+            event.getWalletDestino(), new Estado(TipoDeEstado.PENDIENTE),
+            new FechayHora(LocalDate.now()), event.getValor(), event.getMotivo());
 
         wallet.transferencias.add(transferencia);
 
@@ -74,9 +69,9 @@ public class WalletChange extends EventChange {
 
     apply((TransferenciaExitosa event) -> {
       System.out.println();
-//      Transferencia transferencia = wallet.getTransferenciaPorId(event.getTransferenciaID())
-//          .orElseThrow();
-//      transferencia.setEstado(new Estado(TipoDeEstado.EXITOSA));
+      Transferencia transferencia = wallet.getTransferenciaPorId(event.getTransferenciaID())
+          .orElseThrow();
+      transferencia.setEstado(new Estado(TipoDeEstado.EXITOSA));
     });
 
     apply((TransferenciaFallida event) -> {

@@ -4,6 +4,7 @@ import co.com.sofka.domain.generic.DomainEvent;
 import com.sofka.business.usecase.gateway.WalletDomainEventRepository;
 import com.sofka.domain.wallet.Wallet;
 import com.sofka.domain.wallet.eventos.TransferenciaCreada;
+import com.sofka.domain.wallet.objetosdevalor.Cantidad;
 import com.sofka.domain.wallet.objetosdevalor.WalletID;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -24,13 +25,25 @@ public class ValidarTransferenciaUseCase extends UseCaseForEvent<TransferenciaCr
               var walletId = WalletID.of(transferenciaCreada.aggregateRootId());
               var wallet = Wallet.from(walletId, events);
               var transfereciaId = transferenciaCreada.getTransferenciaID();
-              var cantidad = transferenciaCreada.getWalletDestino().equals(walletId)
-                  ? transferenciaCreada.getValor() : transferenciaCreada.getValor().negate();
+
+              var cantidad = getCantidad(transferenciaCreada, walletId);
 
               wallet.ModificarSaldo(walletId, cantidad, transfereciaId);
+              wallet.validarTransferencia(transferenciaCreada.getWalletOrigen(),
+                  transferenciaCreada.getWalletDestino(),
+                  transferenciaCreada.getTransferenciaID(),
+                  transferenciaCreada.getEstadoDeTransferencia(),
+                  transferenciaCreada.getValor(),
+                  transferenciaCreada.getMotivo()
+              );
 
               return Flux.fromIterable(wallet.getUncommittedChanges());
             }));
+  }
+
+  private static Cantidad getCantidad(TransferenciaCreada transferenciaCreada, WalletID walletId) {
+    return transferenciaCreada.getWalletDestino().equals(walletId)
+        ? transferenciaCreada.getValor() : transferenciaCreada.getValor().negate();
   }
 
   private Flux<DomainEvent> getEventsWallet(TransferenciaCreada transferenciaCreada) {

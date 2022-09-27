@@ -9,6 +9,7 @@ import com.sofka.domain.wallet.eventos.SaldoModificado;
 import com.sofka.domain.wallet.eventos.TransferenciaCreada;
 import com.sofka.domain.wallet.eventos.TransferenciaExitosa;
 import com.sofka.domain.wallet.eventos.TransferenciaFallida;
+import com.sofka.domain.wallet.eventos.TransferenciaValidada;
 import com.sofka.domain.wallet.eventos.UsuarioAsignado;
 import com.sofka.domain.wallet.eventos.UsuarioExistente;
 import com.sofka.domain.wallet.eventos.WalletCreada;
@@ -128,6 +129,21 @@ public class Wallet extends AggregateEvent<WalletID> {
     Objects.requireNonNull(walletID);
     Objects.requireNonNull(cantidad);
     appendChange(new SaldoModificado(walletID, cantidad, transferenciaID));
+  }
+
+  public void validarTransferencia(WalletID walletOrigen, WalletID walletDestino,
+      TransferenciaID transferenciaID, Estado estadoDeTransferencia, Cantidad valor,
+      Motivo motivo) {
+
+    Objects.requireNonNull(transferenciaID);
+    Objects.requireNonNull(estadoDeTransferencia);
+    Objects.requireNonNull(valor);
+    Objects.requireNonNull(motivo);
+    Objects.requireNonNull(walletOrigen);
+    Objects.requireNonNull(walletDestino);
+
+    appendChange(new TransferenciaValidada(walletOrigen, walletDestino, transferenciaID,
+        valor, motivo, estadoDeTransferencia));
   }
 
   public Optional<Transferencia> getTransferenciaPorId(TransferenciaID transferenciaID) {
