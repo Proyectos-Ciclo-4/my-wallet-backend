@@ -50,7 +50,7 @@ public class CommandHandler {
     return route(
         POST("/new/transaction/").and(accept(MediaType.APPLICATION_JSON)),
         request -> useCase.andThen(generalHandle)
-            .apply(validators.validateWallet(request.bodyToMono(RealizarTransferencia.class)))
+            .apply(validators.validateWallet(request))
             .then(ServerResponse.ok().build()))
         .filter(handleRuntimeException());
   }
