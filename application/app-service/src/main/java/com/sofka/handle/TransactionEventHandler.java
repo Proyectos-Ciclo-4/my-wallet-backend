@@ -27,6 +27,7 @@ public class TransactionEventHandler {
   public TransactionEventHandler(Blockchain blockchain,
       ValidarTransferenciaUseCase validarTransferenciaUseCase,
       TransfereciaExitosaUseCase transfereciaExitosaUseCase, IntegrationHandle handle) {
+
     this.blockchain = blockchain;
     this.validarTransferenciaUseCase = validarTransferenciaUseCase;
     this.transfereciaExitosaUseCase = transfereciaExitosaUseCase;
@@ -44,6 +45,6 @@ public class TransactionEventHandler {
   public Mono<Void> onTransactionSuccess(TransferenciaExitosa event) {
     log.info("Procesando transferencia exitosa");
 
-    return handle.apply(transfereciaExitosaUseCase.apply(Mono.just(event)));
+    return handle.handleShortcuts(transfereciaExitosaUseCase.apply(Mono.just(event)));
   }
 }

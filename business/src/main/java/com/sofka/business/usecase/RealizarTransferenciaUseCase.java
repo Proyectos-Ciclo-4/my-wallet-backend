@@ -20,25 +20,31 @@ public class RealizarTransferenciaUseCase extends UseCaseForCommand<RealizarTran
   public Flux<DomainEvent> apply(Mono<RealizarTransferencia> realizarTransferenciaMono) {
     return realizarTransferenciaMono.flatMapMany(
         realizarTransferencia -> walletsRepository.obtenerEventos(
-                realizarTransferencia.getWalletDestino().value()).collectList()
-            .flatMapMany(domainEvents -> {
-              var walletDestinoid = realizarTransferencia.getWalletDestino();
-              var walletPropiaId = realizarTransferencia.getWalletOrigen();
+            realizarTransferencia.getWalletDestino().value()).collectList().flatMapMany(
+            walletDestinoEvents -> walletsRepository.obtenerEventos(
+                    realizarTransferencia.getWalletOrigen().value()).collectList()
+                .flatMapMany(walletPropiaEvents -> {
+                  var walletDestinoid = realizarTransferencia.getWalletDestino();
+                  var walletPropiaId = realizarTransferencia.getWalletOrigen();
 
-              var walletPropia = Wallet.from(walletPropiaId, domainEvents);
-              var walletDestino = Wallet.from(walletDestinoid, domainEvents);
-              var cantidad = realizarTransferencia.getValor();
-              var motivo = realizarTransferencia.getMotivo();
+                  var walletPropia = Wallet.from(walletPropiaId, walletPropiaEvents);
+                  var walletDestino = Wallet.from(walletDestinoid, walletDestinoEvents);
+                  var cantidad = realizarTransferencia.getValor();
+                  var motivo = realizarTransferencia.getMotivo();
 
-              walletPropia.crearTransferencia(walletDestinoid, new TransferenciaID(), cantidad,
-                  motivo);
-              walletDestino.crearTransferencia(walletDestinoid, new TransferenciaID(), cantidad,
-                  motivo);
+                  walletPropia.crearTransferencia(walletDestinoid, new TransferenciaID(), cantidad,
+                      motivo);
 
-              var cambiosPropios = Flux.fromIterable(walletPropia.getUncommittedChanges());
-              var cambiosDeDestino = Flux.fromIterable(walletDestino.getUncommittedChanges());
+                  walletDestino.crearTransferencia(walletDestinoid, new TransferenciaID(), cantidad,
+                      motivo);
 
-              return Flux.concat(cambiosPropios, cambiosDeDestino);
-            }));
+                  var cambiosPropia = walletPropia.getUncommittedChanges();
+                  var cambiosDestino = walletDestino.getUncommittedChanges();
+
+                  var cambiosPropios = Flux.fromIterable(cambiosPropia);
+                  var cambiosDeDestino = Flux.fromIterable(cambiosDestino);
+
+                  return Flux.concat(cambiosPropios, cambiosDeDestino);
+                })));
   }
 }

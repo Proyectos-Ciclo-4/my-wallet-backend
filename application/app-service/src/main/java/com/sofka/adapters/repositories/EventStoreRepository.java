@@ -24,10 +24,11 @@ public class EventStoreRepository implements com.sofka.generic.EventStoreReposit
     this.eventSerializer = eventSerializer;
   }
 
-  public Mono<Boolean> getUser(String email, String telefono) {
-    return template.exists(
-        Query.query(Criteria.where("email").is(email).and("numero").is(telefono)), Usuario.class,
-        "usuarios");
+  public Mono<Boolean> userExists(String email, String telefono) {
+    return template.exists(Query.query(Criteria.where("numero").is(telefono)), Usuario.class,
+        "usuarios").flatMap(aBoolean -> aBoolean ? Mono.just(aBoolean)
+        : template.exists(Query.query(Criteria.where("email").is(email)), Usuario.class,
+            "usuarios"));
   }
 
   @Override
@@ -51,7 +52,6 @@ public class EventStoreRepository implements com.sofka.generic.EventStoreReposit
 
   public Mono<Boolean> walletExists(String id) {
 
-    return template.exists(Query.query(Criteria.where("walletId").is(id)),
-        "wallet_data");
+    return template.exists(Query.query(Criteria.where("walletId").is(id)), "wallet_data");
   }
 }
