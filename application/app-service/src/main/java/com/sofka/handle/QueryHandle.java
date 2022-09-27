@@ -56,17 +56,6 @@ public class QueryHandle {
             ));
   }
 
-  /*
-  @Bean
-  public RouterFunction<ServerResponse> verifyUser(){
-    return RouterFunctions.route(
-        GET("/validate/user/").and(accept(MediaType.APPLICATION_JSON)),
-        request -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
-            .body(BodyInserters.fromPublisher(, DomainEvent.class))
-    );
-  }
- */
-
   private Query filterByWalletId(String userId) {
     return new Query(Criteria.where("usuario").is(userId));
   }

@@ -49,19 +49,24 @@ public class IntegrationHandle implements Function<Flux<DomainEvent>, Mono<Void>
 
           log.info("Eventos publicados: {}", domainEvents);
 
-          var eventos = domainEvents.stream().filter(event -> event instanceof SaldoModificado)
+         /* var eventos = domainEvents.stream().filter(event -> event instanceof SaldoModificado)
               .map(event -> (SaldoModificado) event).count();
 
           if (eventos == 2) {
 
             log.info("Emitiendo transferencia exitosa");
             var saldoModificado = (SaldoModificado) domainEvents.get(0);
+            var saldoModificado2 = (SaldoModificado) domainEvents.get(1);
 
-            var transferecia = new TransferenciaExitosa(saldoModificado.getTransferenciaID());
-            transferecia.setAggregateRootId(saldoModificado.aggregateRootId());
+            var transferecia1 = new TransferenciaExitosa(saldoModificado.getTransferenciaID());
+            transferecia1.setAggregateRootId(saldoModificado.aggregateRootId());
 
-            applicationEventPublisher.publishEvent(transferecia);
-          }
+            var transferecia2 = new TransferenciaExitosa(saldoModificado.getTransferenciaID());
+            transferecia2.setAggregateRootId(saldoModificado2.aggregateRootId());
+
+            applicationEventPublisher.publishEvent(transferecia1);
+            applicationEventPublisher.publishEvent(transferecia2);
+          }*/
 
           return Mono.empty();
         }).then();

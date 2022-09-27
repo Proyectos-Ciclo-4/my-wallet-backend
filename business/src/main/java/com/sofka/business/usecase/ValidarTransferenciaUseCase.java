@@ -4,8 +4,10 @@ import co.com.sofka.domain.generic.DomainEvent;
 import com.sofka.business.usecase.gateway.WalletDomainEventRepository;
 import com.sofka.domain.wallet.Wallet;
 import com.sofka.domain.wallet.eventos.TransferenciaCreada;
+import com.sofka.domain.wallet.eventos.TransferenciaValidada;
 import com.sofka.domain.wallet.objetosdevalor.Cantidad;
 import com.sofka.domain.wallet.objetosdevalor.WalletID;
+import java.util.ArrayList;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -45,17 +47,25 @@ public class ValidarTransferenciaUseCase extends UseCaseForEvent<TransferenciaCr
 
                       var cambiosOrigen = walletOrigen.getUncommittedChanges();
                       var cambiosDestino = walletDestino.getUncommittedChanges();
+                      var cambios = new ArrayList<>(cambiosOrigen);
 
-                      Flux<DomainEvent> uncommitedChangesWalletOrigen = Flux.fromIterable(
-                          cambiosOrigen
-                      );
+                      var transferenciaValida1 = new TransferenciaValidada(
+                          transferenciaCreada.getTransferenciaID());
 
-                      Flux<DomainEvent> uncommitedChangesWalletDestino = Flux.fromIterable(
-                          cambiosDestino
-                      );
+                      var transferenciaValida2 = new TransferenciaValidada(
+                          transferenciaCreada.getTransferenciaID());
 
-                      return Flux.concat(uncommitedChangesWalletDestino,
-                          uncommitedChangesWalletOrigen);
+                      transferenciaValida1.setAggregateRootId(
+                          transferenciaCreada.aggregateRootId());
+
+                      transferenciaValida2.setAggregateRootId(
+                          transferenciaCreada.getWalletDestino().value());
+
+                      cambios.addAll(new ArrayList<>(cambiosDestino));
+                      cambios.add(transferenciaValida1);
+                      cambios.add(transferenciaValida2);
+
+                      return Flux.fromIterable(cambios);
                     })));
   }
 

@@ -5,6 +5,8 @@ import reactor.core.publisher.Mono;
 
 public interface BlockchainRepository {
 
+  void saveTransaction(DomainEvent event);
+
   Mono<DomainEvent> getFromBlockchain(String id);
 
   Mono<String> getTransactionBlockchainID(String transactionID);

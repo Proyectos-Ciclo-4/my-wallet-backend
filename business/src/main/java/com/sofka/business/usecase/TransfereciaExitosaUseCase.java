@@ -3,12 +3,12 @@ package com.sofka.business.usecase;
 import co.com.sofka.domain.generic.DomainEvent;
 import com.sofka.business.usecase.gateway.WalletDomainEventRepository;
 import com.sofka.domain.wallet.Wallet;
-import com.sofka.domain.wallet.eventos.TransferenciaExitosa;
+import com.sofka.domain.wallet.eventos.TransferenciaValidada;
 import com.sofka.domain.wallet.objetosdevalor.WalletID;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public class TransfereciaExitosaUseCase extends UseCaseForEvent<TransferenciaExitosa> {
+public class TransfereciaExitosaUseCase extends UseCaseForEvent<TransferenciaValidada> {
 
   private final WalletDomainEventRepository repository;
 
@@ -17,16 +17,15 @@ public class TransfereciaExitosaUseCase extends UseCaseForEvent<TransferenciaExi
   }
 
   @Override
-  public Flux<DomainEvent> apply(Mono<TransferenciaExitosa> transferenciaExitosaMono) {
-    return transferenciaExitosaMono.flatMapMany(transferenciaExitosa ->
-        repository.obtenerEventos(transferenciaExitosa.aggregateRootId())
+  public Flux<DomainEvent> apply(Mono<TransferenciaValidada> transferenciaValidadaMono) {
+    return transferenciaValidadaMono.flatMapMany(transferenciaValidada ->
+        repository.obtenerEventos(transferenciaValidada.aggregateRootId())
             .collectList()
             .flatMapIterable(domainEvents -> {
-              var wall = Wallet.from(WalletID.of(transferenciaExitosa.aggregateRootId()),
+              var wall = Wallet.from(WalletID.of(transferenciaValidada.aggregateRootId()),
                   domainEvents);
 
-              System.out.println();
-              wall.concretarTransferencia(transferenciaExitosa.getTransferenciaID());
+              wall.concretarTransferencia(transferenciaValidada.getTransferenciaID());
 
               return wall.getUncommittedChanges();
             })

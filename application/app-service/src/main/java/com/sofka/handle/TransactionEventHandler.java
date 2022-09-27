@@ -4,6 +4,7 @@ import com.sofka.business.usecase.TransfereciaExitosaUseCase;
 import com.sofka.business.usecase.ValidarTransferenciaUseCase;
 import com.sofka.domain.wallet.eventos.TransferenciaCreada;
 import com.sofka.domain.wallet.eventos.TransferenciaExitosa;
+import com.sofka.domain.wallet.eventos.TransferenciaValidada;
 import com.sofka.generic.Blockchain;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -42,7 +43,7 @@ public class TransactionEventHandler {
   }
 
   @EventListener
-  public Mono<Void> onTransactionSuccess(TransferenciaExitosa event) {
+  public Mono<Void> onTransactionSuccess(TransferenciaValidada event) {
     log.info("Procesando transferencia exitosa");
 
     return handle.handleShortcuts(transfereciaExitosaUseCase.apply(Mono.just(event)));

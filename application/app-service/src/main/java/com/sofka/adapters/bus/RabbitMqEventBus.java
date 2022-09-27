@@ -1,6 +1,7 @@
 package com.sofka.adapters.bus;
 
 import co.com.sofka.domain.generic.DomainEvent;
+import com.sofka.business.usecase.gateway.BlockchainRepository;
 import com.sofka.generic.EventBus;
 import com.sofka.generic.StoredEvent.EventSerializer;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +9,6 @@ import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -18,17 +18,20 @@ public class RabbitMqEventBus implements EventBus {
 
   private final RabbitTemplate rabbitTemplate;
 
+  private final BlockchainRepository repository;
+
   private final Queue generalQueue;
 
   private final Queue registerQueue;
 
   private final EventSerializer serializer;
 
-  public RabbitMqEventBus(RabbitTemplate rabbitTemplate, ApplicationEventPublisher eventPublisher,
+  public RabbitMqEventBus(RabbitTemplate rabbitTemplate, BlockchainRepository repository,
       @Qualifier("walletGeneralQueue") Queue generalQueue,
       @Qualifier("walletRegisterQueue") Queue registerQueue, EventSerializer eventSerializer) {
 
     this.rabbitTemplate = rabbitTemplate;
+    this.repository = repository;
     this.generalQueue = generalQueue;
     this.registerQueue = registerQueue;
     this.serializer = eventSerializer;
@@ -41,6 +44,7 @@ public class RabbitMqEventBus implements EventBus {
         serializer.serialize(event));
 
     rabbitTemplate.convertAndSend(generalQueue.getName(), notification.serialize().getBytes());
+    repository.saveTransaction(event);
   }
 
   @Override
@@ -51,12 +55,6 @@ public class RabbitMqEventBus implements EventBus {
         serializer.serialize(event));
 
     rabbitTemplate.convertAndSend(registerQueue.getName(), notification.serialize().getBytes());
+    repository.saveTransaction(event);
   }
-  /*
-  @Override
-  public void publishError(Throwable errorEvent) {
-        rabbitTemplate.convertAndSend(ApplicationConfig.EXCHANGE, ApplicationConfig.GENERAL_ROUTING_KEY,
-        serializer.;
-  }
-  */
 }

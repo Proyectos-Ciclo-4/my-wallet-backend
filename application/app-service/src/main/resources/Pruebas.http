@@ -4,11 +4,11 @@ Content-Type: application/json
 
 {
   "usuarioID": "2",
-  "telefono": "210398230",
+  "telefono": "1234567890",
   "email": "alsdkj@gmail.com"
 }
 
-###
+### Crear 2da wallet
 
 POST http://localhost:8084/new/wallet
 Content-Type: application/json
@@ -32,5 +32,5 @@ Content-Type: application/json
   "motivo": "Pago de servicios"
 }
 
-###
-GET http://localhost:8084/wallet/3007508112
+### Constular wallet
+GET http://localhost:8084/wallet/1234567890
