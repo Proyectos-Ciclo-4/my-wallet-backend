@@ -37,6 +37,7 @@ public class WalletMaterializeHandler {
 
     data.put("walletId", walletCreada.getWalletID().value());
     data.put("usuario", walletCreada.getUsuarioID().value());
+    data.put("historial", new ArrayList<>());
     data.put("motivos", new ArrayList<>(List.of("Indefinido")));
     data.put("saldo", walletCreada.getSaldo().value());
 
@@ -57,8 +58,7 @@ public class WalletMaterializeHandler {
     usuario.put("numero", usuarioAsignado.getNumero().value());
 
     return template.updateFirst(filtrarPorIdDeWallet(usuarioAsignado.aggregateRootId()), update,
-        COLLECTION_VIEW).flatMap(updateResult ->
-        template.save(usuario, "usuarios"));
+        COLLECTION_VIEW).flatMap(updateResult -> template.save(usuario, "usuarios"));
   }
 
   @EventListener

@@ -7,6 +7,7 @@ import com.sofka.domain.wallet.eventos.TransferenciaFallida;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
@@ -60,14 +61,37 @@ public class HistoryMaterializeHandler {
   public Mono<UpdateResult> handleTransferenciaExitosa(TransferenciaExitosa transferenciaExitosa) {
     log.info("Materializando transferencia exitosa");
 
+    Update updateWalletHistory = updateWalletHistory(transferenciaExitosa);
+
     var update = new Update();
-    update.set("estado", "EXITOSA");
+    update.set("estado", transferenciaExitosa.getEstado().value().name());
 
     return template.updateMulti(
         filtrarPorIdDeTransferencia(transferenciaExitosa.getTransferenciaID().value()), update,
-        COLLECTION_VIEW);
+        COLLECTION_VIEW).flatMap(updateResult -> template.updateMulti(
+        filtrarPorWalletsId(transferenciaExitosa.getWalletOrigen().value(),
+            transferenciaExitosa.getWalletDestino().value()), updateWalletHistory, "wallet_data"));
   }
 
+  @NotNull
+  private static Update updateWalletHistory(TransferenciaExitosa transferenciaExitosa) {
+    var updateWalletHistory = new Update();
+    var data = new HashMap<>();
+    data.put("walletId", transferenciaExitosa.aggregateRootId());
+    data.put("transferencia_id", transferenciaExitosa.getTransferenciaID().value());
+    data.put("valor", transferenciaExitosa.getValor().value());
+    data.put("estado", transferenciaExitosa.getEstado().value().name());
+    data.put("destino", transferenciaExitosa.getWalletDestino().value());
+    data.put("motivo", transferenciaExitosa.getMotivo().value());
+    data.put("fecha", LocalDateTime.now());
+    updateWalletHistory.addToSet("historial", data);
+
+    return updateWalletHistory;
+  }
+
+  private Query filtrarPorWalletsId(String id1, String id2) {
+    return new Query(Criteria.where("walletId").is(id1).and("walletId").is(id2));
+  }
 
   private Query filtrarPorIdDeTransferencia(String transfereciaFallida) {
     return new Query(Criteria.where("transferencia_id").is(transfereciaFallida));

@@ -26,7 +26,15 @@ public class TransferenciaErroneaUseCase extends UseCaseForEvent<TransferenciaFa
               var wallet = Wallet.from(walletId, domainEvents);
               var transferenciaId = transferenciaFallida.getTransferenciaID();
 
-              wallet.cancelarTransferencia(transferenciaId);
+              var walletOrigen = transferenciaFallida.getWalletOrigen();
+              var walletDestino = transferenciaFallida.getWalletDestino();
+              var transferenciaID = transferenciaFallida.getTransferenciaID();
+              var estadoDeTransferencia = transferenciaFallida.getEstadoDeTransferencia();
+              var valor = transferenciaFallida.getValor();
+              var motivo = transferenciaFallida.getMotivo();
+
+              wallet.cancelarTransferencia(walletOrigen, walletDestino, transferenciaID,
+                  estadoDeTransferencia, valor, motivo);
 
               return wallet.getUncommittedChanges();
             })

@@ -50,10 +50,18 @@ public class ValidarTransferenciaUseCase extends UseCaseForEvent<TransferenciaCr
                       var cambios = new ArrayList<>(cambiosOrigen);
 
                       var transferenciaValida1 = new TransferenciaValidada(
-                          transferenciaCreada.getTransferenciaID());
+                          transferenciaCreada.getWalletOrigen(),
+                          transferenciaCreada.getWalletDestino(),
+                          transferenciaCreada.getTransferenciaID(), transferenciaCreada.getValor(),
+                          transferenciaCreada.getMotivo(),
+                          transferenciaCreada.getEstadoDeTransferencia());
 
                       var transferenciaValida2 = new TransferenciaValidada(
-                          transferenciaCreada.getTransferenciaID());
+                          transferenciaCreada.getWalletOrigen(),
+                          transferenciaCreada.getWalletDestino(),
+                          transferenciaCreada.getTransferenciaID(), transferenciaCreada.getValor(),
+                          transferenciaCreada.getMotivo(),
+                          transferenciaCreada.getEstadoDeTransferencia());
 
                       transferenciaValida1.setAggregateRootId(
                           transferenciaCreada.aggregateRootId());
