@@ -18,10 +18,9 @@ public class TransferenciaErroneaUseCase extends UseCaseForEvent<TransferenciaFa
 
   @Override
   public Flux<DomainEvent> apply(Mono<TransferenciaFallida> transferenciaFallidaMono) {
-    return transferenciaFallidaMono.flatMapMany(transferenciaFallida ->
-        repository.obtenerEventos(transferenciaFallida.aggregateRootId())
-            .collectList()
-            .flatMapIterable(domainEvents -> {
+    return transferenciaFallidaMono.flatMapMany(
+        transferenciaFallida -> repository.obtenerEventos(transferenciaFallida.aggregateRootId())
+            .collectList().flatMapIterable(domainEvents -> {
               var walletId = WalletID.of(transferenciaFallida.aggregateRootId());
               var wallet = Wallet.from(walletId, domainEvents);
               var transferenciaId = transferenciaFallida.getTransferenciaID();
@@ -37,7 +36,6 @@ public class TransferenciaErroneaUseCase extends UseCaseForEvent<TransferenciaFa
                   estadoDeTransferencia, valor, motivo);
 
               return wallet.getUncommittedChanges();
-            })
-    );
+            }));
   }
 }

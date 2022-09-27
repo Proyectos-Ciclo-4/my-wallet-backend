@@ -36,7 +36,7 @@ class TransferenciaErroneaUseCaseTest {
   @Test
   void transferenciaErronea() {
     var transferenciaFallida = new TransferenciaFallida(walletOrigen, walletDestino,
-        TransferenciaID.of("xxx-xxx"), estadoDeTransferencia, valor, motivo);
+        TransferenciaID.of("xxx-xxx"), tipoDeMovimiento, estadoDeTransferencia, valor, motivo);
     transferenciaFallida.setAggregateRootId("w1");
 
     Mockito.when(repository.obtenerEventos(transferenciaFallida.aggregateRootId()))

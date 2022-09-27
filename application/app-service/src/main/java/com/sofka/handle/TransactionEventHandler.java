@@ -46,6 +46,6 @@ public class TransactionEventHandler {
   public Mono<Void> onTransactionSuccess(TransferenciaValidada event) {
     log.info("Procesando transferencia exitosa");
 
-    return handle.handleShortcuts(transfereciaExitosaUseCase.apply(Mono.just(event)));
+    return handle.apply(transfereciaExitosaUseCase.apply(Mono.just(event)));
   }
 }

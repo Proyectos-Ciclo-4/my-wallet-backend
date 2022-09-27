@@ -32,14 +32,15 @@ public class RealizarTransferenciaUseCase extends UseCaseForCommand<RealizarTran
 
                   var walletOrigen = realizarTransferencia.getWalletOrigen();
                   var walletDestinoID = realizarTransferencia.getWalletDestino();
-                  var cantidad = realizarTransferencia.getValor();
+                  var cantidadOrigen = realizarTransferencia.getValor().negate();
+                  var cantidadDestino = realizarTransferencia.getValor();
                   var motivo = realizarTransferencia.getMotivo();
 
-                  walletPropia.crearTransferencia(walletOrigen, walletDestinoID,
-                      cantidad, motivo);
+                  walletPropia.crearTransferencia(walletOrigen, walletDestinoID, cantidadOrigen,
+                      motivo);
 
-                  walletDestino.crearTransferencia(walletOrigen, walletDestinoID,
-                      cantidad, motivo);
+                  walletDestino.crearTransferencia(walletOrigen, walletDestinoID, cantidadDestino,
+                      motivo);
 
                   var cambios = new ArrayList<>(walletPropia.getUncommittedChanges());
                   cambios.addAll(walletDestino.getUncommittedChanges());

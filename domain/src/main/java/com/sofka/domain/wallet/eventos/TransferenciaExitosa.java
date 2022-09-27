@@ -7,8 +7,10 @@ import com.sofka.domain.wallet.objetosdevalor.Motivo;
 import com.sofka.domain.wallet.objetosdevalor.TransferenciaID;
 import com.sofka.domain.wallet.objetosdevalor.WalletID;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
+@ToString
 public class TransferenciaExitosa extends DomainEvent {
 
   private final WalletID walletOrigen;
@@ -25,8 +27,8 @@ public class TransferenciaExitosa extends DomainEvent {
 
 
   public TransferenciaExitosa(WalletID walletOrigen, WalletID walletDestino,
-      TransferenciaID transferenciaID,
-      Cantidad valor, Motivo motivo, Estado estado) {
+      TransferenciaID transferenciaID, Cantidad valor, Motivo motivo,
+      Estado estado) {
     super("com.sofka.domain.wallet.eventos.TransferenciaExitosa");
     this.walletOrigen = walletOrigen;
     this.walletDestino = walletDestino;

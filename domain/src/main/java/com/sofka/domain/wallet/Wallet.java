@@ -142,8 +142,9 @@ public class Wallet extends AggregateEvent<WalletID> {
     Objects.requireNonNull(walletOrigen);
     Objects.requireNonNull(walletDestino);
 
-    appendChange(new TransferenciaValidada(walletOrigen, walletDestino, transferenciaID,
-        valor, motivo, estadoDeTransferencia));
+    appendChange(
+        new TransferenciaValidada(walletOrigen, walletDestino, transferenciaID, valor, motivo,
+            estadoDeTransferencia));
   }
 
   public Optional<Transferencia> getTransferenciaPorId(TransferenciaID transferenciaID) {

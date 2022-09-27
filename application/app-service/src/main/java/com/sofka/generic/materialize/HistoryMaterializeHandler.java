@@ -75,6 +75,11 @@ public class HistoryMaterializeHandler {
 
   @NotNull
   private static Update updateWalletHistory(TransferenciaExitosa transferenciaExitosa) {
+
+//    if(transferenciaExitosa.aggregateRootId().equals(transferenciaExitosa.getWalletDestino().value()) ){
+//
+//    }
+
     var updateWalletHistory = new Update();
     var data = new HashMap<>();
     data.put("walletId", transferenciaExitosa.aggregateRootId());
@@ -90,7 +95,7 @@ public class HistoryMaterializeHandler {
   }
 
   private Query filtrarPorWalletsId(String id1, String id2) {
-    return new Query(Criteria.where("walletId").is(id1).and("walletId").is(id2));
+    return new Query(Criteria.where("walletId").in(id1, id2));
   }
 
   private Query filtrarPorIdDeTransferencia(String transfereciaFallida) {

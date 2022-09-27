@@ -26,24 +26,16 @@ public class ValidarTransferenciaUseCase extends UseCaseForEvent<TransferenciaCr
               var wallet = Wallet.from(walletId, events);
               var transfereciaId = transferenciaCreada.getTransferenciaID();
 
-              var cantidad = getCantidad(transferenciaCreada, walletId);
+              var cantidad = transferenciaCreada.getValor();
 
               wallet.ModificarSaldo(walletId, cantidad, transfereciaId);
               wallet.validarTransferencia(transferenciaCreada.getWalletOrigen(),
-                  transferenciaCreada.getWalletDestino(),
-                  transferenciaCreada.getTransferenciaID(),
-                  transferenciaCreada.getEstadoDeTransferencia(),
-                  transferenciaCreada.getValor(),
-                  transferenciaCreada.getMotivo()
-              );
+                  transferenciaCreada.getWalletDestino(), transferenciaCreada.getTransferenciaID(),
+                  transferenciaCreada.getEstadoDeTransferencia(), transferenciaCreada.getValor(),
+                  transferenciaCreada.getMotivo());
 
               return Flux.fromIterable(wallet.getUncommittedChanges());
             }));
-  }
-
-  private static Cantidad getCantidad(TransferenciaCreada transferenciaCreada, WalletID walletId) {
-    return transferenciaCreada.getWalletDestino().equals(walletId)
-        ? transferenciaCreada.getValor() : transferenciaCreada.getValor().negate();
   }
 
   private Flux<DomainEvent> getEventsWallet(TransferenciaCreada transferenciaCreada) {
