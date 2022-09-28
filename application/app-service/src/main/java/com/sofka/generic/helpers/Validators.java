@@ -9,6 +9,7 @@ import com.sofka.domain.wallet.objetosdevalor.Motivo;
 import com.sofka.domain.wallet.objetosdevalor.WalletID;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import reactor.core.publisher.Mono;
@@ -52,12 +53,13 @@ public class Validators {
 
       var walletDestino = requestMap.get("walletDestino").toString();
       var walletOrigen = requestMap.get("walletOrigen").toString();
-      var valor = (Integer) requestMap.get("valor");
-      var motivo = requestMap.get("motivo").toString();
+      var valor = getValor(requestMap);
+      var motivo = getMotivo(requestMap);
+      System.out.println();
 
       return Mono.just(
           new RealizarTransferencia(WalletID.of(walletOrigen), WalletID.of(walletDestino),
-              new Cantidad(valor + 0.0), new Motivo(motivo)));
+              new Cantidad(valor), motivo));
     });
 
     return bodyMono.flatMap(realizarTransferencia -> {
@@ -75,5 +77,27 @@ public class Validators {
         return Mono.just(realizarTransferencia);
       });
     });
+  }
+
+  private Double getValor(Map<String, Object> requestMap) {
+    var valor = requestMap.get("valor").toString();
+
+    try {
+      return Double.parseDouble(valor);
+    } catch (NumberFormatException e) {
+      log.info(e.getMessage());
+    }
+
+    try {
+      return Integer.parseInt(valor) + 0.0;
+    } catch (NumberFormatException e) {
+      throw new RuntimeException("La cantidad de la transaccion no es un numero");
+    }
+  }
+
+  @NotNull
+  private static Motivo getMotivo(Map<String, Object> requestMap) {
+    var motivoMap = (Map<String, Object>) requestMap.get("motivo");
+    return new Motivo(motivoMap.get("description").toString(), motivoMap.get("color").toString());
   }
 }

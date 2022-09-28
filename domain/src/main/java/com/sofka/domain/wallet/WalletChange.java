@@ -43,7 +43,8 @@ public class WalletChange extends EventChange {
     });
 
     apply((MotivoCreado event) -> {
-      wallet.motivos.add(event.getDescripcion());
+
+      wallet.motivos.add(event.getMotivo());
     });
 
     apply((SaldoModificado event) -> {

@@ -28,8 +28,11 @@ Content-Type: application/json
 {
   "walletOrigen": "1",
   "walletDestino": "2",
-  "valor": 17.0,
-  "motivo": "Pago de servicios"
+  "valor": 17,
+  "motivo": {
+    "description": "Pago de servicio",
+    "color": "#000000"
+  }
 }
 
 ### Constular wallet

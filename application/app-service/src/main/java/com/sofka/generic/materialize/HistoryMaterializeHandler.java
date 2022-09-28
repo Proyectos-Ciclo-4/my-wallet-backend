@@ -1,6 +1,7 @@
 package com.sofka.generic.materialize;
 
 import com.mongodb.client.result.UpdateResult;
+import com.sofka.domain.wallet.eventos.MotivoCreado;
 import com.sofka.domain.wallet.eventos.TransferenciaCreada;
 import com.sofka.domain.wallet.eventos.TransferenciaExitosa;
 import com.sofka.domain.wallet.eventos.TransferenciaFallida;
@@ -48,14 +49,19 @@ public class HistoryMaterializeHandler {
   }
 
   @EventListener
-  public void handleTransferenciaFallida(TransferenciaFallida transfereciaFallida) {
+  public UpdateResult handleTransferenciaFallida(TransferenciaFallida transfereciaFallida) {
     var update = new Update();
     update.set("estado", "RECHAZADA");
 
-    template.updateFirst(
+    return template.updateFirst(
         filtrarPorIdDeTransferencia(transfereciaFallida.getTransferenciaID().value()), update,
         COLLECTION_VIEW).block();
   }
+
+ /* @EventListener
+  public void handleMotivoCreado(MotivoCreado motivoCreado) {
+    return template.updateFirst(query, update, "");
+  }*/
 
   @EventListener
   public Mono<UpdateResult> handleTransferenciaExitosa(TransferenciaExitosa transferenciaExitosa) {

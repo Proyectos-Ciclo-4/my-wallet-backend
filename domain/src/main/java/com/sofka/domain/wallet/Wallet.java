@@ -31,7 +31,7 @@ public class Wallet extends AggregateEvent<WalletID> {
 
   protected Saldo saldo;
 
-  protected List<Motivo> motivos = List.of(new Motivo("Indefinido"));
+  protected List<Motivo> motivos = List.of(new Motivo("Indefinido", "#000000"));
 
   protected Usuario dueño;
 
@@ -76,9 +76,11 @@ public class Wallet extends AggregateEvent<WalletID> {
     appendChange(new ContactoEliminado(walletID, usuarioID));
   }
 
-  public void anadirMotivo(String motivo) {
+  public void agregarMotivo(String motivo, String color) {
     Objects.requireNonNull(motivo);
-    appendChange(new MotivoCreado(new Motivo(motivo)));
+    Objects.requireNonNull(color);
+
+    appendChange(new MotivoCreado(new Motivo(motivo, color)));
   }
 
   public void crearTransferencia(WalletID walletOrigen, WalletID walletDestinoID, Cantidad cantidad,

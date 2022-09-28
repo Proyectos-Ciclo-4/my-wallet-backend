@@ -54,7 +54,7 @@ class TransferenciaErroneaUseCaseTest {
     var walletId = WalletID.of("w1");
     var usuarioId = UsuarioID.of("u1");
     var saldo = new Saldo(100.0);
-    var listaMotivos = List.of(new Motivo("Motivo 1"));
+    var listaMotivos = List.of(new Motivo("Motivo 1", color));
 
     var walletCreada = new WalletCreada(walletId, usuarioId, saldo, listaMotivos);
 
@@ -62,7 +62,7 @@ class TransferenciaErroneaUseCaseTest {
     var transferenciaId = TransferenciaID.of("xxx-xxx");
     var estado = new Estado(TipoDeEstado.PENDIENTE);
     var cantidad = new Cantidad(100.0);
-    var motivo = new Motivo("Motivo 1");
+    var motivo = new Motivo("Motivo 1", color);
 
     var transferenciaCreada = new TransferenciaCreada(walletDestino, transferenciaId, estado,
         cantidad, motivo);
