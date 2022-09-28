@@ -18,9 +18,8 @@ public class BorrarWalletUseCase extends UseCaseForCommand<BorrarWallet> {
 
   @Override
   public Flux<DomainEvent> apply(Mono<BorrarWallet> borrarWalletMono) {
-    return borrarWalletMono.flatMapMany(borrarWallet ->
-        repository.obtenerEventos(borrarWallet.getWalletId())
-            .collectList()
+    return borrarWalletMono.flatMapMany(
+        borrarWallet -> repository.obtenerEventos(borrarWallet.getWalletId()).collectList()
             .flatMapMany(events -> {
               if (events.isEmpty()) {
                 throw new RuntimeException("No se puede borrar una wallet que no existe");
@@ -28,9 +27,9 @@ public class BorrarWalletUseCase extends UseCaseForCommand<BorrarWallet> {
 
               var wallet = Wallet.from(WalletID.of(borrarWallet.getWalletId()), events);
               wallet.desactivarWallet();
+              var cambios = wallet.getUncommittedChanges();
 
-              return Flux.fromIterable(events);
-            })
-    );
+              return Flux.fromIterable(cambios);
+            }));
   }
 }
