@@ -53,3 +53,6 @@ GET http://localhost:8084/telefono/1
 
 ### Get history
 GET http://localhost:8084/history/2022-09-28/to/2022-09-29/
+
+### Delete wallet
+DELETE http://localhost:8084/delete/wallet/1

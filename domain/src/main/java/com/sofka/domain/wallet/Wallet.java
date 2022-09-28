@@ -13,6 +13,7 @@ import com.sofka.domain.wallet.eventos.TransferenciaValidada;
 import com.sofka.domain.wallet.eventos.UsuarioAsignado;
 import com.sofka.domain.wallet.eventos.UsuarioExistente;
 import com.sofka.domain.wallet.eventos.WalletCreada;
+import com.sofka.domain.wallet.eventos.WalletDesactivada;
 import com.sofka.domain.wallet.objetosdevalor.Cantidad;
 import com.sofka.domain.wallet.objetosdevalor.Email;
 import com.sofka.domain.wallet.objetosdevalor.Estado;
@@ -39,6 +40,8 @@ public class Wallet extends AggregateEvent<WalletID> {
 
   protected List<Transferencia> transferencias;
 
+  protected Boolean activa = true;
+
   public Wallet(UsuarioID usuarioID, Saldo saldo) {
     super(WalletID.of(usuarioID.value()));
     subscribe(new WalletChange(this));
@@ -54,6 +57,10 @@ public class Wallet extends AggregateEvent<WalletID> {
     Wallet wallet = new Wallet(walletID);
     events.forEach(wallet::applyEvent);
     return wallet;
+  }
+
+  public Boolean isActiva() {
+    return activa;
   }
 
   public void asignarUsuario(UsuarioID usuarioID, Nombre nombre, Email email, Telefono telefono) {
@@ -147,6 +154,10 @@ public class Wallet extends AggregateEvent<WalletID> {
     appendChange(
         new TransferenciaValidada(walletOrigen, walletDestino, transferenciaID, valor, motivo,
             estadoDeTransferencia));
+  }
+
+  public void desactivarWallet() {
+    appendChange(new WalletDesactivada());
   }
 
   public Optional<Transferencia> getTransferenciaPorId(TransferenciaID transferenciaID) {

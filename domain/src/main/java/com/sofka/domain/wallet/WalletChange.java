@@ -10,6 +10,7 @@ import com.sofka.domain.wallet.eventos.TransferenciaExitosa;
 import com.sofka.domain.wallet.eventos.TransferenciaFallida;
 import com.sofka.domain.wallet.eventos.UsuarioAsignado;
 import com.sofka.domain.wallet.eventos.WalletCreada;
+import com.sofka.domain.wallet.eventos.WalletDesactivada;
 import com.sofka.domain.wallet.objetosdevalor.Estado;
 import com.sofka.domain.wallet.objetosdevalor.Estado.TipoDeEstado;
 import com.sofka.domain.wallet.objetosdevalor.FechayHora;
@@ -41,6 +42,8 @@ public class WalletChange extends EventChange {
       Usuario contactoAEliminar = wallet.getContactoPorId(event.getContactoID()).orElseThrow();
       wallet.contactos.remove(contactoAEliminar);
     });
+
+    apply((WalletDesactivada event) -> wallet.activa = false);
 
     apply((MotivoCreado event) -> {
 
