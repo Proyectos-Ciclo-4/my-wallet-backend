@@ -83,9 +83,10 @@ public class QueryHandle {
 
   @Bean
   RouterFunction<ServerResponse> historial() {
-    return RouterFunctions.route(GET("/history/{from}/to/{to}"),
+    return RouterFunctions.route(GET("/history/{from}/to/{to}/of/{Id}"),
         request -> template.find(
-                filterByDate(request.pathVariable("from"), request.pathVariable("to")),
+                filterByDate(request.pathVariable("from"), request.pathVariable("to"),
+                    request.pathVariable("Id")),
                 TransaccionDeHistorial.class, "history")
             .collectList()
             .flatMap(
@@ -93,7 +94,7 @@ public class QueryHandle {
                     .body(BodyInserters.fromPublisher(Mono.just(historial), List.class))));
   }
 
-  private Query filterByDate(String date1, String date2) {
+  private Query filterByDate(String date1, String date2, String Id) {
     var format = new SimpleDateFormat("yyyy-MM-dd");
     Date dateOne = null;
     Date dateTwo = null;
@@ -106,7 +107,7 @@ public class QueryHandle {
       throw new RuntimeException(e);
     }
 
-    return new Query(Criteria.where("fecha").gte(dateOne).lte(dateTwo));
+    return new Query(Criteria.where("fecha").gte(dateOne).lte(dateTwo).and("walletId").is(Id));
   }
 
   private Query filterByWalletId(String userId) {
