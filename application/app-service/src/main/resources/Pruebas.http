@@ -28,7 +28,7 @@ Content-Type: application/json
 {
   "walletOrigen": "1",
   "walletDestino": "2",
-  "valor": 17,
+  "valor": 20,
   "motivo": {
     "description": "Pago de servicio",
     "color": "#000000"
@@ -38,3 +38,12 @@ Content-Type: application/json
 ### Constular wallet
 GET http://localhost:8084/wallet/1
 
+### Crear motivo
+POST http://localhost:8084/new/motivo/
+Content-Type: application/json
+
+{
+  "walletID": "1",
+  "descripcion": "Pago de servicio",
+  "color": "#789456"
+}

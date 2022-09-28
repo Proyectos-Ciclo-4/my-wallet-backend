@@ -1,7 +1,9 @@
 package com.sofka.domain.wallet.objetosdevalor;
 
 import co.com.sofka.domain.generic.ValueObject;
+import lombok.ToString;
 
+@ToString
 public class Telefono implements ValueObject<String> {
 
   private final String numero;

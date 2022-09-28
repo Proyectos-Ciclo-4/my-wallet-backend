@@ -1,7 +1,9 @@
 package com.sofka.domain.wallet.objetosdevalor;
 
 import co.com.sofka.domain.generic.ValueObject;
+import lombok.ToString;
 
+@ToString
 public class Motivo implements ValueObject<Motivo.Props> {
 
   private final String descripcion;

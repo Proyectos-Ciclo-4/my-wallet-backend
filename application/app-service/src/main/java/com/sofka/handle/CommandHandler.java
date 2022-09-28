@@ -34,8 +34,6 @@ public class CommandHandler {
     this.validators = validators;
   }
 
-//  private final Error
-
   @Bean
   public RouterFunction<ServerResponse> create(CrearWalletUseCase useCase) {
     return route(

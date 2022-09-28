@@ -4,6 +4,8 @@ import co.com.sofka.domain.generic.DomainEvent;
 import com.sofka.business.usecase.gateway.WalletDomainEventRepository;
 import com.sofka.domain.wallet.Wallet;
 import com.sofka.domain.wallet.eventos.TransferenciaFallida;
+import com.sofka.domain.wallet.objetosdevalor.Estado;
+import com.sofka.domain.wallet.objetosdevalor.Estado.TipoDeEstado;
 import com.sofka.domain.wallet.objetosdevalor.WalletID;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -28,7 +30,7 @@ public class TransferenciaErroneaUseCase extends UseCaseForEvent<TransferenciaFa
               var walletOrigen = transferenciaFallida.getWalletOrigen();
               var walletDestino = transferenciaFallida.getWalletDestino();
               var transferenciaID = transferenciaFallida.getTransferenciaID();
-              var estadoDeTransferencia = transferenciaFallida.getEstadoDeTransferencia();
+              var estadoDeTransferencia = new Estado(TipoDeEstado.RECHAZADA);
               var valor = transferenciaFallida.getValor();
               var motivo = transferenciaFallida.getMotivo();
 

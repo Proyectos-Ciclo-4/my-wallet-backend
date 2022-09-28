@@ -1,7 +1,6 @@
 package com.sofka.handle;
 
 import co.com.sofka.domain.generic.DomainEvent;
-import com.sofka.business.usecase.gateway.UsuarioRepositorio;
 import com.sofka.generic.EventBus;
 import com.sofka.generic.EventStoreRepository;
 import com.sofka.generic.StoredEvent;
@@ -26,8 +25,7 @@ public class RegisterIntegrationHandle implements Function<Flux<DomainEvent>, Mo
 
 
   public RegisterIntegrationHandle(EventStoreRepository repository, EventSerializer eventSerializer,
-      EventBus eventBus, UsuarioRepositorio usuarioRepositorio,
-      ApplicationEventPublisher applicationEventPublisher) {
+      EventBus eventBus, ApplicationEventPublisher applicationEventPublisher) {
 
     this.repository = repository;
     this.eventSerializer = eventSerializer;
@@ -39,14 +37,12 @@ public class RegisterIntegrationHandle implements Function<Flux<DomainEvent>, Mo
   public Mono<Void> apply(Flux<DomainEvent> domainEventFlux) {
 
     return domainEventFlux.flatMap(domainEvent -> {
-      var stored = StoredEvent.wrapEvent(domainEvent, eventSerializer);
+          var stored = StoredEvent.wrapEvent(domainEvent, eventSerializer);
 
-      return repository.saveEvent("wallet", domainEvent.aggregateRootId(), stored)
-          .thenReturn(domainEvent);
-    }).doOnNext(eventBus::publishRegister).collect(Collectors.toList())
-        .doOnNext(events -> events.forEach(applicationEventPublisher::publishEvent))
-        .then();
-//    (applicationEventPublisher::publishEvent).then();
+          return repository.saveEvent("wallet", domainEvent.aggregateRootId(), stored)
+              .thenReturn(domainEvent);
+        }).doOnNext(eventBus::publishRegister).collect(Collectors.toList())
+        .doOnNext(events -> events.forEach(applicationEventPublisher::publishEvent)).then();
   }
 
   @Override

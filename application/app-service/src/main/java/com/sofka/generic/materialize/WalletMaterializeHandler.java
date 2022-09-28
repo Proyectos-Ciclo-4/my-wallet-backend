@@ -4,6 +4,7 @@ import com.mongodb.client.result.UpdateResult;
 import com.sofka.domain.wallet.eventos.SaldoModificado;
 import com.sofka.domain.wallet.eventos.UsuarioAsignado;
 import com.sofka.domain.wallet.eventos.WalletCreada;
+import com.sofka.domain.wallet.objetosdevalor.Motivo;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +39,7 @@ public class WalletMaterializeHandler {
     data.put("walletId", walletCreada.getWalletID().value());
     data.put("usuario", walletCreada.getUsuarioID().value());
     data.put("historial", new ArrayList<>());
-    data.put("motivos", new ArrayList<>(List.of("Indefinido")));
+    data.put("motivos", new ArrayList<>(List.of(new Motivo("Indefinido", "#000000"))));
     data.put("saldo", walletCreada.getSaldo().value());
 
     return template.save(data, COLLECTION_VIEW);
