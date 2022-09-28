@@ -1,6 +1,6 @@
 package com.sofka.bus;
 
-
+import co.com.sofka.domain.generic.DomainEvent;
 import com.sofka.GsonEventSerializer;
 import com.sofka.SocketController;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ public class RabbitMQEventConsumer {
       var event = serializer.deserialize(notification.getBody(),
           Class.forName(notification.getType()));
 
-      ws.send(event.aggregateRootId(), event);
+      sendToWs(event);
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
     }
@@ -47,13 +47,14 @@ public class RabbitMQEventConsumer {
       var event = serializer.deserialize(notification.getBody(),
           Class.forName(notification.getType()));
 
-      var notificationBody = notification.getBody();
-
-      var userId = notificationBody.split(":")[2].split("}")[0].replaceAll("\"", "");
-
-      ws.send(userId, event);
+      sendToWs(event);
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
     }
   }
+
+  private void sendToWs(DomainEvent evento) {
+    ws.send(evento.aggregateRootId(), evento);
+  }
+
 }
