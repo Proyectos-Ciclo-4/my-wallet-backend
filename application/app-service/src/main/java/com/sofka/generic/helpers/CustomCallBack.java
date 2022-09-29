@@ -1,9 +1,10 @@
 package com.sofka.generic.helpers;
 
+import com.google.gson.Gson;
+import com.sofka.adapters.repositories.DocumentEventStored;
 import com.sofka.generic.EventBus;
 import com.sofka.generic.StoredEvent;
 import com.sofka.generic.StoredEvent.EventSerializer;
-import com.sofka.generic.materialize.model.TransaccionDeHistorial;
 import java.io.IOException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -40,10 +41,12 @@ public class CustomCallBack implements Callback {
 
     var body = response.body().string();
 
-    var event = eventSerializer.deserialize(body, TransaccionDeHistorial.class);
+    log.info("Getting history: " + body);
+
+    var documentEventStored = new Gson().fromJson(body, DocumentEventStored.class);
+
+    var event = documentEventStored.getStoredEvent().deserializeEvent(eventSerializer);
 
     eventBus.publish(event);
-
-    log.info("body: " + body);
   }
 }

@@ -11,8 +11,11 @@ public class SavedHash {
 
   private String typeName;
 
-  public SavedHash(String hash, String typeName) {
+  private String walletId;
+
+  public SavedHash(String hash, String typeName, String walletId) {
     this.hash = hash;
     this.typeName = typeName;
+    this.walletId = walletId;
   }
 }

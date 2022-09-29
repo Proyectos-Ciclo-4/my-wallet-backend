@@ -4,7 +4,6 @@ import co.com.sofka.domain.generic.DomainEvent;
 import com.sofka.business.usecase.gateway.WalletDomainEventRepository;
 import com.sofka.domain.wallet.Wallet;
 import com.sofka.domain.wallet.eventos.TransferenciaCreada;
-import com.sofka.domain.wallet.objetosdevalor.Cantidad;
 import com.sofka.domain.wallet.objetosdevalor.WalletID;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;

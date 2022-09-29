@@ -3,6 +3,8 @@ package com.sofka.handle;
 import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 
 import com.sofka.adapters.repositories.EventStoreRepository;
+import com.sofka.generic.BlockchainRepository;
+import com.sofka.generic.materialize.model.SavedHash;
 import com.sofka.generic.materialize.model.TransaccionDeHistorial;
 import com.sofka.generic.materialize.model.UserModel;
 import com.sofka.generic.materialize.model.WalletModel;
@@ -20,6 +22,7 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Configuration
@@ -29,9 +32,13 @@ public class QueryHandle {
 
   private final EventStoreRepository verifierRepo;
 
-  public QueryHandle(ReactiveMongoTemplate template, EventStoreRepository verifierRepo) {
+  private final BlockchainRepository blockchainRepository;
+
+  public QueryHandle(ReactiveMongoTemplate template, EventStoreRepository verifierRepo,
+      BlockchainRepository blockchainRepository) {
     this.template = template;
     this.verifierRepo = verifierRepo;
+    this.blockchainRepository = blockchainRepository;
   }
 
   @Bean
@@ -46,10 +53,24 @@ public class QueryHandle {
   @Bean
   public RouterFunction<ServerResponse> getAllHistory() {
     return RouterFunctions.route(GET("/history/{uid}"),
-        request -> template.find(filterByWalletId(request.pathVariable("uid")),
-            TransaccionDeHistorial.class, "history").collectList().flatMap(
-            element -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromPublisher(Mono.just(element), List.class))));
+        request -> blockchainRepository.getFromBlockchain(
+            getAllHistoryHashes(request.pathVariable("uid"))).flatMap(
+            element -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(
+                BodyInserters.fromPublisher(
+                    Mono.just(" \"message\" : \"Getting all history from blockChain\""),
+                    String.class))));
+
+//            template.find(filterByWalletId(request.pathVariable("uid")),
+//            TransaccionDeHistorial.class, "history")
+//            .collectList()
+//            .flatMap(
+//            element -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
+//                .body(BodyInserters.fromPublisher(Mono.just(element), List.class))));
+  }
+
+  private Flux<SavedHash> getAllHistoryHashes(String uid) {
+    return template.find(new Query(Criteria.where("walletId").is(uid).and("typeName")
+        .is("com.sofka.domain.wallet.eventos.TransferenciaExitosa")), SavedHash.class, "hashes");
   }
 
   @Bean

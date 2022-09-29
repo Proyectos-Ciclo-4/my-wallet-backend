@@ -1,7 +1,7 @@
 package com.sofka.handle;
 
 import co.com.sofka.domain.generic.DomainEvent;
-import com.sofka.business.usecase.gateway.BlockchainRepository;
+import com.sofka.generic.BlockchainRepository;
 import com.sofka.generic.EventBus;
 import com.sofka.generic.EventStoreRepository;
 import com.sofka.generic.StoredEvent;

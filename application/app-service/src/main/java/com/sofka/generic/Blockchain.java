@@ -2,6 +2,7 @@ package com.sofka.generic;
 
 import co.com.sofka.domain.generic.DomainEvent;
 import com.google.gson.Gson;
+import com.sofka.adapters.repositories.DocumentEventStored;
 import com.sofka.generic.StoredEvent.EventSerializer;
 import com.sofka.generic.materialize.model.SavedHash;
 import java.io.IOException;
@@ -15,6 +16,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
 
 @Component
 @Slf4j
@@ -57,7 +59,11 @@ public class Blockchain {
 
   private void run(DomainEvent event) throws Exception {
     var storedEvent = StoredEvent.wrapEvent(event, serializer);
-    var body = new Gson().toJson(storedEvent);
+    var documentEventStored = new DocumentEventStored();
+    documentEventStored.setAggregateRootId(event.aggregateRootId());
+    documentEventStored.setStoredEvent(storedEvent);
+
+    var body = new Gson().toJson(documentEventStored);
 
     log.info("Sending to blockchain {}", body);
 
@@ -72,17 +78,21 @@ public class Blockchain {
 
       var hashBody = response.body().string().split(":")[1].replace("\"", "").replace("}", "");
 
-      var hashToSave = new SavedHash(hashBody, event.getClass().getTypeName());
+      var hashToSave = new SavedHash(hashBody, event.getClass().getTypeName(),
+          event.aggregateRootId());
 
       repository.saveEventHash(hashToSave)
           .subscribe(savedHash -> log.info("saved hash: " + savedHash.getHash()));
     }
   }
 
-  public void getTransactionHistory(String walletID) {
-    Request request = new Request.Builder().url(GET_URL).build();
+  public void getTransactionHistory(Flux<SavedHash> hash) {
+    hash.doOnNext(savedHash -> {
+      var url = GET_URL.toString() + savedHash.getHash();
+      Request request = new Request.Builder().url(url).build();
 
-    client.newCall(request).enqueue(callback);
+      client.newCall(request).enqueue(callback);
+    }).subscribe(savedHash -> log.info("Getting history: " + savedHash.getHash()));
   }
 
   private void buildUrls(String postUrl, String getUrl) {

@@ -1,9 +1,11 @@
 package com.sofka.adapters.repositories;
 
 import co.com.sofka.domain.generic.DomainEvent;
-import com.sofka.business.usecase.gateway.BlockchainRepository;
 import com.sofka.generic.Blockchain;
+import com.sofka.generic.BlockchainRepository;
+import com.sofka.generic.materialize.model.SavedHash;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Repository
@@ -21,8 +23,10 @@ public class BlockChainRepository implements BlockchainRepository {
   }
 
   @Override
-  public Mono<DomainEvent> getFromBlockchain(String id) {
-    return null;
+  public Mono<Void> getFromBlockchain(Flux<SavedHash> hash) {
+    blockchain.getTransactionHistory(hash);
+
+    return Mono.empty();
   }
 
   @Override
