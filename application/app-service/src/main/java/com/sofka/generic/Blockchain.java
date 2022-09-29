@@ -59,7 +59,7 @@ public class Blockchain {
     var storedEvent = StoredEvent.wrapEvent(event, serializer);
     var body = new Gson().toJson(storedEvent);
 
-    log.warn("body: " + body);
+    log.info("Sending to blockchain {}", body);
 
     var request = new Request.Builder().url(POST_URL)
         .post(okhttp3.RequestBody.create(body, MEDIA_TYPE_JSON))
@@ -70,25 +70,14 @@ public class Blockchain {
         throw new IOException("Unexpected code " + response);
       }
 
-      var hashToSave = new SavedHash(response.body().string(), event.getClass().getSimpleName());
+      var hashBody = response.body().string().split(":")[1].replace("\"", "").replace("}", "");
+
+      var hashToSave = new SavedHash(hashBody, event.getClass().getTypeName());
 
       repository.saveEventHash(hashToSave)
           .subscribe(savedHash -> log.info("saved hash: " + savedHash.getHash()));
     }
   }
-
- /* public Response getFromBlockchain(String id) {
-
-    Request request = new Request.Builder().url(GET_URL + id).build();
-
-    Call call = client.newCall(request);
-
-    try {
-      return call.execute();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-  }*/
 
   public void getTransactionHistory(String walletID) {
     Request request = new Request.Builder().url(GET_URL).build();

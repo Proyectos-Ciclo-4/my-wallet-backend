@@ -1,12 +1,12 @@
 package com.sofka.handle;
 
 import co.com.sofka.domain.generic.DomainEvent;
+import com.sofka.business.usecase.gateway.BlockchainRepository;
 import com.sofka.generic.EventBus;
 import com.sofka.generic.EventStoreRepository;
 import com.sofka.generic.StoredEvent;
 import com.sofka.generic.StoredEvent.EventSerializer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -19,16 +19,20 @@ public class RegisterIntegrationHandle implements Function<Flux<DomainEvent>, Mo
 
   private final EventSerializer eventSerializer;
 
+  private final BlockchainRepository blockchainRepository;
+
   private final EventBus eventBus;
 
   private final ApplicationEventPublisher applicationEventPublisher;
 
 
   public RegisterIntegrationHandle(EventStoreRepository repository, EventSerializer eventSerializer,
-      EventBus eventBus, ApplicationEventPublisher applicationEventPublisher) {
+      BlockchainRepository blockchainRepository, EventBus eventBus,
+      ApplicationEventPublisher applicationEventPublisher) {
 
     this.repository = repository;
     this.eventSerializer = eventSerializer;
+    this.blockchainRepository = blockchainRepository;
     this.eventBus = eventBus;
     this.applicationEventPublisher = applicationEventPublisher;
   }
@@ -41,8 +45,10 @@ public class RegisterIntegrationHandle implements Function<Flux<DomainEvent>, Mo
 
           return repository.saveEvent("wallet", domainEvent.aggregateRootId(), stored)
               .thenReturn(domainEvent);
-        }).doOnNext(eventBus::publishRegister).collect(Collectors.toList())
-        .doOnNext(events -> events.forEach(applicationEventPublisher::publishEvent)).then();
+        }).doOnNext(eventBus::publishRegister)
+        .doOnNext(applicationEventPublisher::publishEvent)
+        .doOnNext(blockchainRepository::saveTransaction)
+        .then();
   }
 
   @Override

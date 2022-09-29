@@ -1,12 +1,12 @@
 package com.sofka.handle;
 
 import co.com.sofka.domain.generic.DomainEvent;
+import com.sofka.business.usecase.gateway.BlockchainRepository;
 import com.sofka.generic.EventBus;
 import com.sofka.generic.EventStoreRepository;
 import com.sofka.generic.StoredEvent;
 import com.sofka.generic.StoredEvent.EventSerializer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
@@ -21,15 +21,19 @@ public class IntegrationHandle implements Function<Flux<DomainEvent>, Mono<Void>
 
   private final StoredEvent.EventSerializer eventSerializer;
 
+  private final BlockchainRepository blockchainRepository;
+
   private final ApplicationEventPublisher applicationEventPublisher;
 
   private final EventBus eventBus;
 
   public IntegrationHandle(EventStoreRepository repository, EventSerializer eventSerializer,
+      BlockchainRepository blockchainRepository,
       ApplicationEventPublisher applicationEventPublisher, EventBus eventBus) {
 
     this.repository = repository;
     this.eventSerializer = eventSerializer;
+    this.blockchainRepository = blockchainRepository;
     this.applicationEventPublisher = applicationEventPublisher;
     this.eventBus = eventBus;
   }
@@ -43,8 +47,9 @@ public class IntegrationHandle implements Function<Flux<DomainEvent>, Mono<Void>
 
           return repository.saveEvent("wallet", domainEvent.aggregateRootId(), stored).log()
               .thenReturn(domainEvent);
-        }).doOnNext(eventBus::publish).collect(Collectors.toList())
-        .doOnNext(events -> events.forEach(applicationEventPublisher::publishEvent))
+        }).doOnNext(eventBus::publish)
+        .doOnNext(applicationEventPublisher::publishEvent)
+        .doOnNext(blockchainRepository::saveTransaction)
         .doOnNext(domainEvents ->
             log.info("Eventos publicados: {}", domainEvents)).then();
   }

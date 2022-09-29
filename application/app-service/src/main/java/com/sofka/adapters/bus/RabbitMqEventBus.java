@@ -1,7 +1,6 @@
 package com.sofka.adapters.bus;
 
 import co.com.sofka.domain.generic.DomainEvent;
-import com.sofka.business.usecase.gateway.BlockchainRepository;
 import com.sofka.generic.EventBus;
 import com.sofka.generic.StoredEvent.EventSerializer;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +23,7 @@ public class RabbitMqEventBus implements EventBus {
 
   private final EventSerializer serializer;
 
-  public RabbitMqEventBus(RabbitTemplate rabbitTemplate, BlockchainRepository repository,
+  public RabbitMqEventBus(RabbitTemplate rabbitTemplate,
       @Qualifier("walletGeneralQueue") Queue generalQueue,
       @Qualifier("walletRegisterQueue") Queue registerQueue, EventSerializer eventSerializer) {
 

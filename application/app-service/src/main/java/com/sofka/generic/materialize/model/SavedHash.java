@@ -13,5 +13,6 @@ public class SavedHash {
 
   public SavedHash(String hash, String typeName) {
     this.hash = hash;
+    this.typeName = typeName;
   }
 }

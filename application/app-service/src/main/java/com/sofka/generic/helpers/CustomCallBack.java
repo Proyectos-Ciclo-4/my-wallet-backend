@@ -29,7 +29,7 @@ public class CustomCallBack implements Callback {
 
   @Override
   public void onFailure(@NotNull Call call, @NotNull IOException e) {
-
+    log.error(e.getMessage());
   }
 
   @Override

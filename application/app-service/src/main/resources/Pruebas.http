@@ -27,7 +27,7 @@ Content-Type: application/json
 
 {
   "walletOrigen": "1",
-  "walletDestino": "MVdRsisUlvSteSpJxxaMzkRzVlJ3",
+  "walletDestino": "2",
   "valor": 20,
   "motivo": {
     "description": "Pago de servicio",
