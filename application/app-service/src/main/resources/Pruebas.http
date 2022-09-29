@@ -27,7 +27,7 @@ Content-Type: application/json
 
 {
   "walletOrigen": "1",
-  "walletDestino": "2",
+  "walletDestino": "MVdRsisUlvSteSpJxxaMzkRzVlJ3",
   "valor": 20,
   "motivo": {
     "description": "Pago de servicio",
@@ -56,3 +56,6 @@ GET http://localhost:8084/history/2022-09-28/to/2022-09-29/
 
 ### Delete wallet
 DELETE http://localhost:8084/delete/wallet/2
+
+### GetAllHistory
+GET http://localhost:8084/history/1

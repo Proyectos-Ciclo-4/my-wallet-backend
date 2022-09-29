@@ -15,7 +15,7 @@ import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -24,43 +24,25 @@ public class Blockchain {
 
   private final EventStoreRepository repository;
 
-  private static URL POST_URL;
+  private URL POST_URL;
 
-  static {
-    try {
-      POST_URL = new URL("http://localhost:8090/api/collections/blockchain/records");
-    } catch (MalformedURLException e) {
-      throw new RuntimeException(e);
-    }
-  }
+  private URL GET_URL;
 
-  private static URL GET_URL;
-
-  static {
-    try {
-      GET_URL = new URL("http://localhost:8090/api/collections/blockchain/records/2hrwvpz8a9zp22v");
-    } catch (MalformedURLException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  private static OkHttpClient client = new OkHttpClient();
+  private static final OkHttpClient client = new OkHttpClient();
 
   public static final MediaType MEDIA_TYPE_JSON = MediaType.parse(
       "application/json; charset=utf-8");
 
   private static BlockchainTransactionIdRepository transactionIDrepo;
 
-  @Autowired
   private static EventSerializer serializer;
 
-  public Blockchain(EventStoreRepository repository, EventSerializer serializer) {
+  public Blockchain(EventStoreRepository repository, EventSerializer serializer,
+      @Value("${blockchain.post.url}") String post, @Value("${blockchain.get.url}") String get) {
     this.repository = repository;
     Blockchain.serializer = serializer;
-
+    buildUrls(post, get);
   }
-
-  //TODO verificar tokens en los header
 
   public void postEventToBlockchain(DomainEvent event) {
     try {
@@ -84,9 +66,11 @@ public class Blockchain {
         throw new IOException("Unexpected code " + response);
       }
 
-      log.info("Blockchain response {}", response.body().string());
-    }
+      // TODO: guardarRespuesta en la base de datos
 
+      log.info("Blockchain response {}",
+          response.body().string().isEmpty() ? "empty" : response.body().string());
+    }
   }
 
   public Response getFromBlockchain(String id) {
@@ -102,7 +86,6 @@ public class Blockchain {
     }
   }
 
-  //Esto no es reactivo y probablemente no es funcional... esperemos que funcione!
   public List<DomainEvent> getTransactionHistory(String walletID) throws IOException {
 
     List<DomainEvent> transacciones = new ArrayList<>();
@@ -118,6 +101,15 @@ public class Blockchain {
           }
         });
     return transacciones;
+  }
+
+  private void buildUrls(String postUrl, String getUrl) {
+    try {
+      POST_URL = new URL(postUrl);
+      GET_URL = new URL(getUrl);
+    } catch (MalformedURLException e) {
+      throw new RuntimeException(e);
+    }
   }
 
 }

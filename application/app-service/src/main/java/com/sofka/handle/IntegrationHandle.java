@@ -47,16 +47,6 @@ public class IntegrationHandle implements Function<Flux<DomainEvent>, Mono<Void>
         .doOnNext(events -> events.forEach(applicationEventPublisher::publishEvent))
         .doOnNext(domainEvents ->
             log.info("Eventos publicados: {}", domainEvents)).then();
-
-  }
-
-  public Mono<Void> handleShortcuts(Flux<DomainEvent> domainEventFlux) {
-    return domainEventFlux.flatMap(domainEvent -> {
-      var stored = StoredEvent.wrapEvent(domainEvent, eventSerializer);
-
-      return repository.saveEvent("wallet", domainEvent.aggregateRootId(), stored).log()
-          .thenReturn(domainEvent);
-    }).doOnNext(eventBus::publish).then();
   }
 
   @Override
