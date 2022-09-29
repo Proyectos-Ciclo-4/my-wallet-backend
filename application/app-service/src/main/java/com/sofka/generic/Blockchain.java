@@ -28,6 +28,8 @@ public class Blockchain {
 
   private URL GET_URL;
 
+  private final String APP_TOKEN;
+
   private static final OkHttpClient client = new OkHttpClient();
 
   public static final MediaType MEDIA_TYPE_JSON = MediaType.parse(
@@ -38,9 +40,11 @@ public class Blockchain {
   private static EventSerializer serializer;
 
   public Blockchain(EventStoreRepository repository, EventSerializer serializer,
-      @Value("${blockchain.post.url}") String post, @Value("${blockchain.get.url}") String get) {
+      @Value("${blockchain.post.url}") String post, @Value("${blockchain.get.url}") String get,
+      @Value("${blockchain.token}") String app_token) {
     this.repository = repository;
     Blockchain.serializer = serializer;
+    APP_TOKEN = app_token;
     buildUrls(post, get);
   }
 
@@ -59,17 +63,17 @@ public class Blockchain {
     log.warn("body: " + body);
 
     var request = new Request.Builder().url(POST_URL)
-        .post(okhttp3.RequestBody.create(body, MEDIA_TYPE_JSON)).build();
+        .post(okhttp3.RequestBody.create(body, MEDIA_TYPE_JSON))
+        .addHeader("Authorization", String.format("Bearer %s", APP_TOKEN))
+        .build();
 
     try (Response response = client.newCall(request).execute()) {
       if (!response.isSuccessful()) {
         throw new IOException("Unexpected code " + response);
       }
 
-      // TODO: guardarRespuesta en la base de datos
-
-      log.info("Blockchain response {}",
-          response.body().string().isEmpty() ? "empty" : response.body().string());
+      repository.saveEventHash(response.body().string(), event.getClass().getSimpleName())
+          .subscribe(savedHash -> log.info("saved hash: " + savedHash.getHash()));
     }
   }
 
