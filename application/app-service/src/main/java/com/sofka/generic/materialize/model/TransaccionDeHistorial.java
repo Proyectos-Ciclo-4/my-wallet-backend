@@ -32,5 +32,4 @@ public class TransaccionDeHistorial {
     private String color;
 
   }
-
 }

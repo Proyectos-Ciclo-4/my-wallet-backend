@@ -11,6 +11,6 @@ public interface EventStoreRepository {
 
   Mono<Void> saveEvent(String aggregateName, String aggregateRootId, StoredEvent storedEvent);
 
-  Mono<SavedHash> saveEventHash(String hash, String typeName);
+  Mono<SavedHash> saveEventHash(SavedHash hash);
 
 }

@@ -57,7 +57,7 @@ public class EventStoreRepository implements com.sofka.generic.EventStoreReposit
   }
 
   @Override
-  public Mono<SavedHash> saveEventHash(String hash, String typeName) {
-    return template.save(new SavedHash(hash, typeName), "hashes");
+  public Mono<SavedHash> saveEventHash(SavedHash hash) {
+    return template.save(hash, "hashes");
   }
 }

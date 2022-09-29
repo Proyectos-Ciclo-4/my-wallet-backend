@@ -3,14 +3,12 @@ package com.sofka.generic;
 import co.com.sofka.domain.generic.DomainEvent;
 import com.google.gson.Gson;
 import com.sofka.generic.StoredEvent.EventSerializer;
+import com.sofka.generic.materialize.model.SavedHash;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -21,6 +19,8 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class Blockchain {
+
+  private final Callback callback;
 
   private final EventStoreRepository repository;
 
@@ -35,15 +35,14 @@ public class Blockchain {
   public static final MediaType MEDIA_TYPE_JSON = MediaType.parse(
       "application/json; charset=utf-8");
 
-  private static BlockchainTransactionIdRepository transactionIDrepo;
-
   private static EventSerializer serializer;
 
   public Blockchain(EventStoreRepository repository, EventSerializer serializer,
       @Value("${blockchain.post.url}") String post, @Value("${blockchain.get.url}") String get,
-      @Value("${blockchain.token}") String app_token) {
+      Callback callback, @Value("${blockchain.token}") String app_token) {
     this.repository = repository;
     Blockchain.serializer = serializer;
+    this.callback = callback;
     APP_TOKEN = app_token;
     buildUrls(post, get);
   }
@@ -64,20 +63,21 @@ public class Blockchain {
 
     var request = new Request.Builder().url(POST_URL)
         .post(okhttp3.RequestBody.create(body, MEDIA_TYPE_JSON))
-        .addHeader("Authorization", String.format("Bearer %s", APP_TOKEN))
-        .build();
+        .addHeader("Authorization", String.format("Bearer %s", APP_TOKEN)).build();
 
     try (Response response = client.newCall(request).execute()) {
       if (!response.isSuccessful()) {
         throw new IOException("Unexpected code " + response);
       }
 
-      repository.saveEventHash(response.body().string(), event.getClass().getSimpleName())
+      var hashToSave = new SavedHash(response.body().string(), event.getClass().getSimpleName());
+
+      repository.saveEventHash(hashToSave)
           .subscribe(savedHash -> log.info("saved hash: " + savedHash.getHash()));
     }
   }
 
-  public Response getFromBlockchain(String id) {
+ /* public Response getFromBlockchain(String id) {
 
     Request request = new Request.Builder().url(GET_URL + id).build();
 
@@ -88,23 +88,12 @@ public class Blockchain {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-  }
+  }*/
 
-  public List<DomainEvent> getTransactionHistory(String walletID) throws IOException {
+  public void getTransactionHistory(String walletID) {
+    Request request = new Request.Builder().url(GET_URL).build();
 
-    List<DomainEvent> transacciones = new ArrayList<>();
-
-    transactionIDrepo.getTransactionBlockchainsIDs(walletID).toStream().collect(Collectors.toList())
-        .forEach(Id -> {
-          try {
-            var response = getFromBlockchain(Id);
-            var transaccion = serializer.deserialize(response.body().string(), DomainEvent.class);
-            transacciones.add(transaccion);
-          } catch (IOException e) {
-            throw new RuntimeException(e);
-          }
-        });
-    return transacciones;
+    client.newCall(request).enqueue(callback);
   }
 
   private void buildUrls(String postUrl, String getUrl) {
@@ -115,5 +104,4 @@ public class Blockchain {
       throw new RuntimeException(e);
     }
   }
-
 }
