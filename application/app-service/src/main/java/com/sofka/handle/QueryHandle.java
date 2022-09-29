@@ -37,10 +37,19 @@ public class QueryHandle {
   @Bean
   public RouterFunction<ServerResponse> getNumberByUid() {
     return RouterFunctions.route(GET("/telefono/{uid}"),
-        request -> template.findOne(filterByUid(request.pathVariable("uid")),
-            UserModel.class, "usuarios").flatMap(
+        request -> template.findOne(filterByUid(request.pathVariable("uid")), UserModel.class,
+            "usuarios").flatMap(
             element -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromPublisher(Mono.just(element), UserModel.class))));
+  }
+
+  @Bean
+  public RouterFunction<ServerResponse> getAllHistory() {
+    return RouterFunctions.route(GET("/history/{uid}"),
+        request -> template.find(filterByWalletId(request.pathVariable("uid")),
+            TransaccionDeHistorial.class, "history").collectList().flatMap(
+            element -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromPublisher(Mono.just(element), List.class))));
   }
 
   @Bean
@@ -50,6 +59,15 @@ public class QueryHandle {
             WalletModel.class, "wallet_data").flatMap(
             element -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromPublisher(Mono.just(element), WalletModel.class))));
+  }
+
+  @Bean
+  public RouterFunction<ServerResponse> getUser() {
+    return RouterFunctions.route(GET("/usuario/{uid}"),
+        request -> template.findOne(filterByUid(request.pathVariable("uid")), UserModel.class,
+            "usuarios").flatMap(
+            element -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromPublisher(Mono.just(element), UserModel.class))));
   }
 
   @Bean
@@ -67,8 +85,8 @@ public class QueryHandle {
   public RouterFunction<ServerResponse> userExistsEmail() {
     return RouterFunctions.route(GET("/walletByEmail/{email}"),
         request -> template.findOne(filterByEmail(request.pathVariable("email")), UserModel.class,
-                "usuarios")
-            .flatMap(element -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
+            "usuarios").flatMap(
+            element -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromPublisher(Mono.just(element), UserModel.class))));
   }
 
@@ -76,22 +94,18 @@ public class QueryHandle {
   public RouterFunction<ServerResponse> userBothValidation() {
     return RouterFunctions.route(GET("/validateBoth/{telefono}/email/{email}"),
         request -> verifierRepo.userExists(request.pathVariable("email"),
-                request.pathVariable("telefono"))
-            .flatMap(aBoolean -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
+            request.pathVariable("telefono")).flatMap(
+            aBoolean -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromPublisher(Mono.just(aBoolean), Boolean.class))));
   }
 
   @Bean
   RouterFunction<ServerResponse> historial() {
-    return RouterFunctions.route(GET("/history/{from}/to/{to}/of/{Id}"),
-        request -> template.find(
-                filterByDate(request.pathVariable("from"), request.pathVariable("to"),
-                    request.pathVariable("Id")),
-                TransaccionDeHistorial.class, "history")
-            .collectList()
-            .flatMap(
-                historial -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
-                    .body(BodyInserters.fromPublisher(Mono.just(historial), List.class))));
+    return RouterFunctions.route(GET("/history/{from}/to/{to}/of/{Id}"), request -> template.find(
+            filterByDate(request.pathVariable("from"), request.pathVariable("to"),
+                request.pathVariable("Id")), TransaccionDeHistorial.class, "history").collectList()
+        .flatMap(historial -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
+            .body(BodyInserters.fromPublisher(Mono.just(historial), List.class))));
   }
 
   private Query filterByDate(String date1, String date2, String Id) {
@@ -111,7 +125,7 @@ public class QueryHandle {
   }
 
   private Query filterByWalletId(String userId) {
-    return new Query(Criteria.where("usuario").is(userId));
+    return new Query(Criteria.where("walletId").is(userId));
   }
 
   private Query filterByUid(String userId) {
