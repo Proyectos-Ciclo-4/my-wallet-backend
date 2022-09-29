@@ -55,22 +55,13 @@ public class QueryHandle {
     return RouterFunctions.route(GET("/history/{uid}"),
         request -> blockchainRepository.getFromBlockchain(
             getAllHistoryHashes(request.pathVariable("uid"))).flatMap(
-            element -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(
-                BodyInserters.fromPublisher(
-                    Mono.just(" \"message\" : \"Getting all history from blockChain\""),
-                    String.class))));
-
-//            template.find(filterByWalletId(request.pathVariable("uid")),
-//            TransaccionDeHistorial.class, "history")
-//            .collectList()
-//            .flatMap(
-//            element -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
-//                .body(BodyInserters.fromPublisher(Mono.just(element), List.class))));
+            element -> ServerResponse.ok().contentType(MediaType.TEXT_PLAIN).body(
+                BodyInserters.fromValue("\"message\":\"Getting all history from blockChain\""))));
   }
 
   private Flux<SavedHash> getAllHistoryHashes(String uid) {
     return template.find(new Query(Criteria.where("walletId").is(uid).and("typeName")
-        .is("com.sofka.domain.wallet.eventos.TransferenciaExitosa")), SavedHash.class, "hashes");
+        .is("com.sofka.domain.wallet.eventos.HistorialRecuperado")), SavedHash.class, "hashes");
   }
 
   @Bean

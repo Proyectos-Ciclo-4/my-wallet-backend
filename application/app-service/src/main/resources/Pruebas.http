@@ -58,4 +58,4 @@ GET http://localhost:8084/history/2022-09-28/to/2022-09-29/
 DELETE http://localhost:8084/delete/wallet/2
 
 ### GetAllHistory
-GET http://localhost:8084/history/1
+GET http://localhost:8084/history/2

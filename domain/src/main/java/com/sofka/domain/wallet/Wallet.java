@@ -102,16 +102,18 @@ public class Wallet extends AggregateEvent<WalletID> {
   }
 
   public void concretarTransferencia(WalletID walletOrigen, WalletID walletDestino,
-      TransferenciaID transferenciaID, Cantidad valor, Motivo motivo, Estado estado) {
+      TransferenciaID transferenciaID, Cantidad valor, Motivo motivo, Estado estado,
+      String className) {
 
     Objects.requireNonNull(transferenciaID);
     Objects.requireNonNull(valor);
     Objects.requireNonNull(motivo);
     Objects.requireNonNull(estado);
+    Objects.requireNonNull(className);
 
     appendChange(
         new TransferenciaExitosa(walletOrigen, walletDestino, transferenciaID, valor, motivo,
-            estado));
+            estado, className));
   }
 
   public void rechazarCreacion(String usuarioId) {

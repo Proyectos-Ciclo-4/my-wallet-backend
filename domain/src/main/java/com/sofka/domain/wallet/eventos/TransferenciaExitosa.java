@@ -28,8 +28,8 @@ public class TransferenciaExitosa extends DomainEvent {
 
   public TransferenciaExitosa(WalletID walletOrigen, WalletID walletDestino,
       TransferenciaID transferenciaID, Cantidad valor, Motivo motivo,
-      Estado estado) {
-    super("com.sofka.domain.wallet.eventos.TransferenciaExitosa");
+      Estado estado, String className) {
+    super("com.sofka.domain.wallet.eventos." + className);
     this.walletOrigen = walletOrigen;
     this.walletDestino = walletDestino;
     this.transferenciaID = transferenciaID;

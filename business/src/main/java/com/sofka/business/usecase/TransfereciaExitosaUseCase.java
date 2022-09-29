@@ -29,7 +29,8 @@ public class TransfereciaExitosaUseCase extends UseCaseForEvent<TransferenciaVal
               wall.concretarTransferencia(transferenciaValidada.getWalletOrigen(),
                   transferenciaValidada.getWalletDestino(),
                   transferenciaValidada.getTransferenciaID(), transferenciaValidada.getValor(),
-                  transferenciaValidada.getMotivo(), new Estado(TipoDeEstado.EXITOSA));
+                  transferenciaValidada.getMotivo(), new Estado(TipoDeEstado.EXITOSA),
+                  "TransferenciaExitosa");
 
               return wall.getUncommittedChanges();
             }));

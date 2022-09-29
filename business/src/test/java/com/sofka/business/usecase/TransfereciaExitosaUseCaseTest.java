@@ -38,7 +38,7 @@ class TransfereciaExitosaUseCaseTest {
   @Test
   void transferenciaExitosa() {
     var transferenciaExitosa = new TransferenciaExitosa(TransferenciaID.of("xxx-xxx"),
-        new Cantidad(101.0));
+        new Cantidad(101.0), "TransferenciaExitosa");
     transferenciaExitosa.setAggregateRootId("w1");
 
     when(repository.obtenerEventos(transferenciaExitosa.aggregateRootId())).thenReturn(history());

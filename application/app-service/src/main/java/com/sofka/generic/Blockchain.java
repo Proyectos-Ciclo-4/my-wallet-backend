@@ -3,6 +3,8 @@ package com.sofka.generic;
 import co.com.sofka.domain.generic.DomainEvent;
 import com.google.gson.Gson;
 import com.sofka.adapters.repositories.DocumentEventStored;
+import com.sofka.domain.wallet.eventos.HistorialRecuperado;
+import com.sofka.domain.wallet.eventos.TransferenciaExitosa;
 import com.sofka.generic.StoredEvent.EventSerializer;
 import com.sofka.generic.materialize.model.SavedHash;
 import java.io.IOException;
@@ -14,6 +16,7 @@ import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -58,9 +61,10 @@ public class Blockchain {
   }
 
   private void run(DomainEvent event) throws Exception {
-    var storedEvent = StoredEvent.wrapEvent(event, serializer);
+    var evento = getEventoDeHistorial(event);
+    var storedEvent = StoredEvent.wrapEvent(evento, serializer);
     var documentEventStored = new DocumentEventStored();
-    documentEventStored.setAggregateRootId(event.aggregateRootId());
+    documentEventStored.setAggregateRootId(evento.aggregateRootId());
     documentEventStored.setStoredEvent(storedEvent);
 
     var body = new Gson().toJson(documentEventStored);
@@ -78,12 +82,24 @@ public class Blockchain {
 
       var hashBody = response.body().string().split(":")[1].replace("\"", "").replace("}", "");
 
-      var hashToSave = new SavedHash(hashBody, event.getClass().getTypeName(),
+      var hashToSave = new SavedHash(hashBody, evento.getClass().getTypeName(),
           event.aggregateRootId());
 
       repository.saveEventHash(hashToSave)
           .subscribe(savedHash -> log.info("saved hash: " + savedHash.getHash()));
     }
+  }
+
+  @NotNull
+  private static DomainEvent getEventoDeHistorial(DomainEvent event) {
+    if (event instanceof TransferenciaExitosa) {
+      var historialRecuperado = new HistorialRecuperado((TransferenciaExitosa) event);
+      historialRecuperado.setAggregateRootId(event.aggregateRootId());
+
+      return historialRecuperado;
+    }
+
+    return event;
   }
 
   public void getTransactionHistory(Flux<SavedHash> hash) {
