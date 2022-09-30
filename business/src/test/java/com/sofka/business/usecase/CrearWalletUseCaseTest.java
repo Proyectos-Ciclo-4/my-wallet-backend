@@ -42,8 +42,8 @@ class CrearWalletUseCaseTest {
     var usuarioId = UsuarioID.of("usuario1");
     var saldo = new Saldo(100.0);
     var listaMotivos = new ArrayList<Motivo>();
-    var motivo1 = new Motivo("recibo agua");
-    var motivo2 = new Motivo("pago energia");
+    var motivo1 = new Motivo("recibo agua", color);
+    var motivo2 = new Motivo("pago energia", color);
     listaMotivos.add(motivo1);
     listaMotivos.add(motivo2);
     var command = new CrearWallet(walletId, usuarioId, saldo, listaMotivos);
@@ -76,8 +76,8 @@ class CrearWalletUseCaseTest {
     var usuarioId = UsuarioID.of("usuario1");
     var saldo = new Saldo(100.0);
     var listaMotivos = new ArrayList<Motivo>();
-    var motivo1 = new Motivo("recibo agua");
-    var motivo2 = new Motivo("pago energia");
+    var motivo1 = new Motivo("recibo agua", color);
+    var motivo2 = new Motivo("pago energia", color);
     listaMotivos.add(motivo1);
     listaMotivos.add(motivo2);
     return Flux.just(new WalletCreada(walletId, usuarioId, saldo, listaMotivos));

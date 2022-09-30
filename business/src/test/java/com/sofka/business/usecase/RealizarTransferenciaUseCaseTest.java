@@ -39,7 +39,7 @@ class RealizarTransferenciaUseCaseTest {
     var transferenciaID = TransferenciaID.of("t1");
     var estadoDeTransferencia = new Estado(TipoDeEstado.PENDIENTE);
     var valor = new Cantidad(30.0);
-    var motivo = new Motivo("Pago de servicios");
+    var motivo = new Motivo("Pago de servicios", color);
 
     var realizarTransferencia = new RealizarTransferencia(walletDestino, transferenciaID,
         estadoDeTransferencia, valor, motivo);
@@ -63,7 +63,7 @@ class RealizarTransferenciaUseCaseTest {
     var walletId = WalletID.of("w1");
     var usuarioId = UsuarioID.of("u1");
     var saldo = new Saldo(100.0);
-    var listaMotivos = List.of(new Motivo("Motivo 1"));
+    var listaMotivos = List.of(new Motivo("Motivo 1", color));
 
     var walletCreada = new WalletCreada(walletId, usuarioId, saldo, listaMotivos);
 

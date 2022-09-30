@@ -2,6 +2,7 @@ package com.sofka.domain.wallet.eventos;
 
 import co.com.sofka.domain.generic.DomainEvent;
 import com.sofka.domain.wallet.objetosdevalor.Cantidad;
+import com.sofka.domain.wallet.objetosdevalor.TransferenciaID;
 import com.sofka.domain.wallet.objetosdevalor.WalletID;
 
 public class SaldoModificado extends DomainEvent {
@@ -10,10 +11,13 @@ public class SaldoModificado extends DomainEvent {
 
   private final Cantidad cantidad;
 
-  public SaldoModificado(WalletID walletID, Cantidad cantidad) {
+  private final TransferenciaID transferenciaID;
+
+  public SaldoModificado(WalletID walletID, Cantidad cantidad, TransferenciaID transferenciaID) {
     super("com.sofka.domain.wallet.eventos.SaldoModificado");
     this.walletID = walletID;
     this.cantidad = cantidad;
+    this.transferenciaID = transferenciaID;
   }
 
   public WalletID getWalletID() {
@@ -22,6 +26,10 @@ public class SaldoModificado extends DomainEvent {
 
   public Cantidad getCantidad() {
     return cantidad;
+  }
+
+  public TransferenciaID getTransferenciaID() {
+    return transferenciaID;
   }
 
   @Override

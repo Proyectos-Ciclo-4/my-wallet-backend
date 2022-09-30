@@ -1,13 +1,12 @@
 package com.sofka.handle;
 
 import co.com.sofka.domain.generic.DomainEvent;
-import com.sofka.business.usecase.gateway.UsuarioRepositorio;
+import com.sofka.generic.BlockchainRepository;
 import com.sofka.generic.EventBus;
 import com.sofka.generic.EventStoreRepository;
 import com.sofka.generic.StoredEvent;
 import com.sofka.generic.StoredEvent.EventSerializer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -20,17 +19,20 @@ public class RegisterIntegrationHandle implements Function<Flux<DomainEvent>, Mo
 
   private final EventSerializer eventSerializer;
 
+  private final BlockchainRepository blockchainRepository;
+
   private final EventBus eventBus;
 
   private final ApplicationEventPublisher applicationEventPublisher;
 
 
   public RegisterIntegrationHandle(EventStoreRepository repository, EventSerializer eventSerializer,
-      EventBus eventBus, UsuarioRepositorio usuarioRepositorio,
+      BlockchainRepository blockchainRepository, EventBus eventBus,
       ApplicationEventPublisher applicationEventPublisher) {
 
     this.repository = repository;
     this.eventSerializer = eventSerializer;
+    this.blockchainRepository = blockchainRepository;
     this.eventBus = eventBus;
     this.applicationEventPublisher = applicationEventPublisher;
   }
@@ -39,14 +41,14 @@ public class RegisterIntegrationHandle implements Function<Flux<DomainEvent>, Mo
   public Mono<Void> apply(Flux<DomainEvent> domainEventFlux) {
 
     return domainEventFlux.flatMap(domainEvent -> {
-      var stored = StoredEvent.wrapEvent(domainEvent, eventSerializer);
+          var stored = StoredEvent.wrapEvent(domainEvent, eventSerializer);
 
-      return repository.saveEvent("wallet", domainEvent.aggregateRootId(), stored)
-          .thenReturn(domainEvent);
-    }).doOnNext(eventBus::publishRegister).collect(Collectors.toList())
-        .doOnNext(events -> events.forEach(applicationEventPublisher::publishEvent))
+          return repository.saveEvent("wallet", domainEvent.aggregateRootId(), stored)
+              .thenReturn(domainEvent);
+        }).doOnNext(eventBus::publishRegister)
+        .doOnNext(applicationEventPublisher::publishEvent)
+        .doOnNext(blockchainRepository::saveTransaction)
         .then();
-//    (applicationEventPublisher::publishEvent).then();
   }
 
   @Override

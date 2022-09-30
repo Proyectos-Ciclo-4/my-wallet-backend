@@ -9,11 +9,14 @@ import com.sofka.domain.wallet.eventos.SaldoModificado;
 import com.sofka.domain.wallet.eventos.TransferenciaCreada;
 import com.sofka.domain.wallet.eventos.TransferenciaExitosa;
 import com.sofka.domain.wallet.eventos.TransferenciaFallida;
+import com.sofka.domain.wallet.eventos.TransferenciaValidada;
 import com.sofka.domain.wallet.eventos.UsuarioAsignado;
 import com.sofka.domain.wallet.eventos.UsuarioExistente;
 import com.sofka.domain.wallet.eventos.WalletCreada;
+import com.sofka.domain.wallet.eventos.WalletDesactivada;
 import com.sofka.domain.wallet.objetosdevalor.Cantidad;
 import com.sofka.domain.wallet.objetosdevalor.Email;
+import com.sofka.domain.wallet.objetosdevalor.Estado;
 import com.sofka.domain.wallet.objetosdevalor.Motivo;
 import com.sofka.domain.wallet.objetosdevalor.Nombre;
 import com.sofka.domain.wallet.objetosdevalor.Saldo;
@@ -29,13 +32,15 @@ public class Wallet extends AggregateEvent<WalletID> {
 
   protected Saldo saldo;
 
-  protected List<Motivo> motivos = List.of(new Motivo("Indefinido"));
+  protected List<Motivo> motivos = List.of(new Motivo("Indefinido", "#000000"));
 
   protected Usuario dueño;
 
   protected List<Usuario> contactos;
 
   protected List<Transferencia> transferencias;
+
+  protected Boolean activa = true;
 
   public Wallet(UsuarioID usuarioID, Saldo saldo) {
     super(WalletID.of(usuarioID.value()));
@@ -52,6 +57,10 @@ public class Wallet extends AggregateEvent<WalletID> {
     Wallet wallet = new Wallet(walletID);
     events.forEach(wallet::applyEvent);
     return wallet;
+  }
+
+  public Boolean isActiva() {
+    return activa;
   }
 
   public void asignarUsuario(UsuarioID usuarioID, Nombre nombre, Email email, Telefono telefono) {
@@ -74,54 +83,91 @@ public class Wallet extends AggregateEvent<WalletID> {
     appendChange(new ContactoEliminado(walletID, usuarioID));
   }
 
-  public void anadirMotivo(String motivo) {
+  public void agregarMotivo(String motivo, String color) {
     Objects.requireNonNull(motivo);
-    appendChange(new MotivoCreado(new Motivo(motivo)));
+    Objects.requireNonNull(color);
+
+    appendChange(new MotivoCreado(new Motivo(motivo, color)));
   }
 
-  public void crearTransferencia(WalletID walletDestinoID, TransferenciaID transferenciaID,
-      Cantidad cantidad, Motivo motivo) {
+  public void crearTransferencia(WalletID walletOrigen, WalletID walletDestinoID, Cantidad cantidad,
+      Motivo motivo) {
+
     Objects.requireNonNull(walletDestinoID);
     Objects.requireNonNull(cantidad);
     Objects.requireNonNull(motivo);
-    appendChange(
-        new TransferenciaCreada(walletDestinoID, transferenciaID, cantidad, motivo));
+    Objects.requireNonNull(walletOrigen);
+
+    appendChange(new TransferenciaCreada(walletOrigen, walletDestinoID, cantidad, motivo));
   }
 
-  public void concretarTransferencia(TransferenciaID transferenciaID
-  ) {
+  public void concretarTransferencia(WalletID walletOrigen, WalletID walletDestino,
+      TransferenciaID transferenciaID, Cantidad valor, Motivo motivo, Estado estado,
+      String className) {
 
     Objects.requireNonNull(transferenciaID);
+    Objects.requireNonNull(valor);
+    Objects.requireNonNull(motivo);
+    Objects.requireNonNull(estado);
+    Objects.requireNonNull(className);
 
-    appendChange(new TransferenciaExitosa(transferenciaID));
+    appendChange(
+        new TransferenciaExitosa(walletOrigen, walletDestino, transferenciaID, valor, motivo,
+            estado, className));
   }
 
   public void rechazarCreacion(String usuarioId) {
     appendChange(new UsuarioExistente(usuarioId));
   }
 
-  public void cancelarTransferencia(TransferenciaID transferenciaID) {
-    Objects.requireNonNull(transferenciaID);
+  public void cancelarTransferencia(WalletID walletOrigen, WalletID walletDestino,
+      TransferenciaID transferenciaID, Estado estadoDeTransferencia, Cantidad valor,
+      Motivo motivo) {
 
-    appendChange(new TransferenciaFallida(transferenciaID));
+    Objects.requireNonNull(transferenciaID);
+    Objects.requireNonNull(estadoDeTransferencia);
+    Objects.requireNonNull(valor);
+    Objects.requireNonNull(motivo);
+    Objects.requireNonNull(walletOrigen);
+    Objects.requireNonNull(walletDestino);
+
+    appendChange(new TransferenciaFallida(walletOrigen, walletDestino, transferenciaID,
+        estadoDeTransferencia, valor, motivo));
   }
 
-  public void ModificarSaldo(WalletID walletID, Cantidad cantidad) {
+  public void ModificarSaldo(WalletID walletID, Cantidad cantidad,
+      TransferenciaID transferenciaID) {
     Objects.requireNonNull(walletID);
     Objects.requireNonNull(cantidad);
-    appendChange(new SaldoModificado(walletID, cantidad));
+    appendChange(new SaldoModificado(walletID, cantidad, transferenciaID));
+  }
+
+  public void validarTransferencia(WalletID walletOrigen, WalletID walletDestino,
+      TransferenciaID transferenciaID, Estado estadoDeTransferencia, Cantidad valor,
+      Motivo motivo) {
+
+    Objects.requireNonNull(transferenciaID);
+    Objects.requireNonNull(estadoDeTransferencia);
+    Objects.requireNonNull(valor);
+    Objects.requireNonNull(motivo);
+    Objects.requireNonNull(walletOrigen);
+    Objects.requireNonNull(walletDestino);
+
+    appendChange(
+        new TransferenciaValidada(walletOrigen, walletDestino, transferenciaID, valor, motivo,
+            estadoDeTransferencia));
+  }
+
+  public void desactivarWallet() {
+    appendChange(new WalletDesactivada());
   }
 
   public Optional<Transferencia> getTransferenciaPorId(TransferenciaID transferenciaID) {
     return transferencias.stream()
-        .filter((transferencia -> transferencia.identity().equals(transferenciaID)))
-        .findFirst();
+        .filter((transferencia -> transferencia.identity().equals(transferenciaID))).findFirst();
   }
 
   public Optional<Usuario> getContactoPorId(UsuarioID usuarioID) {
-    return contactos.stream().filter((usuario -> usuario.identity().equals(usuarioID)))
-        .findFirst();
+    return contactos.stream().filter((usuario -> usuario.identity().equals(usuarioID))).findFirst();
   }
-
-
 }

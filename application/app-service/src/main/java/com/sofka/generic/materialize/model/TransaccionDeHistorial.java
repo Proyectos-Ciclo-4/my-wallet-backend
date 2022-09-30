@@ -1,22 +1,26 @@
 package com.sofka.generic.materialize.model;
 
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 @Data
-public class WalletModel {
+public class TransaccionDeHistorial {
 
   private String walletId;
 
-  private String usuario;
+  private String fecha;
 
-  private List<Motivo> motivos;
+  private String estado;
 
-  private Double saldo;
+  private Motivo motivo;
 
-  private List<TransaccionDeHistorial> historial;
+  private Double valor;
+
+  private String destino;
+
+  private String transferencia_id;
 
   @Data
   @AllArgsConstructor

@@ -3,7 +3,6 @@ package com.sofka.domain.wallet.eventos;
 import co.com.sofka.domain.generic.DomainEvent;
 import com.sofka.domain.wallet.objetosdevalor.Cantidad;
 import com.sofka.domain.wallet.objetosdevalor.Estado;
-import com.sofka.domain.wallet.objetosdevalor.Estado.TipoDeEstado;
 import com.sofka.domain.wallet.objetosdevalor.Motivo;
 import com.sofka.domain.wallet.objetosdevalor.TransferenciaID;
 import com.sofka.domain.wallet.objetosdevalor.WalletID;
@@ -12,7 +11,7 @@ import lombok.ToString;
 
 @Getter
 @ToString
-public class TransferenciaCreada extends DomainEvent {
+public class TransferenciaValidada extends DomainEvent {
 
   private final WalletID walletOrigen;
 
@@ -20,20 +19,20 @@ public class TransferenciaCreada extends DomainEvent {
 
   private final TransferenciaID transferenciaID;
 
-  private final Estado estadoDeTransferencia;
-
   private final Cantidad valor;
 
   private final Motivo motivo;
 
-  public TransferenciaCreada(WalletID walletOrigen, WalletID walletDestino, Cantidad valor,
-      Motivo motivo) {
-    super("com.sofka.domain.wallet.eventos.TransferenciaCreada");
+  private final Estado estado;
+
+  public TransferenciaValidada(WalletID walletOrigen, WalletID walletDestino,
+      TransferenciaID transferenciaID, Cantidad valor, Motivo motivo, Estado estado) {
+    super("com.sofka.domain.wallet.eventos.TransferenciaValidada");
     this.walletOrigen = walletOrigen;
     this.walletDestino = walletDestino;
-    this.transferenciaID = new TransferenciaID();
-    this.estadoDeTransferencia = new Estado(TipoDeEstado.PENDIENTE);
+    this.transferenciaID = transferenciaID;
     this.valor = valor;
     this.motivo = motivo;
+    this.estado = estado;
   }
 }

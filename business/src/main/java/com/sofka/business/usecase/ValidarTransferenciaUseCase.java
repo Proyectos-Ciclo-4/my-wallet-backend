@@ -1,58 +1,43 @@
 package com.sofka.business.usecase;
 
 import co.com.sofka.domain.generic.DomainEvent;
+import com.sofka.business.usecase.gateway.WalletDomainEventRepository;
+import com.sofka.domain.wallet.Wallet;
 import com.sofka.domain.wallet.eventos.TransferenciaCreada;
+import com.sofka.domain.wallet.objetosdevalor.WalletID;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public class ValidarTransferenciaUseCase extends UseCaseForEvent<TransferenciaCreada> {
 
-  @Override
-  public Flux<DomainEvent> apply(Mono<TransferenciaCreada> transferenciaCreadaMono) {
-    return null;
-  }
-}
-
-
-/*{
-
   private final WalletDomainEventRepository repository;
 
-  private final BlockchainRepository repositoryBlockchain;
-
-  public ValidarTransferenciaUseCase(WalletDomainEventRepository repository,
-      BlockchainRepository repositoryBlockchain) {
+  public ValidarTransferenciaUseCase(WalletDomainEventRepository repository) {
     this.repository = repository;
-    this.repositoryBlockchain = repositoryBlockchain;
   }
 
   @Override
   public Flux<DomainEvent> apply(Mono<TransferenciaCreada> transferenciaCreadaMono) {
+    return transferenciaCreadaMono.flatMapMany(
+        transferenciaCreada -> getEventsWallet(transferenciaCreada).collectList()
+            .flatMapMany(events -> {
+              var walletId = WalletID.of(transferenciaCreada.aggregateRootId());
+              var wallet = Wallet.from(walletId, events);
+              var transfereciaId = transferenciaCreada.getTransferenciaID();
 
-    try {
-      TimeUnit.SECONDS.sleep(5);
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    }
+              var cantidad = transferenciaCreada.getValor();
 
-    return transferenciaCreadaMono.flatMap(transferenciaCreada -> {
-      repository
-          .obtenerEventos(transferenciaCreada.aggregateRootId())
-          .collectList()
-          .flatMap(eventsWalletOrigen -> {
+              wallet.ModificarSaldo(walletId, cantidad, transfereciaId);
+              wallet.validarTransferencia(transferenciaCreada.getWalletOrigen(),
+                  transferenciaCreada.getWalletDestino(), transferenciaCreada.getTransferenciaID(),
+                  transferenciaCreada.getEstadoDeTransferencia(), transferenciaCreada.getValor(),
+                  transferenciaCreada.getMotivo());
 
-            var walletOrigenID = WalletID.of(transferenciaCreada.aggregateRootId());
-            var walletOrigen = Wallet.from(walletOrigenID,eventsWalletOrigen);
-
-            var transferenciaBlockchainID =
-
-            var transferenciaBlockchain = repositoryBlockchain.getFromBlockchain()
-
-
-
-
-
-          })
-    })
+              return Flux.fromIterable(wallet.getUncommittedChanges());
+            }));
   }
-}*/
+
+  private Flux<DomainEvent> getEventsWallet(TransferenciaCreada transferenciaCreada) {
+    return repository.obtenerEventos(transferenciaCreada.aggregateRootId());
+  }
+}

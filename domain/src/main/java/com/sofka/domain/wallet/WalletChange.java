@@ -10,6 +10,7 @@ import com.sofka.domain.wallet.eventos.TransferenciaExitosa;
 import com.sofka.domain.wallet.eventos.TransferenciaFallida;
 import com.sofka.domain.wallet.eventos.UsuarioAsignado;
 import com.sofka.domain.wallet.eventos.WalletCreada;
+import com.sofka.domain.wallet.eventos.WalletDesactivada;
 import com.sofka.domain.wallet.objetosdevalor.Estado;
 import com.sofka.domain.wallet.objetosdevalor.Estado.TipoDeEstado;
 import com.sofka.domain.wallet.objetosdevalor.FechayHora;
@@ -38,13 +39,15 @@ public class WalletChange extends EventChange {
     });
 
     apply((ContactoEliminado event) -> {
-      Usuario contactoAEliminar = wallet.getContactoPorId(event.getContactoID())
-          .orElseThrow();
+      Usuario contactoAEliminar = wallet.getContactoPorId(event.getContactoID()).orElseThrow();
       wallet.contactos.remove(contactoAEliminar);
     });
 
+    apply((WalletDesactivada event) -> wallet.activa = false);
+
     apply((MotivoCreado event) -> {
-      wallet.motivos.add(event.getDescripcion());
+
+//      wallet.motivos.add(event.getMotivo());
     });
 
     apply((SaldoModificado event) -> {
@@ -54,14 +57,10 @@ public class WalletChange extends EventChange {
     apply((TransferenciaCreada event) -> {
 
       if (wallet.saldo.value() >= event.getValor().value()) {
-
-        Transferencia transferencia = new Transferencia(
-            event.getTransferenciaID(),
-            event.getWalletDestino(),
-            new Estado(TipoDeEstado.PENDIENTE),
-            new FechayHora(LocalDate.now()),
-            event.getValor(),
-            event.getMotivo());
+        System.out.println();
+        Transferencia transferencia = new Transferencia(event.getTransferenciaID(),
+            event.getWalletDestino(), new Estado(TipoDeEstado.PENDIENTE),
+            new FechayHora(LocalDate.now()), event.getValor(), event.getMotivo());
 
         wallet.transferencias.add(transferencia);
 

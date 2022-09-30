@@ -21,6 +21,6 @@ public class UserRepository implements UsuarioRepositorio {
     var telefonoo = new Telefono("123456789");
 
     return Mono.just(new Usuario(usuarioId, nombre, emaill, telefonoo));*/
-    return repository.getUser(email, telefono);
+    return repository.userExists(email, telefono);
   }
 }

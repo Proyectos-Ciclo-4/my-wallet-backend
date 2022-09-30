@@ -1,8 +1,61 @@
+### Crear wallet
 POST http://localhost:8084/new/wallet
 Content-Type: application/json
 
 {
   "usuarioID": "2",
-  "telefono": "1232456789",
-  "email": "dan2iel@gmail.com"
+  "telefono": "1234567890",
+  "email": "alsdkj@gmail.com"
 }
+
+### Crear 2da wallet
+
+POST http://localhost:8084/new/wallet
+Content-Type: application/json
+
+{
+  "usuarioID": "1",
+  "telefono": "210398230",
+  "email": "david@gmail.com"
+}
+
+
+### Transaciones
+
+POST http://localhost:8084/new/transaction/
+Content-Type: application/json
+
+{
+  "walletOrigen": "1",
+  "walletDestino": "2",
+  "valor": 20,
+  "motivo": {
+    "description": "Pago de servicio",
+    "color": "#000000"
+  }
+}
+
+### Constular wallet
+GET http://localhost:8084/wallet/1
+
+### Crear motivo
+POST http://localhost:8084/new/motivo/
+Content-Type: application/json
+
+{
+  "walletID": "1",
+  "descripcion": "Pago de servicio",
+  "color": "#789456"
+}
+
+### Telefono por uid
+GET http://localhost:8084/telefono/1
+
+### Get history
+GET http://localhost:8084/history/2022-09-28/to/2022-09-29/
+
+### Delete wallet
+DELETE http://localhost:8084/delete/wallet/2
+
+### GetAllHistory
+GET http://localhost:8084/history/2

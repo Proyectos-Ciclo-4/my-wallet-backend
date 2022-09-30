@@ -1,7 +1,9 @@
 package com.sofka.domain.wallet.objetosdevalor;
 
 import co.com.sofka.domain.generic.ValueObject;
+import lombok.ToString;
 
+@ToString
 public class Estado implements ValueObject<Estado.TipoDeEstado> {
 
   private final TipoDeEstado tipoDeEstado;

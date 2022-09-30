@@ -1,8 +1,10 @@
 package com.sofka.generic.materialize;
 
+import com.mongodb.client.result.UpdateResult;
 import com.sofka.domain.wallet.eventos.SaldoModificado;
 import com.sofka.domain.wallet.eventos.UsuarioAsignado;
 import com.sofka.domain.wallet.eventos.WalletCreada;
+import com.sofka.domain.wallet.objetosdevalor.Motivo;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,9 +36,10 @@ public class WalletMaterializeHandler {
     log.info("Materializing WalletCreada event: {}", walletCreada);
     var data = new HashMap<>();
 
-    data.put("_id", walletCreada.getWalletID());
+    data.put("walletId", walletCreada.getWalletID().value());
     data.put("usuario", walletCreada.getUsuarioID().value());
-    data.put("motivos", new ArrayList<>(List.of("Indefinido")));
+    data.put("historial", new ArrayList<>());
+    data.put("motivos", new ArrayList<>(List.of(new Motivo("Desconocido", "#CBCBCB"))));
     data.put("saldo", walletCreada.getSaldo().value());
 
     return template.save(data, COLLECTION_VIEW);
@@ -51,25 +54,25 @@ public class WalletMaterializeHandler {
 
     update.set("usuario", usuarioAsignado.getUsuarioID().value());
 
+    usuario.put("usuarioId", usuarioAsignado.getUsuarioID().value());
     usuario.put("email", usuarioAsignado.getEmail().value());
     usuario.put("numero", usuarioAsignado.getNumero().value());
 
     return template.updateFirst(filtrarPorIdDeWallet(usuarioAsignado.aggregateRootId()), update,
-        COLLECTION_VIEW).flatMap(updateResult ->
-        template.save(usuario, "usuarios"));
+        COLLECTION_VIEW).flatMap(updateResult -> template.save(usuario, "usuarios"));
   }
 
   @EventListener
-  public void handleSaldoModificado(SaldoModificado saldoModificado) {
+  public Mono<UpdateResult> handleSaldoModificado(SaldoModificado saldoModificado) {
     log.info("Materializing SaldoModificado event: {}", saldoModificado);
     var update = new Update();
-    update.set("saldo", saldoModificado.getCantidad().value());
+    update.inc("saldo", saldoModificado.getCantidad().value());
 
-    template.updateFirst(filtrarPorIdDeWallet(saldoModificado.aggregateRootId()), update,
-        COLLECTION_VIEW).block();
+    return template.updateFirst(filtrarPorIdDeWallet(saldoModificado.aggregateRootId()), update,
+        COLLECTION_VIEW);
   }
 
   private Query filtrarPorIdDeWallet(String walletId) {
-    return new Query(Criteria.where("_id").is(walletId));
+    return new Query(Criteria.where("walletId").is(walletId));
   }
 }
