@@ -2,9 +2,9 @@ package com.sofka.business.usecase;
 
 import co.com.sofka.domain.generic.DomainEvent;
 import com.sofka.business.usecase.gateway.WalletDomainEventRepository;
-import com.sofka.domain.wallet.comandos.AgregarMotivo;
-import com.sofka.domain.wallet.eventos.MotivoCreado;
+import com.sofka.domain.wallet.comandos.BorrarWallet;
 import com.sofka.domain.wallet.eventos.WalletCreada;
+import com.sofka.domain.wallet.eventos.WalletDesactivada;
 import com.sofka.domain.wallet.objetosdevalor.Saldo;
 import com.sofka.domain.wallet.objetosdevalor.UsuarioID;
 import com.sofka.domain.wallet.objetosdevalor.WalletID;
@@ -19,26 +19,25 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 @ExtendWith(MockitoExtension.class)
-class AgregarMotivoUseCaseTest {
+class BorrarWalletUseCaseTest {
 
   @Mock
   private WalletDomainEventRepository repository;
 
   @InjectMocks
-  private AgregarMotivoUseCase usecase;
+  private BorrarWalletUseCase usecase;
 
   @Test
   void anadirMotivo() {
-    var anadirMotivo = new AgregarMotivo("wallet1", "Viajes", "#FF0000");
+    var borrarWallet = new BorrarWallet("wallet1");
 
     Mockito.when(repository.obtenerEventos("wallet1")).thenReturn(history());
 
-    StepVerifier.create(usecase.apply(Mono.just(anadirMotivo))).expectNextMatches(domainEvent -> {
-      var event = (MotivoCreado) domainEvent;
-      return event.getMotivo().value().descripcion().equals("Viajes") && event.getMotivo().value()
-          .color().equals("#FF0000");
-    }).expectComplete().verify();
+    StepVerifier.create(usecase.apply(Mono.just(borrarWallet))).expectNextMatches(domainEvent -> {
+      var event = (WalletDesactivada) domainEvent;
 
+      return event.aggregateRootId().equals("wallet1");
+    }).expectComplete().verify();
   }
 
   private Flux<DomainEvent> history() {

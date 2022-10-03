@@ -22,8 +22,6 @@ public class CrearWalletUseCase extends UseCaseForCommand<CrearWallet> {
     });
   }
 
-
-
   /*{
     return crearWallet.flatMapMany(command -> usuarioRepositorio.obtenerDatosUsuario(command.getEmail().value(),
         command.getTelefono().value()).flatMapMany((usuarioData)-> {

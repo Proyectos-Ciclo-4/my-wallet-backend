@@ -13,7 +13,6 @@ import com.sofka.domain.wallet.objetosdevalor.Saldo;
 import com.sofka.domain.wallet.objetosdevalor.TransferenciaID;
 import com.sofka.domain.wallet.objetosdevalor.UsuarioID;
 import com.sofka.domain.wallet.objetosdevalor.WalletID;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -35,8 +34,14 @@ class TransferenciaErroneaUseCaseTest {
 
   @Test
   void transferenciaErronea() {
+    var walletOrigen = WalletID.of("w2");
+    var walletDestino = WalletID.of("w1");
+    var estadoDeTransferencia = new Estado(TipoDeEstado.RECHAZADA);
+    var cantidad = new Cantidad(100.0);
+    var motivo = new Motivo("Pago de servicios", "#FF0000");
+
     var transferenciaFallida = new TransferenciaFallida(walletOrigen, walletDestino,
-        TransferenciaID.of("xxx-xxx"), tipoDeMovimiento, estadoDeTransferencia, valor, motivo);
+        TransferenciaID.of("xxx-xxx"), estadoDeTransferencia, cantidad, motivo);
     transferenciaFallida.setAggregateRootId("w1");
 
     Mockito.when(repository.obtenerEventos(transferenciaFallida.aggregateRootId()))
@@ -54,18 +59,15 @@ class TransferenciaErroneaUseCaseTest {
     var walletId = WalletID.of("w1");
     var usuarioId = UsuarioID.of("u1");
     var saldo = new Saldo(100.0);
-    var listaMotivos = List.of(new Motivo("Motivo 1", color));
 
-    var walletCreada = new WalletCreada(walletId, usuarioId, saldo, listaMotivos);
+    var walletCreada = new WalletCreada(walletId, usuarioId, saldo);
 
     var walletDestino = WalletID.of("w1");
-    var transferenciaId = TransferenciaID.of("xxx-xxx");
-    var estado = new Estado(TipoDeEstado.PENDIENTE);
     var cantidad = new Cantidad(100.0);
-    var motivo = new Motivo("Motivo 1", color);
+    var motivo = new Motivo("Motivo 1", "#FF0000");
 
-    var transferenciaCreada = new TransferenciaCreada(walletDestino, transferenciaId, estado,
-        cantidad, motivo);
+    var transferenciaCreada = new TransferenciaCreada(walletDestino, walletDestino, cantidad,
+        motivo);
 
     return Flux.just(walletCreada, transferenciaCreada);
   }
