@@ -54,10 +54,10 @@ Content-Type: application/json
 
 {
   "nombre": "david",
-  "telefono": "+577894567890",
+  "telefono": "210398230",
   "email": "david@gmail.com",
-  "contactoId": "2",
-  "walletId": "1"
+  "contactoId": "",
+  "walletId": "2"
 }
 
 ### Borrar contacto
@@ -65,8 +65,8 @@ DELETE http://localhost:8084/borrar/contacto
 Content-Type: application/json
 
 {
-  "walletId": "1",
-  "contactoId": "2"
+  "walletId": "2",
+  "contactoId": "1"
 }
 
 ### Telefono por uid

@@ -1,5 +1,6 @@
 package com.sofka.generic.helpers;
 
+import com.sofka.adapters.repositories.UserRepository;
 import com.sofka.business.usecase.gateway.UsuarioRepositorio;
 import com.sofka.business.usecase.gateway.WalletDomainEventRepository;
 import com.sofka.domain.wallet.comandos.AgregarContacto;
@@ -21,47 +22,47 @@ public class Validators {
 
   private final UsuarioRepositorio usuarioRepositorio;
 
+  private final UserRepository repository;
+
   private final WalletDomainEventRepository walletsRepository;
 
-  public Validators(UsuarioRepositorio usuarioRepositorio,
+  public Validators(UsuarioRepositorio usuarioRepositorio, UserRepository repository,
       WalletDomainEventRepository walletsRepository) {
     this.usuarioRepositorio = usuarioRepositorio;
+    this.repository = repository;
     this.walletsRepository = walletsRepository;
   }
 
   public Mono<CrearWallet> validateUser(Mono<CrearWallet> command) {
-    return command.flatMap(
-        crearWallet -> {
-          log.info("Validating user {}", crearWallet);
+    return command.flatMap(crearWallet -> {
+      log.info("Validating user {}", crearWallet);
 
-          return usuarioRepositorio.obtenerDatosUsuario(crearWallet.getEmail().value(),
-              crearWallet.getTelefono().value()).flatMap(usuarioData -> {
+      return usuarioRepositorio.obtenerDatosUsuario(crearWallet.getEmail().value(),
+          crearWallet.getTelefono().value()).flatMap(usuarioData -> {
 
-            if (usuarioData) {
-              log.error("User already exists");
-              return Mono.error(new RuntimeException("El usuario ya existe"));
-            }
+        if (usuarioData) {
+          log.error("User already exists");
+          return Mono.error(new RuntimeException("El usuario ya existe"));
+        }
 
-            return Mono.just(crearWallet);
-          });
-        });
+        return Mono.just(crearWallet);
+      });
+    });
   }
 
   public Mono<AgregarContacto> validateContact(Mono<AgregarContacto> agregarContactoMono) {
-    return agregarContactoMono.flatMap(agregarContacto ->
-        walletsRepository.exists(agregarContacto.getContactoId())
-            .flatMap(exists -> {
-              if (!exists) {
-                log.error("Wallet does not exist");
+    return agregarContactoMono.flatMap(
+        agregarContacto -> repository.datos(agregarContacto.getTelefono())
+            .collectList()
+            .flatMap(userModel -> {
+                  if (userModel.isEmpty()) {
+                    return Mono.error(new RuntimeException("El usuario no existe"));
+                  }
 
-                return Mono.error(
-                    new RuntimeException("La wallet que quiere agregar como contacto no existe"));
-              }
-
-              return Mono.just(agregarContacto);
+                  agregarContacto.setContactoId(userModel.get(0).getUsuarioId());
+                  return Mono.just(agregarContacto);
                 }
-            )
-    );
+            ));
   }
 
   public Mono<RealizarTransferencia> validateWallet(ServerRequest request) {

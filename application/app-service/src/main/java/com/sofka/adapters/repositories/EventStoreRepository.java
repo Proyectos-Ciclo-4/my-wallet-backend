@@ -5,7 +5,9 @@ import com.sofka.domain.wallet.Usuario;
 import com.sofka.generic.StoredEvent;
 import com.sofka.generic.StoredEvent.EventSerializer;
 import com.sofka.generic.materialize.model.SavedHash;
+import com.sofka.generic.materialize.model.UserModel;
 import java.util.Comparator;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -14,6 +16,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Repository
+@Slf4j
 public class EventStoreRepository implements com.sofka.generic.EventStoreRepository {
 
   private final ReactiveMongoTemplate template;
@@ -30,6 +33,12 @@ public class EventStoreRepository implements com.sofka.generic.EventStoreReposit
         "usuarios").flatMap(aBoolean -> aBoolean ? Mono.just(aBoolean)
         : template.exists(Query.query(Criteria.where("email").is(email)), Usuario.class,
             "usuarios"));
+  }
+
+  public Flux<UserModel> getUserByPhoneNumber(String number) {
+    var query = new Query(Criteria.where("numero").is(number));
+
+    return template.find(query, UserModel.class, "usuarios");
   }
 
   @Override

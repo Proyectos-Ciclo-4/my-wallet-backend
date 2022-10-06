@@ -1,10 +1,12 @@
 package com.sofka.adapters.repositories;
 
 import com.sofka.business.usecase.gateway.UsuarioRepositorio;
-import org.springframework.stereotype.Component;
+import com.sofka.generic.materialize.model.UserModel;
+import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@Component
+@Repository
 public class UserRepository implements UsuarioRepositorio {
 
   private final EventStoreRepository repository;
@@ -15,12 +17,10 @@ public class UserRepository implements UsuarioRepositorio {
 
   @Override
   public Mono<Boolean> obtenerDatosUsuario(String email, String telefono) {
-    /*var usuarioId = UsuarioID.of("123");
-    var nombre = new Nombre("Juan");
-    var emaill = new Email("daniel@gmail.com");
-    var telefonoo = new Telefono("123456789");
-
-    return Mono.just(new Usuario(usuarioId, nombre, emaill, telefonoo));*/
     return repository.userExists(email, telefono);
+  }
+
+  public Flux<UserModel> datos(String telefono) {
+    return repository.getUserByPhoneNumber(telefono);
   }
 }
