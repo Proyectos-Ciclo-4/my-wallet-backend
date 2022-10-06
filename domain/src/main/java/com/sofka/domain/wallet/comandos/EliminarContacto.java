@@ -14,6 +14,6 @@ import lombok.NoArgsConstructor;
 public class EliminarContacto extends Command {
 
   private WalletID walletID;
-  private UsuarioID contactoID;
 
+  private UsuarioID contactoID;
 }

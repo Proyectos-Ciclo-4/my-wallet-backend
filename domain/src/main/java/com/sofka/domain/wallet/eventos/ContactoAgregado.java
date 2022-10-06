@@ -4,13 +4,13 @@ import co.com.sofka.domain.generic.DomainEvent;
 import com.sofka.domain.wallet.Usuario;
 import com.sofka.domain.wallet.objetosdevalor.WalletID;
 
-public class ContactoAnadido extends DomainEvent {
+public class ContactoAgregado extends DomainEvent {
 
   private final WalletID walletID;
   private final Usuario contacto;
 
-  public ContactoAnadido(WalletID walletID, Usuario contacto) {
-    super("com.sofka.domain.wallet.eventos.ContactoAnadido");
+  public ContactoAgregado(WalletID walletID, Usuario contacto) {
+    super("com.sofka.domain.wallet.eventos.ContactoAgregado");
     this.walletID = walletID;
     this.contacto = contacto;
   }

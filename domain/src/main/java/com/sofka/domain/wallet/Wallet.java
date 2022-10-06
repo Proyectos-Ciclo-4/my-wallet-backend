@@ -2,7 +2,7 @@ package com.sofka.domain.wallet;
 
 import co.com.sofka.domain.generic.AggregateEvent;
 import co.com.sofka.domain.generic.DomainEvent;
-import com.sofka.domain.wallet.eventos.ContactoAnadido;
+import com.sofka.domain.wallet.eventos.ContactoAgregado;
 import com.sofka.domain.wallet.eventos.ContactoEliminado;
 import com.sofka.domain.wallet.eventos.MotivoCreado;
 import com.sofka.domain.wallet.eventos.SaldoModificado;
@@ -74,7 +74,7 @@ public class Wallet extends AggregateEvent<WalletID> {
   public void anadirContacto(WalletID walletID, Usuario usuario) {
     Objects.requireNonNull(walletID);
     Objects.requireNonNull(usuario);
-    appendChange(new ContactoAnadido(walletID, usuario));
+    appendChange(new ContactoAgregado(walletID, usuario));
   }
 
   public void eliminarContacto(WalletID walletID, UsuarioID usuarioID) {
@@ -165,6 +165,13 @@ public class Wallet extends AggregateEvent<WalletID> {
   public Optional<Transferencia> getTransferenciaPorId(TransferenciaID transferenciaID) {
     return transferencias.stream()
         .filter((transferencia -> transferencia.identity().equals(transferenciaID))).findFirst();
+  }
+
+  public void nuevoContacto(WalletID walletId, Usuario usuario) {
+    Objects.requireNonNull(walletId);
+    Objects.requireNonNull(usuario);
+
+    appendChange(new ContactoAgregado(walletId, usuario));
   }
 
   public Optional<Usuario> getContactoPorId(UsuarioID usuarioID) {

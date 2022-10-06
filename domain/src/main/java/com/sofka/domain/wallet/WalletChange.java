@@ -1,7 +1,7 @@
 package com.sofka.domain.wallet;
 
 import co.com.sofka.domain.generic.EventChange;
-import com.sofka.domain.wallet.eventos.ContactoAnadido;
+import com.sofka.domain.wallet.eventos.ContactoAgregado;
 import com.sofka.domain.wallet.eventos.ContactoEliminado;
 import com.sofka.domain.wallet.eventos.MotivoCreado;
 import com.sofka.domain.wallet.eventos.SaldoModificado;
@@ -30,11 +30,12 @@ public class WalletChange extends EventChange {
     });
 
     apply((UsuarioAsignado event) -> {
-      wallet.dueño = new Usuario(event.getUsuarioID(), event.getNombre(), event.getEmail(),
-          event.getNumero());
+      wallet.dueño = new Usuario(event.getUsuarioID(), event.getNombre().value(),
+          event.getEmail().value(),
+          event.getNumero().value());
     });
 
-    apply((ContactoAnadido event) -> {
+    apply((ContactoAgregado event) -> {
       wallet.contactos.add(event.getContacto());
     });
 
