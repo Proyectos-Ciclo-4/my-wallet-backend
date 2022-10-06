@@ -6,10 +6,17 @@ import com.sofka.adapters.repositories.DocumentEventStored;
 import com.sofka.domain.wallet.eventos.HistorialRecuperado;
 import com.sofka.domain.wallet.eventos.TransferenciaExitosa;
 import com.sofka.generic.StoredEvent.EventSerializer;
+import com.sofka.generic.helpers.EncrypDES3;
 import com.sofka.generic.materialize.model.SavedHash;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -69,6 +76,8 @@ public class Blockchain {
 
     var body = new Gson().toJson(documentEventStored);
 
+    body = encryptBody(body);
+
     log.info("Sending to blockchain {}", body);
 
     var request = new Request.Builder().url(POST_URL)
@@ -87,6 +96,16 @@ public class Blockchain {
 
       repository.saveEventHash(hashToSave)
           .subscribe(savedHash -> log.info("saved hash: " + savedHash.getHash()));
+    }
+  }
+
+  private String encryptBody(String body) {
+    try {
+      EncrypDES3 encrypDES3 = new EncrypDES3();
+      return Arrays.toString(encrypDES3.Encrytor(body));
+    } catch (NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException |
+             BadPaddingException | InvalidKeyException e) {
+      throw new RuntimeException(e);
     }
   }
 
