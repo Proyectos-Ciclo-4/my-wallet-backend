@@ -2,6 +2,7 @@ package com.sofka.generic.helpers;
 
 import com.sofka.business.usecase.gateway.UsuarioRepositorio;
 import com.sofka.business.usecase.gateway.WalletDomainEventRepository;
+import com.sofka.domain.wallet.comandos.AgregarContacto;
 import com.sofka.domain.wallet.comandos.CrearWallet;
 import com.sofka.domain.wallet.comandos.RealizarTransferencia;
 import com.sofka.domain.wallet.objetosdevalor.Cantidad;
@@ -46,6 +47,22 @@ public class Validators {
         });
   }
 
+  public Mono<AgregarContacto> validateContact(Mono<AgregarContacto> agregarContactoMono) {
+    return agregarContactoMono.flatMap(agregarContacto ->
+        walletsRepository.exists(agregarContacto.getWalletId())
+            .flatMap(exists -> {
+                  if (exists) {
+                    log.error("Wallet does not exist");
+
+                    return Mono.error(
+                        new RuntimeException("La wallet que quiere agregar como contacto no existe"));
+                  }
+                  return Mono.just(agregarContacto);
+                }
+            )
+    );
+  }
+
   public Mono<RealizarTransferencia> validateWallet(ServerRequest request) {
 
     var bodyMono = request.bodyToMono(Object.class).flatMap(body -> {
@@ -55,7 +72,6 @@ public class Validators {
       var walletOrigen = requestMap.get("walletOrigen").toString();
       var valor = getValor(requestMap);
       var motivo = getMotivo(requestMap);
-      System.out.println();
 
       return Mono.just(
           new RealizarTransferencia(WalletID.of(walletOrigen), WalletID.of(walletDestino),

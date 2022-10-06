@@ -14,6 +14,8 @@ public class WalletModel {
 
   private List<Motivo> motivos;
 
+  private List<Contacto> contactos;
+
   private Double saldo;
 
   private List<TransaccionDeHistorial> historial;
@@ -26,6 +28,21 @@ public class WalletModel {
     private String descripcion;
 
     private String color;
+
+  }
+
+  @Data
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class Contacto {
+
+    private String walletId;
+
+    private String nombre;
+
+    private String telefono;
+
+    private String email;
 
   }
 }

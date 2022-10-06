@@ -1,6 +1,7 @@
 package com.sofka.generic.materialize;
 
 import com.mongodb.client.result.UpdateResult;
+import com.sofka.domain.wallet.eventos.ContactoAgregado;
 import com.sofka.domain.wallet.eventos.SaldoModificado;
 import com.sofka.domain.wallet.eventos.UsuarioAsignado;
 import com.sofka.domain.wallet.eventos.WalletCreada;
@@ -38,6 +39,7 @@ public class WalletMaterializeHandler {
 
     data.put("walletId", walletCreada.getWalletID().value());
     data.put("usuario", walletCreada.getUsuarioID().value());
+    data.put("contactos", new ArrayList<>());
     data.put("historial", new ArrayList<>());
     data.put("motivos", new ArrayList<>(List.of(new Motivo("Desconocido", "#CBCBCB"))));
     data.put("saldo", walletCreada.getSaldo().value());
@@ -60,6 +62,24 @@ public class WalletMaterializeHandler {
 
     return template.updateFirst(filtrarPorIdDeWallet(usuarioAsignado.aggregateRootId()), update,
         COLLECTION_VIEW).flatMap(updateResult -> template.save(usuario, "usuarios"));
+  }
+
+  @EventListener
+  public Mono<UpdateResult> handleContactoAgregado(ContactoAgregado contactoAgregado) {
+    log.info("Materializing ContactoAgregado event: {}", contactoAgregado);
+    var update = new Update();
+    var query = new Query(Criteria.where("walletId").is(contactoAgregado.getWalletID().value()));
+    var contacto = new HashMap<String, String>();
+    var value = contactoAgregado.getContacto();
+
+    contacto.put("walletId", value.identity().value());
+    contacto.put("nombre", value.getNombre().value());
+    contacto.put("telefono", value.getTelefono().value());
+    contacto.put("email", value.getEmail().value());
+
+    update.addToSet("contactos", contacto);
+
+    return template.updateFirst(query, update, COLLECTION_VIEW);
   }
 
   @EventListener
