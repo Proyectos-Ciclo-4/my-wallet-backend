@@ -1,8 +1,6 @@
 package com.sofka.domain.wallet.comandos;
 
 import co.com.sofka.domain.generic.Command;
-import com.sofka.domain.wallet.objetosdevalor.UsuarioID;
-import com.sofka.domain.wallet.objetosdevalor.WalletID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class EliminarContacto extends Command {
 
-  private WalletID walletID;
+  private String walletId;
 
-  private UsuarioID contactoID;
+  private String contactoId;
 }

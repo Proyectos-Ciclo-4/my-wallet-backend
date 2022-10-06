@@ -16,5 +16,7 @@ public class AgregarContacto extends Command {
 
   private String email;
 
+  private String contactoId;
+
   private String walletId;
 }

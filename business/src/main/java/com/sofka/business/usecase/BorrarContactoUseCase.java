@@ -4,6 +4,7 @@ import co.com.sofka.domain.generic.DomainEvent;
 import com.sofka.business.usecase.gateway.WalletDomainEventRepository;
 import com.sofka.domain.wallet.Wallet;
 import com.sofka.domain.wallet.comandos.EliminarContacto;
+import com.sofka.domain.wallet.objetosdevalor.WalletID;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -18,13 +19,13 @@ public class BorrarContactoUseCase extends UseCaseForCommand<EliminarContacto> {
   @Override
   public Flux<DomainEvent> apply(Mono<EliminarContacto> eliminarContactoMono) {
     return eliminarContactoMono.flatMapMany(eliminarContacto ->
-        repository.obtenerEventos(eliminarContacto.getWalletID().value())
+        repository.obtenerEventos(eliminarContacto.getWalletId())
             .collectList()
             .flatMapIterable(events -> {
-              var wallet = Wallet.from(eliminarContacto.getWalletID(), events);
+              var wallet = Wallet.from(WalletID.of(eliminarContacto.getWalletId()), events);
 
-              wallet.eliminarContacto(eliminarContacto.getWalletID(),
-                  eliminarContacto.getContactoID());
+              wallet.eliminarContacto(eliminarContacto.getWalletId(),
+                  eliminarContacto.getContactoId());
 
               return wallet.getUncommittedChanges();
             }));

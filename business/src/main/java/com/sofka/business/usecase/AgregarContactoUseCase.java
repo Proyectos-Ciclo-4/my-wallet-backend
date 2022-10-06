@@ -25,7 +25,7 @@ public class AgregarContactoUseCase extends UseCaseForCommand<AgregarContacto> {
             .flatMapIterable(domainEvents -> {
               var wallet = Wallet.from(WalletID.of(command.getWalletId()), domainEvents);
               wallet.nuevoContacto(WalletID.of(command.getWalletId()),
-                  new Usuario(UsuarioID.of(command.getWalletId()), command.getNombre(),
+                  new Usuario(UsuarioID.of(command.getContactoId()), command.getNombre(),
                       command.getEmail(),
                       command.getTelefono()));
 

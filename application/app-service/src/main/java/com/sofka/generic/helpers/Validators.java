@@ -49,15 +49,16 @@ public class Validators {
 
   public Mono<AgregarContacto> validateContact(Mono<AgregarContacto> agregarContactoMono) {
     return agregarContactoMono.flatMap(agregarContacto ->
-        walletsRepository.exists(agregarContacto.getWalletId())
+        walletsRepository.exists(agregarContacto.getContactoId())
             .flatMap(exists -> {
-                  if (exists) {
-                    log.error("Wallet does not exist");
+              if (!exists) {
+                log.error("Wallet does not exist");
 
-                    return Mono.error(
-                        new RuntimeException("La wallet que quiere agregar como contacto no existe"));
-                  }
-                  return Mono.just(agregarContacto);
+                return Mono.error(
+                    new RuntimeException("La wallet que quiere agregar como contacto no existe"));
+              }
+
+              return Mono.just(agregarContacto);
                 }
             )
     );

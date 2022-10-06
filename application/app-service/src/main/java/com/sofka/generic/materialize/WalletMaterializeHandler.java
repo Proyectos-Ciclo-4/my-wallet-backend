@@ -2,12 +2,14 @@ package com.sofka.generic.materialize;
 
 import com.mongodb.client.result.UpdateResult;
 import com.sofka.domain.wallet.eventos.ContactoAgregado;
+import com.sofka.domain.wallet.eventos.ContactoEliminado;
 import com.sofka.domain.wallet.eventos.SaldoModificado;
 import com.sofka.domain.wallet.eventos.UsuarioAsignado;
 import com.sofka.domain.wallet.eventos.WalletCreada;
 import com.sofka.domain.wallet.objetosdevalor.Motivo;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +19,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.scheduling.annotation.EnableAsync;
+import reactor.core.Disposable;
 import reactor.core.publisher.Mono;
 
 @EnableAsync
@@ -80,6 +83,25 @@ public class WalletMaterializeHandler {
     update.addToSet("contactos", contacto);
 
     return template.updateFirst(query, update, COLLECTION_VIEW);
+  }
+
+  @EventListener
+  public Disposable handleBorrarContacto(ContactoEliminado contactoEliminado) {
+    log.info("Materializing ContactoEliminado event: {}", contactoEliminado);
+
+    var update = new Update();
+    var query = new Query(Criteria.where("walletId").is(contactoEliminado.getWalletID().value()));
+
+    return template.findOne(query, HashMap.class, COLLECTION_VIEW).subscribe(data -> {
+      var contactos = (List<LinkedHashMap<String, String>>) data.get("contactos");
+
+      contactos.removeIf(
+          contacto -> contacto.get("walletId").equals(contactoEliminado.getContactoID().value()));
+
+      update.set("contactos", contactos);
+
+      template.updateFirst(query, update, COLLECTION_VIEW).subscribe();
+    });
   }
 
   @EventListener

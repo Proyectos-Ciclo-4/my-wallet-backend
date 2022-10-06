@@ -48,6 +48,27 @@ Content-Type: application/json
   "color": "#789456"
 }
 
+### Crear contacto
+POST http://localhost:8084/nuevo/contacto
+Content-Type: application/json
+
+{
+  "nombre": "david",
+  "telefono": "+577894567890",
+  "email": "david@gmail.com",
+  "contactoId": "2",
+  "walletId": "1"
+}
+
+### Borrar contacto
+DELETE http://localhost:8084/borrar/contacto
+Content-Type: application/json
+
+{
+  "walletId": "1",
+  "contactoId": "2"
+}
+
 ### Telefono por uid
 GET http://localhost:8084/telefono/1
 

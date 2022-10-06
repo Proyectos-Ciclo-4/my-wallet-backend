@@ -77,10 +77,10 @@ public class Wallet extends AggregateEvent<WalletID> {
     appendChange(new ContactoAgregado(walletID, usuario));
   }
 
-  public void eliminarContacto(WalletID walletID, UsuarioID usuarioID) {
+  public void eliminarContacto(String walletID, String usuarioID) {
     Objects.requireNonNull(walletID);
     Objects.requireNonNull(usuarioID);
-    appendChange(new ContactoEliminado(walletID, usuarioID));
+    appendChange(new ContactoEliminado(WalletID.of(walletID), UsuarioID.of(usuarioID)));
   }
 
   public void agregarMotivo(String motivo, String color) {
