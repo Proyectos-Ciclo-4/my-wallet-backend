@@ -45,7 +45,7 @@ public class CustomCallBack implements Callback {
       throw new IOException("Unexpected code " + response);
     }
 
-    var body = response.body().string();
+    var body = response.body().string().split(":")[1].replace("\"", "").replace("}", "");
 
     body = decrypt(body);
 

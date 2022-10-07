@@ -61,12 +61,12 @@ Content-Type: application/json
 }
 
 ### Borrar contacto
-DELETE http://localhost:8084/borrar/contacto
+DELETE https://app-service-wallet.herokuapp.com/borrar/contacto
 Content-Type: application/json
 
 {
-  "walletId": "2",
-  "contactoId": "1"
+  "walletId": "MVdRsisUlvSteSpJxxaMzkRzVlJ3",
+  "contactoId": "6WhCcDlNv4duJgkMBGo1yhgKc123"
 }
 
 ### Telefono por uid

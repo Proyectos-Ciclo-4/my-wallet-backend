@@ -14,6 +14,7 @@ import java.net.URL;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.HashMap;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
@@ -73,8 +74,10 @@ public class Blockchain {
     var documentEventStored = new DocumentEventStored();
     documentEventStored.setAggregateRootId(evento.aggregateRootId());
     documentEventStored.setStoredEvent(storedEvent);
+    var map = new HashMap<>();
+    map.put("evento", documentEventStored);
 
-    var body = new Gson().toJson(documentEventStored);
+    var body = new Gson().toJson(map);
 
     body = encryptBody(body);
 
