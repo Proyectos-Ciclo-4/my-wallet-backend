@@ -6,12 +6,6 @@ import com.sofka.generic.EventBus;
 import com.sofka.generic.StoredEvent;
 import com.sofka.generic.StoredEvent.EventSerializer;
 import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Call;
@@ -45,9 +39,7 @@ public class CustomCallBack implements Callback {
       throw new IOException("Unexpected code " + response);
     }
 
-    var body = response.body().string().split(":")[1].replace("\"", "").replace("}", "");
-
-    body = decrypt(body);
+    var body = response.body().string();
 
     log.info("Getting history: " + body);
 
@@ -56,15 +48,5 @@ public class CustomCallBack implements Callback {
     var event = documentEventStored.getStoredEvent().deserializeEvent(eventSerializer);
 
     eventBus.publish(event);
-  }
-
-  private String decrypt(String body) {
-    try {
-      EncrypDES3 des = new EncrypDES3();
-      return Arrays.toString(des.Decryptor(body.getBytes()));
-    } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException |
-             BadPaddingException | IllegalBlockSizeException e) {
-      throw new RuntimeException(e);
-    }
   }
 }
